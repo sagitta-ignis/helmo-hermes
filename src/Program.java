@@ -1,0 +1,83 @@
+
+import client.controleur.logger.Logger;
+import client.Client;
+import client.exception.NotConnectedException;
+import client.exception.UnopenableExecption;
+import client.exception.UnreachableServerExeception;
+import client.vue.Login;
+import java.util.Scanner;
+import java.util.logging.Level;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+/**
+ *
+ * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
+ */
+public class Program {
+
+    public void startConsole() {
+        Scanner input = new Scanner(System.in);
+        Client c = new Client(System.in, System.out);
+        try {
+            c.connect("127.0.0.1", 12345);
+            System.out.println("-- client a démarré");
+            System.out.println("Entrer un nom : ");
+            String nom = input.nextLine();
+            c.login(nom, null);
+            c.open();
+        } catch (UnreachableServerExeception ex) {
+            java.util.logging.Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("[error] impossible de se connecter : création du socket client a échoué");
+        } catch (NotConnectedException ex) {
+            java.util.logging.Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("[error] impossible de s'authentifier : client n'est pas connecté");
+        } catch (UnopenableExecption ex) {
+            java.util.logging.Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("[error] impossible de continuer : client n'est pas connecté ou authentifié");
+        }
+        c.close();
+        System.exit(0);
+    }
+
+    public void startInterface() {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                Logger logger = new Logger();
+            }
+        });
+    }
+
+    public static void main(String[] args) {
+        Program p = new Program();
+        p.startInterface();
+    }
+}
