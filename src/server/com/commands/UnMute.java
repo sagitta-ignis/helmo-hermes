@@ -3,42 +3,46 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package server.com.commands;
 
-import server.com.ClientManager;
 import pattern.Command;
 import server.Server;
 import server.com.Client;
 
 /**
  *
- * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
+ * @Author David M
  */
-public class Connect implements Command {
+public class UnMute implements Command {
 
     private final Server server;
-    private final Client clientInfo;
 
-    public Connect(Server server, Client client) {
+    public UnMute(Server server) {
         this.server = server;
-        this.clientInfo = client;
     }
 
     @Override
     public void execute() {
-        execute("Anonyme");
+        execute(null);
     }
 
     @Override
     public void execute(String args) {
-        clientInfo.setUsername(args);
-        server.transmettre("-- "+clientInfo.toString()+" a rejoint le serveur");
-    }
+        StringBuilder message = new StringBuilder();
+        Client cl = server.trouverClient(Integer.parseInt(args));
 
-    @Override
-    public String desciption() {
-        return "Change de pseudo";
+        if (cl != null) {
+            cl.setMuet(false);
+            message.append(cl.getUsername());
+            message.append(" peut maintenant parler.");
+
+            server.transmettre(message.toString());
+        }
     }
     
+    
+    @Override
+    public String desciption() {
+       return "Unmute un utilisateur";
+    }
 }

@@ -8,6 +8,7 @@ package server.com.commands;
 import server.com.ClientManager;
 import pattern.Command;
 import server.Server;
+import server.com.Client;
 
 /**
  *
@@ -17,10 +18,12 @@ public class Quit implements Command {
 
     private final Server server;
     private final ClientManager client;
+    private final Client clientInfo;
 
-    public Quit(Server server, ClientManager client) {
+    public Quit(Server server, ClientManager client, Client clInfo) {
         this.server = server;
         this.client = client;
+        this.clientInfo = clInfo;
     }
 
     @Override
@@ -31,15 +34,20 @@ public class Quit implements Command {
     @Override
     public void execute(String args) {
         StringBuilder message = new StringBuilder();
-        message.append("-- ").append(client.getUserName());
-        message.append("(").append(client.getClientId()).append(") ");
+        message.append("-- ").append(clientInfo.getUsername());
+        message.append("(").append(clientInfo.getId()).append(") ");
         message.append("a quitté le serveur");
         if(args!=null && !args.isEmpty()) {
             message.append(" (").append(args).append(")");
         }
         server.transmettre(message.toString());
         server.retirer(client);
-        client.setOpened(false);
+        clientInfo.setOpened(false);
         client.close();
+    }
+
+    @Override
+    public String desciption() {
+        return "Quitter le serveur";
     }
 }

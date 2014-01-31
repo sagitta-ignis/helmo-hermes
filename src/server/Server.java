@@ -8,11 +8,15 @@ package server;
 import server.com.ClientManager;
 import java.io.*;
 import java.net.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import server.com.Client;
 
 /**
  *
@@ -54,9 +58,16 @@ public class Server {
     }
 
     public void transmettre(String message) {
-        afficher(message);
+        Date date = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("[k:mm:s]");
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append(dateFormat.format(date));
+        sb.append(message);
+        
+        afficher(sb.toString());
         for (ClientManager client : clients) {
-            client.envoyer(message);
+            client.envoyer(sb.toString());
         }
     }
 
@@ -94,5 +105,17 @@ public class Server {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(-1);
         }
+    }
+    
+    public Client trouverClient(int id){
+        for(ClientManager clientM: clients){
+            if(clientM.getClient().getId() == id)
+                return clientM.getClient();
+        }
+        return null;
+    }
+    
+    public List<ClientManager> getConnected(){
+        return clients;
     }
 }

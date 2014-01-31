@@ -18,10 +18,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pattern.Command;
-import server.com.commands.Connect;
-import server.com.commands.Quit;
 import server.Server;
-import server.com.commands.Set;
+import server.com.commands.*;
+
 
 /**
  *
@@ -37,12 +36,13 @@ public class ClientManager extends Thread {
     private final PrintWriter outToClient;
 
     private Map<String, Command> commands;
+    private Map<String, Command> commandsAdmin;
 
-    private final int id = increment++;
-    private String username = "Anonyme";
-    private boolean opened = true;
+    private Client clientInfo;
 
     public ClientManager(Server srv, Socket sck) throws IOException {
+        clientInfo = new Client(increment++);
+        
         inFromClient = new BufferedReader(
                 new InputStreamReader(
                         sck.getInputStream(), Charset.forName("UTF-8"))
@@ -54,34 +54,32 @@ public class ClientManager extends Thread {
         server = srv;
         socket = sck;
         initCommands();
+       
     }
 
-    private void initCommands() {
+    private void initCommands() {               
+        commandsAdmin = new HashMap<>();
+        commandsAdmin.put("/mute", new Mute(server));
+        commandsAdmin.put("/unmute", new UnMute(server));
+        
         commands = new HashMap<>();
-        commands.put("/quit", new Quit(server, this));
-        commands.put("/connect", new Connect(server, this));
+        commands.put("/quit", new Quit(server, this, clientInfo));
+        commands.put("/connect", new Connect(server, clientInfo));
         commands.put("/set", new Set(this));
+        commands.put("/time", new Time(server, clientInfo,this));
+        commands.put("/users", new Users(server,this));
+        
+        //DOIT TOUJOURS ETRE LE DERNIER AJOUT
+        commands.put("/help", new Help(this,commands,commandsAdmin));
     }
 
-    public int getClientId() {
-        return id;
+    public Client getClient(){
+        return clientInfo;
     }
-
-    public String getUserName() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setOpened(boolean opened) {
-        this.opened = opened;
-    }
-
+    
     @Override
-    public void run() {
-        while (opened) {
+    public void run() { 
+        while (clientInfo.isOpened()) {
             recevoir();
         }
     }
@@ -105,29 +103,39 @@ public class ClientManager extends Thread {
     private void connectionLost() {
         //Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         server.afficher("[error] connection avec " + toString() + " perdue");
-        opened = false;
+        clientInfo.setOpened(false);
         executer("/quit");
     }
 
     private void traiter(String message) {
         if (message.charAt(0) == '/') {
             executer(message);
-        } else {
-            server.transmettre(username + " : " + message);
+        } else if(!clientInfo.isMuet()){            
+            server.transmettre(clientInfo.toString() + " : " + message);
         }
     }
     
     private void executer(String requete) {
         String[] r = requete.split(" ", 2);
         if (r.length >= 1) {
-            Command c = commands.get(r[0]);
-            if (c != null) {
+            
+            Command commandPublique = commands.get(r[0]); 
+            Command commandAdmin = commandsAdmin.get(r[0]);
+            
+            if (commandPublique != null) {
                 if (r.length == 2) {
-                    c.execute(r[1]);
+                    commandPublique.execute(r[1]);
                 } else {
-                    c.execute();
+                    commandPublique.execute();
                 }
-            } else {
+                        
+            }else if(clientInfo.isAdmin() && commandAdmin != null){
+                 if (r.length == 2) {
+                    commandAdmin.execute(r[1]);
+                } else {
+                    commandAdmin.execute();
+                }
+            }else {
                 outToClient.printf("server : commande %s inconnue\n", requete);
             }
         }
@@ -148,8 +156,4 @@ public class ClientManager extends Thread {
         }
     }
 
-    @Override
-    public String toString() {
-        return String.format("%s(%d)", username, id);
-    }
 }
