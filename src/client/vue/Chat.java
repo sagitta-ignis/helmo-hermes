@@ -13,6 +13,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.OutputStream;
 import javax.swing.JOptionPane;
+import javax.swing.text.DefaultCaret;
 
 /**
  *
@@ -33,6 +34,13 @@ public final class Chat extends javax.swing.JFrame {
         chat = chatter;
         ouput = new JTextAreaOutputStream(conversation);
         setChatListener();
+        
+        //centre la frame
+        this.setLocationRelativeTo(getRootPane());
+        
+        //Scroll automatiquement en bas du textarea
+        DefaultCaret caret = (DefaultCaret) conversation.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
     }
 
     public OutputStream getOutputStream() {
@@ -43,7 +51,7 @@ public final class Chat extends javax.swing.JFrame {
         message.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent ke) {
-                if(ke.getKeyChar() == '\n') {
+                if (ke.getKeyChar() == '\n') {
                     envoyer.doClick();
                 }
             }
@@ -58,8 +66,11 @@ public final class Chat extends javax.swing.JFrame {
     }
 
     public void entrer(String text) {
+
         conversation.append(text);
         conversation.append("\n");
+
+        
     }
 
     public void avertir(String titre, String message) {
@@ -80,8 +91,17 @@ public final class Chat extends javax.swing.JFrame {
         dialogue = new javax.swing.JPanel();
         message = new javax.swing.JTextField();
         envoyer = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        scrollPane = new javax.swing.JScrollPane();
         conversation = new javax.swing.JTextArea();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem4 = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        jMenuItem5 = new javax.swing.JMenuItem();
 
         setTitle("IRC Helmo");
         setName("client"); // NOI18N
@@ -108,9 +128,60 @@ public final class Chat extends javax.swing.JFrame {
         conversation.setEditable(false);
         conversation.setColumns(20);
         conversation.setRows(5);
-        jScrollPane2.setViewportView(conversation);
+        scrollPane.setViewportView(conversation);
 
-        getContentPane().add(jScrollPane2, java.awt.BorderLayout.CENTER);
+        getContentPane().add(scrollPane, java.awt.BorderLayout.CENTER);
+
+        jMenu1.setText("File");
+
+        jMenuItem4.setText("Quitter");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem4);
+
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Overlay");
+
+        jMenuItem1.setText("Overlay 1");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem1);
+
+        jMenuItem2.setText("Overlay 3");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem2);
+
+        jMenuItem3.setText("Overlay 5");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem3);
+        jMenu2.add(jSeparator1);
+
+        jMenuItem5.setText("Desactiver");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem5);
+
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -119,11 +190,40 @@ public final class Chat extends javax.swing.JFrame {
         chat.close();
     }//GEN-LAST:event_femer
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        chat.afficherOverlay(1);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        chat.afficherOverlay(3);
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        chat.afficherOverlay(5);
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        chat.desactiverOverlay();
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        chat.close();
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea conversation;
     private javax.swing.JPanel dialogue;
     private javax.swing.JButton envoyer;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
+    private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JTextField message;
+    private javax.swing.JScrollPane scrollPane;
     // End of variables declaration//GEN-END:variables
 }
