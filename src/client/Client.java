@@ -12,7 +12,6 @@ import pattern.Command;
 import java.io.*;
 import java.net.*;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,8 +20,6 @@ import java.util.logging.Logger;
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
 public class Client {
-
-    public static final int PORT = 12345;
 
     private Socket socket;
     private final Emetteur emetteur;
@@ -67,7 +64,7 @@ public class Client {
 
     public boolean connect(String host, int port) throws UnreachableServerExeception {
         try {
-            socket = new Socket(host, PORT);
+            socket = new Socket(host, port);
             emetteur.lier(socket);
             ecouteur.lier(socket);
             connected = true;
