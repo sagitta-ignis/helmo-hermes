@@ -22,6 +22,8 @@ public class Login extends javax.swing.JFrame {
         initComponents();
         connecter.addActionListener(al);
         connecter.setActionCommand("connecter");
+        
+        this.setLocationRelativeTo(getRootPane());
     }
     
     public String getIp() {
