@@ -5,10 +5,12 @@ package client;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import client.exception.NotConnectedException;
+import client.exception.UnreachableServerExeception;
+import client.exception.UnopenableExecption;
 import pattern.Command;
 import java.io.*;
 import java.net.*;
-import java.nio.charset.*;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -21,155 +23,139 @@ import java.util.logging.Logger;
 public class Client {
 
     public static final int PORT = 12345;
+
     private Socket socket;
-    private Sender dialogue;
-    private Prompter affichage;
+    private final Emetteur emetteur;
+    private final Ecouteur ecouteur;
+    private Encodeur encodeur;
     
+    private PrintStream output;
+    private ClientListener listener;
+
     private Map<String, Command> commands;
 
-    private String nom;
-    private int id;
-    private boolean opened = true;
+    private boolean connected;
+    private boolean logged;
+    private boolean opened;
 
-    public Client(String host, Scanner in, PrintStream out) {
-        try {
-            socket = new Socket(host, PORT);
-            dialogue = new Sender(in);
-            affichage = new Prompter(out);
-        } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            out.println("[error] création du socket client a échoué");
+    public Client() {
+        connected = false;
+        logged = false;
+        opened = false;
+        emetteur = new Emetteur(this);
+        ecouteur = new Ecouteur(this);
+    }
+
+    public Client(ClientListener cl, InputStream in, OutputStream out) {
+        this();
+        listener = cl;
+        if(in != null) {
+            encodeur = new Encodeur(this, emetteur, in);
+        }
+        if (out != null) {
+            output = new PrintStream(out);
         }
     }
-    
-    public Client(String nom, String host, Scanner in, PrintStream out) {
-        this(host, in, out);
-        authentifier(nom);
+
+    public Client(ClientListener cl) {
+        this(cl, null, null);
     }
 
-    public final void authentifier(String nom) {
-        this.nom = nom;
-        dialogue.send("/connect "+nom);
+    public Client(InputStream in, OutputStream out) {
+        this(null, in, out);
     }
-    
-    public synchronized void open() {
-        dialogue.start();
-        affichage.start();
-        while(dialogue.isAlive() || affichage.isAlive()) {
+
+    public boolean connect(String host, int port) throws UnreachableServerExeception {
+        try {
+            socket = new Socket(host, PORT);
+            emetteur.lier(socket);
+            ecouteur.lier(socket);
+            connected = true;
+        } catch (IOException ex) {
+            throw new UnreachableServerExeception();
+        }
+        return connected;
+    }
+
+    public boolean isConnected() {
+        return connected;
+    }
+
+    public boolean isLogged() {
+        return logged;
+    }
+
+    public void setLogged(boolean b) {
+        logged = b;
+    }
+
+    public void setOpened(boolean b) {
+        opened = b;
+    }
+
+    public boolean canRun() {
+        return connected && logged && opened;
+    }
+
+    public final boolean login(String nom, String password) throws NotConnectedException {
+        if (!connected) {
+            throw new NotConnectedException();
+        }
+        if (nom == null || nom.isEmpty()) {
+            return false;
+        }
+        if (password == null || password.isEmpty()) {
+            emetteur.envoyer(String.format("/connect %s ", nom));
+        } else {
+            emetteur.envoyer(String.format("/connect %s %s", nom, password));
+        }
+        String message = ecouteur.lire();
+        if (message.startsWith("-- " + nom)) {
+            print(message);
+            logged = true;
+        }
+        return logged;
+    }
+
+    public synchronized void open() throws UnopenableExecption {
+        if (!connected || !logged) {
+            throw new UnopenableExecption();
+        }
+        opened = true;
+        ecouteur.start();
+        if (encodeur != null) {
+            encodeur.start();
+        }
+        while ((encodeur != null && encodeur.isAlive()) || ecouteur.isAlive()) {
             try {
                 wait(1000);
             } catch (InterruptedException ex) {
-                
+
             }
+        }
+    }
+
+    public void send(String text) {
+        emetteur.envoyer(text);
+    }
+
+    public void print(String text) {
+        if (output != null) {
+            output.println(text);
+        }
+        if (listener != null) {
+            listener.lire(text);
         }
     }
 
     public void close() {
-        
         try {
             socket.close();
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            affichage.print("[error] création du socket client a échoué");
+            print("[error] fermeture du socket client a échoué");
         }
-        dialogue.close();
-        affichage.close();
-    }
-    
-    private class Sender extends Thread {
-
-        Scanner input;
-        PrintWriter outToServer;
-
-        public Sender(Scanner console) throws IOException {
-            outToServer = new PrintWriter(
-                    new OutputStreamWriter(socket.getOutputStream(),
-                            Charset.forName("UTF-8")),
-                    true
-            );
-            input = console;
-        }
-
-        @Override
-        public void run() {
-            while (opened) {
-                String message = input.nextLine();
-                send(message);
-                opened = !message.equals("/quit");
-            }
-        }
-
-        public void send(String message) {
-            outToServer.println(message);
-        }
-
-        public void close() {
-            if (outToServer != null) {
-                outToServer.close();
-                outToServer = null;
-            }
-        }
-    }
-    private class Prompter extends Thread {
-
-        BufferedReader inFromServer;
-        PrintStream output;
-
-        public Prompter(PrintStream stream) throws IOException {
-            inFromServer = new BufferedReader(new InputStreamReader(socket.getInputStream(),
-                    Charset.forName("UTF-8")));
-            output = stream;
-        }
-
-        @Override
-        public void run() {
-            while (opened) {
-                opened = listen();
-            }
-        }
-
-        public void print(String message) {
-            output.println(message);
-        }
-
-        private boolean listen() {
-            String message;
-            try {
-                message = inFromServer.readLine();
-            }catch (IOException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-                message = "[error] reception depuis serveur a échoué";
-            }
-            if(message != null) {
-                print(message);
-                return !message.startsWith("[error]");
-            }
-            return false;
-        }
-
-        public void close() {
-            try {
-                if (inFromServer != null) {
-                    inFromServer.close();
-                    inFromServer = null;
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-                print("[error] socket avec serveur mal fermé");
-                inFromServer = null;
-            }
-        }
-    }
-
-    public static void main(String[] args) {
-        Scanner input = new Scanner(System.in); 
-        Client c = new Client("127.0.0.1", input, System.out);
-        System.out.println("-- client a démarré");
-        System.out.println("Entrer un nom : ");
-        String nom = input.nextLine();
-        c.authentifier(nom);
-        c.open();
-        c.close();
-        System.exit(0);
+        emetteur.fermer();
+        ecouteur.fermer();
     }
 }
