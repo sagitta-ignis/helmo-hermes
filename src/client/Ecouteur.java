@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,7 +25,7 @@ public class Ecouteur extends Thread {
 
     public Ecouteur(Client clt) {
         client = clt;
-    }    
+    }
 
     public void lier(Socket socket) throws IOException {
         inFromServer = new BufferedReader(
@@ -39,13 +40,18 @@ public class Ecouteur extends Thread {
     public void run() {
         while (client.canRun()) {
             String message = lire();
-            client.setOpened(traiter(message));
+            if(!traiter(message)) {
+                client.setOpened(false);
+                break;
+            }
         }
     }
 
     public String lire() {
         try {
             return inFromServer.readLine();
+        } catch (SocketException ex) {
+            return "[error] connexion perdue avec le serveur";
         } catch (IOException ex) {
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             return "[error] reception depuis serveur a échoué";
