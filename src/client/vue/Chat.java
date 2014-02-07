@@ -103,6 +103,7 @@ public final class Chat extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItem5 = new javax.swing.JMenuItem();
 
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("IRC Helmo");
         setName("client"); // NOI18N
         addWindowListener(new java.awt.event.WindowAdapter() {

@@ -17,11 +17,9 @@ import java.nio.charset.Charset;
  */
 public class Emetteur {
 
-    Client client;
     PrintWriter outToServer;
 
-    public Emetteur(Client clt) {
-        client = clt;
+    public Emetteur() {
     }    
 
     public void lier(Socket socket) throws IOException {
@@ -34,7 +32,6 @@ public class Emetteur {
 
     public void envoyer(String message) {
         outToServer.println(message);
-        client.setLogged(!message.equals("/quit"));
     }
 
     public void fermer() {

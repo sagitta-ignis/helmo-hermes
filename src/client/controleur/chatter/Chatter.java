@@ -79,8 +79,8 @@ public class Chatter implements ClientListener {
         overlay.entrer(text);
     }
 
-    public void close() {        
-        fenetre.dispose();
+    public void close() {    
+        desactiverOverlay();
         client.close();
         System.exit(0);
     }

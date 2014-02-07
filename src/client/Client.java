@@ -39,7 +39,7 @@ public class Client {
         connected = false;
         logged = false;
         opened = false;
-        emetteur = new Emetteur(this);
+        emetteur = new Emetteur();
         ecouteur = new Ecouteur(this);
     }
 
@@ -47,7 +47,7 @@ public class Client {
         this();
         listener = cl;
         if(in != null) {
-            encodeur = new Encodeur(this, emetteur, in);
+            encodeur = new Encodeur(this, in);
         }
         if (out != null) {
             output = new PrintStream(out);
@@ -72,6 +72,18 @@ public class Client {
             throw new UnreachableServerExeception();
         }
         return connected;
+    }
+    
+    public boolean disconnect() {
+        logged = false;
+        connected = false;
+        try {
+            socket.close();
+        } catch (IOException ex) {
+            
+        }
+        socket = null;
+        return canRun();
     }
 
     public boolean isConnected() {
@@ -102,9 +114,9 @@ public class Client {
             return false;
         }
         if (password == null || password.isEmpty()) {
-            emetteur.envoyer(String.format("/connect %s ", nom));
+            send(String.format("/connect %s ", nom));
         } else {
-            emetteur.envoyer(String.format("/connect %s %s", nom, password));
+            send(String.format("/connect %s %s", nom, password));
         }
         String message = ecouteur.lire();
         if (message.startsWith("-- " + nom)) {
@@ -119,21 +131,22 @@ public class Client {
             throw new UnopenableExecption();
         }
         opened = true;
-        ecouteur.start();
         if (encodeur != null) {
             encodeur.start();
         }
+        ecouteur.start();
         while ((encodeur != null && encodeur.isAlive()) || ecouteur.isAlive()) {
             try {
                 wait(1000);
             } catch (InterruptedException ex) {
-
+                break;
             }
         }
     }
 
     public void send(String text) {
         emetteur.envoyer(text);
+        logged = !text.equals("/quit");
     }
 
     public void print(String text) {
@@ -146,6 +159,7 @@ public class Client {
     }
 
     public void close() {
+        disconnect();
         try {
             socket.close();
         } catch (IOException ex) {

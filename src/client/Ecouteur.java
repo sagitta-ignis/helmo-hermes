@@ -37,7 +37,7 @@ public class Ecouteur extends Thread {
 
     @Override
     public void run() {
-        while (client.isLogged()) {
+        while (client.canRun()) {
             String message = lire();
             client.setOpened(traiter(message));
         }
@@ -61,6 +61,7 @@ public class Ecouteur extends Thread {
     }
 
     public void fermer() {
+        this.interrupt();
         try {
             if (inFromServer != null) {
                 inFromServer.close();
