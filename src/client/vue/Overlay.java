@@ -35,9 +35,9 @@ public class Overlay {
     private final int CHARPARLIGNE = 60;
 
     public Overlay(Chatter chatter) {
+        frame = new JFrame("Overlay");
         labels = new ArrayList<>();
         chat = chatter;
-
     }
 
     public void initialiser(int dimension) {
@@ -56,9 +56,7 @@ public class Overlay {
 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 
-        if (frame != null) {
-            frame.setVisible(false);
-        }
+        frame.setVisible(false);
         frame = new JFrame("Overlay");
         labels.clear();
 
@@ -149,8 +147,7 @@ public class Overlay {
         ArrayList<String> tempo = new ArrayList<>();
 
         int div = (int) Math.ceil(text.length() / CHARPARLIGNE) + 1;
-        System.out.printf("div: %d",div);
-        
+               
         if (div > labels.size()) {
             div = labels.size();
         }

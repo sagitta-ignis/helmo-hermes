@@ -15,20 +15,18 @@ import java.util.Scanner;
 public class Encodeur extends Thread {
 
     private final Client client;
-    private final Emetteur emetteur;
     private final Scanner input;
 
-    public Encodeur(Client client, Emetteur emetteur, InputStream in) {
+    public Encodeur(Client client, InputStream in) {
         this.client = client;
-        this.emetteur = emetteur;
         this.input = new Scanner(in);
     }
     
     @Override
     public void run() {
-        while (client.isLogged()) {
+        while (client.canRun()) {
             String message = input.nextLine();
-            emetteur.envoyer(message);
+            client.send(message);
         }
     }
 }
