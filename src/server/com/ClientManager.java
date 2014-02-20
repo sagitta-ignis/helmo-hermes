@@ -5,40 +5,55 @@
  */
 package server.com;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import pattern.Command;
-import server.ServerControleur;
+import server.Server;
 import server.com.commands.*;
 
 /**
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public class ClientManager{
+public class ClientManager extends Thread {
 
     private static int increment = 1;
 
-    private final ServerControleur server;
-    private final EcouteurClient thread;
-    private final SortieClient sortie;
+    private final Socket socket;
+    private final Server server;
+    private final BufferedReader inFromClient;
+    private final PrintWriter outToClient;
 
     private Map<String, Command> commands;
     private Map<String, Command> commandsAdmin;
 
-    private final Client clientInfo;
+    private Client clientInfo;
 
-    public ClientManager(ServerControleur srv, Socket sck) throws IOException {
+    public ClientManager(Server srv, Socket sck) throws IOException {
         clientInfo = new Client(increment++);
-        thread = new EcouteurClient(clientInfo, sck,this,srv);
-        sortie = new SortieClient(sck);
+
+        inFromClient = new BufferedReader(
+                new InputStreamReader(
+                        sck.getInputStream(), Charset.forName("UTF-8"))
+        );
+        OutputStreamWriter osw = new OutputStreamWriter(
+                sck.getOutputStream(), Charset.forName("UTF-8")
+        );
+        outToClient = new PrintWriter(osw, true);
         server = srv;
-        
+        socket = sck;
         initCommands();
 
-        thread.start();
     }
 
     private void initCommands() {
@@ -61,7 +76,38 @@ public class ClientManager{
         return clientInfo;
     }
 
-    public void traiter(String message) {
+    @Override
+    public void run() {
+        while (clientInfo.isOpened()) {
+            recevoir();
+        }
+    }
+
+    private void recevoir() {
+        try {
+            String message = inFromClient.readLine();
+
+            if (message == null) {
+                executer("/quit");
+            } else if (message.length() > 0) {
+                traiter(message);
+            }
+
+        } catch (SocketException ex) {
+            connectionLost();
+        } catch (IOException ex) {
+            server.afficher("[error] reception depuis " + toString() + " a échouée");
+        }
+    }
+
+    private void connectionLost() {
+        //Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        server.afficher("[error] connection avec " + toString() + " perdue");
+        clientInfo.setOpened(false);
+        executer("/quit");
+    }
+
+    private void traiter(String message) {
         if (message.charAt(0) == '/') {
             executer(message);
         } else if (!clientInfo.isMuet()) {
@@ -69,7 +115,7 @@ public class ClientManager{
         }
     }
 
-    public void executer(String requete) {
+    private void executer(String requete) {
         String[] r = requete.split(" ", 2);
         if (r.length >= 1) {
 
@@ -90,18 +136,24 @@ public class ClientManager{
                     commandAdmin.execute();
                 }
             } else {
-                sortie.envoyer(String.format("server : commande %s inconnue\n", requete));
+                outToClient.printf("server : commande %s inconnue\n", requete);
             }
         }
     }
 
+    public void envoyer(String message) {
+        outToClient.println(message);
+        outToClient.flush();
+    }
 
-    public void envoyer(String msg){
-        sortie.envoyer(msg);
-    }
-    
     public void close() {
-        thread.close();
-        sortie.close();
+        try {
+            inFromClient.close();
+            socket.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            server.afficher("[error] socket avec " + toString() + " mal fermé");
+        }
     }
+
 }

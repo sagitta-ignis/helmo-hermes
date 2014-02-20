@@ -6,7 +6,7 @@
 package server.com.commands;
 
 import pattern.Command;
-import server.ServerControleur;
+import server.Server;
 import server.com.Client;
 
 /**
@@ -15,9 +15,9 @@ import server.com.Client;
  */
 public class UnMute implements Command {
 
-    private final ServerControleur server;
+    private final Server server;
 
-    public UnMute(ServerControleur server) {
+    public UnMute(Server server) {
         this.server = server;
     }
 

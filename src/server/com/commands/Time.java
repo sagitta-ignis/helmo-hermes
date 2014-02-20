@@ -6,7 +6,7 @@
 package server.com.commands;
 
 import pattern.Command;
-import server.ServerControleur;
+import server.Server;
 import server.com.Client;
 import server.com.ClientManager;
 
@@ -16,11 +16,11 @@ import server.com.ClientManager;
  */
 public class Time implements Command {
 
-    private final ServerControleur server;
+    private final Server server;
     private final Client clientInfo;
     private final ClientManager clManager;
 
-    public Time(ServerControleur server, Client clientInfo, ClientManager clientManager) {
+    public Time(Server server, Client clientInfo, ClientManager clientManager) {
         this.server = server;
         this.clientInfo = clientInfo;
         this.clManager = clientManager;
