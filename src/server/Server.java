@@ -16,7 +16,11 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import server.Xml.ReadConfiguration;
+import server.Xml.ReadUsers;
 import server.com.Client;
+import server.com.Configuration;
+import server.com.User;
 
 /**
  *
@@ -24,22 +28,19 @@ import server.com.Client;
  */
 public class Server {
 
-    public static final int PORT = 12345;
     ServerSocket server;
     Scanner input;
     Writer output;
     List<ClientManager> clients;
+    List<User> users;
+    Configuration config;
 
-    public Server(Scanner input, Writer output) {
-        try {
-            server = new ServerSocket(PORT);
-            clients = new ArrayList<>();
-            this.input = input;
-            this.output = output;
-        } catch (IOException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-            afficher("[error] création du socket serveur a échouée");
-        }
+    public Server() {
+        server = null;
+        users = new ArrayList();
+        clients = new ArrayList<>();
+        this.input = new Scanner(System.in);
+        this.output = new PrintWriter(System.out);
     }
 
     public void run() {
@@ -48,7 +49,7 @@ public class Server {
                 Socket clientSocket = server.accept();
                 ClientManager client = new ClientManager(this, clientSocket);
                 clients.add(client);
-                Thread t= new Thread(client);
+                Thread t = new Thread(client);
                 t.start();
             }
         } catch (IOException ex) {
@@ -60,11 +61,11 @@ public class Server {
     public void transmettre(String message) {
         Date date = new Date();
         DateFormat dateFormat = new SimpleDateFormat("[k:mm:s]");
-        
+
         StringBuilder sb = new StringBuilder();
         sb.append(dateFormat.format(date));
         sb.append(message);
-        
+
         afficher(sb.toString());
         for (ClientManager client : clients) {
             client.envoyer(sb.toString());
@@ -73,7 +74,7 @@ public class Server {
 
     public void afficher(String message) {
         try {
-            output.write(message+"\n");
+            output.write(message + "\n");
             output.flush();
         } catch (IOException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
@@ -81,7 +82,7 @@ public class Server {
             System.out.println(message);
         }
     }
-    
+
     public boolean retirer(ClientManager client) {
         return clients.remove(client);
     }
@@ -95,7 +96,10 @@ public class Server {
 
     public static void main(String[] args) {
         try {
-            Server s = new Server(new Scanner(System.in), new PrintWriter(System.out));
+            Server s = new Server();
+            s.lectureFichiers();
+            s.connection();
+
             System.out.println("-- serveur a démarré");
             s.run();
             s.fermer();
@@ -106,16 +110,39 @@ public class Server {
             System.exit(-1);
         }
     }
-    
-    public Client trouverClient(int id){
-        for(ClientManager clientM: clients){
-            if(clientM.getClient().getId() == id)
+
+    public Client trouverClient(int id) {
+        for (ClientManager clientM : clients) {
+            if (clientM.getClient().getId() == id) {
                 return clientM.getClient();
+            }
         }
         return null;
     }
-    
-    public List<ClientManager> getConnected(){
+
+    public List<ClientManager> getConnected() {
         return clients;
+    }
+
+    private void connection() {
+        try {
+            server = new ServerSocket(config.getPort());
+        } catch (IOException ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            afficher("[error] création du socket serveur a échouée");
+        }
+    }
+
+    private void lectureFichiers() {
+        try {
+            config = ReadConfiguration.UnmarshalConfig(new FileInputStream("./config.xml"));
+            users = ReadUsers.UnmarshalConfig(new FileInputStream(config.getUserFileName())).getUsers();
+        } catch (Exception ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void receptionConnection() {
+
     }
 }

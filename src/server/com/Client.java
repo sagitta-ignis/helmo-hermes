@@ -6,7 +6,6 @@
 
 package server.com;
 
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -20,6 +19,7 @@ public class Client {
     private boolean opened;
     private boolean admin;
     private boolean muet;
+    private boolean accepte;
     private Date time;
     
     public Client(int idClient){
@@ -28,6 +28,7 @@ public class Client {
         opened = true;
         admin = true;
         muet = false;
+        accepte = false;
         time = new Date();
     }
 
@@ -111,6 +112,20 @@ public class Client {
      */
     public void setMuet(boolean muet) {
         this.muet = muet;
+    }
+
+    /**
+     * @return the accepte
+     */
+    public boolean isAccepte() {
+        return accepte;
+    }
+
+    /**
+     * @param accepte the accepte to set
+     */
+    public void setAccepte(boolean accepte) {
+        this.accepte = accepte;
     }
     
 }

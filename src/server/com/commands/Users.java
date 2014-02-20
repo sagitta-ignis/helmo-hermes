@@ -38,12 +38,13 @@ public class Users implements Command {
         StringBuilder message = new StringBuilder();
         
         for(ClientManager client: clients){
-                         
+            
+            message.append("\n");
             message.append(client.getClient().toString());
             if(client.getClient().isMuet()) message.append(" - Muet");
             message.append(" - ");
             message.append(client.getClient().getTimeConnected());
-            message.append(" minutes \n");
+            message.append(" minutes");
             
         }
         

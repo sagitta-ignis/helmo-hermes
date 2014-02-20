@@ -1,0 +1,5 @@
+<server-config> 
+ <server-port>12345</server-port> 
+ <user-filename>./user.xml</user-filename> 
+ <sendingthread-sleepseconds>1</sendingthread-sleepseconds> 
+</server-config>

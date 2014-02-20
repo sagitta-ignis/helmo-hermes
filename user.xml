@@ -1,0 +1,10 @@
+<list-users> 
+	 <user> 
+		 <nickname>alice</nickname> 
+		 <password>monpass</password> 
+	 </user> 
+	 <user> 
+		 <nickname>bobby</nickname> 
+		 <password>ilovecobol</password> 
+	 </user> 
+</list-users> 

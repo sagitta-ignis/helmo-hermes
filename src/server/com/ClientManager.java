@@ -21,7 +21,6 @@ import pattern.Command;
 import server.Server;
 import server.com.commands.*;
 
-
 /**
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
@@ -42,7 +41,7 @@ public class ClientManager extends Thread {
 
     public ClientManager(Server srv, Socket sck) throws IOException {
         clientInfo = new Client(increment++);
-        
+
         inFromClient = new BufferedReader(
                 new InputStreamReader(
                         sck.getInputStream(), Charset.forName("UTF-8"))
@@ -54,31 +53,31 @@ public class ClientManager extends Thread {
         server = srv;
         socket = sck;
         initCommands();
-       
+
     }
 
-    private void initCommands() {               
+    private void initCommands() {
         commandsAdmin = new HashMap<>();
         commandsAdmin.put("/mute", new Mute(server));
         commandsAdmin.put("/unmute", new UnMute(server));
-        
+
         commands = new HashMap<>();
         commands.put("/quit", new Quit(server, this, clientInfo));
         commands.put("/connect", new Connect(server, clientInfo));
         commands.put("/set", new Set(this));
-        commands.put("/time", new Time(server, clientInfo,this));
-        commands.put("/users", new Users(server,this));
-        
+        commands.put("/time", new Time(server, clientInfo, this));
+        commands.put("/users", new Users(server, this));
+
         //DOIT TOUJOURS ETRE LE DERNIER AJOUT
-        commands.put("/help", new Help(this,commands,commandsAdmin));
+        commands.put("/help", new Help(this, commands, commandsAdmin));
     }
 
-    public Client getClient(){
+    public Client getClient() {
         return clientInfo;
     }
-    
+
     @Override
-    public void run() { 
+    public void run() {
         while (clientInfo.isOpened()) {
             recevoir();
         }
@@ -87,12 +86,13 @@ public class ClientManager extends Thread {
     private void recevoir() {
         try {
             String message = inFromClient.readLine();
-            if(message == null) {
+
+            if (message == null) {
                 executer("/quit");
-            }
-            else if (message.length() > 0) {
+            } else if (message.length() > 0) {
                 traiter(message);
             }
+
         } catch (SocketException ex) {
             connectionLost();
         } catch (IOException ex) {
@@ -110,32 +110,32 @@ public class ClientManager extends Thread {
     private void traiter(String message) {
         if (message.charAt(0) == '/') {
             executer(message);
-        } else if(!clientInfo.isMuet()){            
+        } else if (!clientInfo.isMuet()) {
             server.transmettre(clientInfo.toString() + " : " + message);
         }
     }
-    
+
     private void executer(String requete) {
         String[] r = requete.split(" ", 2);
         if (r.length >= 1) {
-            
-            Command commandPublique = commands.get(r[0]); 
+
+            Command commandPublique = commands.get(r[0]);
             Command commandAdmin = commandsAdmin.get(r[0]);
-            
+
             if (commandPublique != null) {
                 if (r.length == 2) {
                     commandPublique.execute(r[1]);
                 } else {
                     commandPublique.execute();
                 }
-                        
-            }else if(clientInfo.isAdmin() && commandAdmin != null){
-                 if (r.length == 2) {
+
+            } else if (clientInfo.isAdmin() && commandAdmin != null) {
+                if (r.length == 2) {
                     commandAdmin.execute(r[1]);
                 } else {
                     commandAdmin.execute();
                 }
-            }else {
+            } else {
                 outToClient.printf("server : commande %s inconnue\n", requete);
             }
         }

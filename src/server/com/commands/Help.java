@@ -30,12 +30,12 @@ public class Help implements Command {
     public void execute() {
         StringBuilder sb = new StringBuilder();
         
-        sb.append("====Commmandes disponibles===\n");
+        sb.append("====Commmandes disponibles===");
         
         Iterator it = commands.entrySet().iterator();
         sb.append(parcourirElements(it));
         
-        sb.append("====Commmandes admins===\n");
+        sb.append("\n====Commmandes admins===");
        
         it = commandsAdmin.entrySet().iterator();        
         sb.append(parcourirElements(it));
@@ -52,8 +52,8 @@ public class Help implements Command {
             String cle = (String)entry.getKey();
             Command cmd = (Command)entry.getValue();
             
-            sb.append(cle).append(" ");
-            sb.append(cmd.desciption()).append("\n");
+            sb.append("\n").append(cle).append(" ");
+            sb.append(cmd.desciption());
             
         }
          return sb.toString();
