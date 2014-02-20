@@ -6,8 +6,7 @@
 package server.com.commands;
 
 import pattern.Command;
-import server.Server;
-import server.com.Client;
+import server.ServerControleur;
 
 /**
  *
@@ -16,9 +15,9 @@ import server.com.Client;
 
 public class Kick implements Command {
 
-    private final Server server;
+    private final ServerControleur server;
 
-    public Kick(Server server) {
+    public Kick(ServerControleur server) {
         this.server = server;
     }
 

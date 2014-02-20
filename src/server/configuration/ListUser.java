@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package server.com;
+package server.configuration;
 
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
