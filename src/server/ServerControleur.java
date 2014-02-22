@@ -19,14 +19,14 @@ import java.util.logging.Logger;
 import server.Xml.ReadConfiguration;
 import server.Xml.ReadUsers;
 import server.com.Client;
-import server.com.Configuration;
-import server.com.User;
+import server.configuration.Configuration;
+import server.configuration.User;
 
 /**
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public class Server {
+public class ServerControleur {
 
     ServerSocket server;
     Scanner input;
@@ -35,25 +35,27 @@ public class Server {
     List<User> users;
     Configuration config;
 
-    public Server() {
+    public ServerControleur() {
         server = null;
         users = new ArrayList();
         clients = new ArrayList<>();
         this.input = new Scanner(System.in);
         this.output = new PrintWriter(System.out);
+        
+        
+        lectureFichiers();
+        connection();
     }
 
-    public void run() {
+    public void lancerServeur() {
         try {
             while (true) {
                 Socket clientSocket = server.accept();
                 ClientManager client = new ClientManager(this, clientSocket);
                 clients.add(client);
-                Thread t = new Thread(client);
-                t.start();
             }
         } catch (IOException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
             afficher("[error] connexion au client a échouée");
         }
     }
@@ -77,7 +79,7 @@ public class Server {
             output.write(message + "\n");
             output.flush();
         } catch (IOException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("[warning] flux de sortie du serveur n'a pu être utilisé");
             System.out.println(message);
         }
@@ -87,29 +89,13 @@ public class Server {
         return clients.remove(client);
     }
 
-    private void fermer() throws IOException {
+    public void fermer() throws IOException {
         for (ClientManager client : clients) {
             client.close();
         }
         server.close();
     }
 
-    public static void main(String[] args) {
-        try {
-            Server s = new Server();
-            s.lectureFichiers();
-            s.connection();
-
-            System.out.println("-- serveur a démarré");
-            s.run();
-            s.fermer();
-            System.out.println("-- serveur fermé");
-            System.exit(0);
-        } catch (IOException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-            System.exit(-1);
-        }
-    }
 
     public Client trouverClient(int id) {
         for (ClientManager clientM : clients) {
@@ -128,7 +114,7 @@ public class Server {
         try {
             server = new ServerSocket(config.getPort());
         } catch (IOException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
             afficher("[error] création du socket serveur a échouée");
         }
     }
@@ -138,11 +124,9 @@ public class Server {
             config = ReadConfiguration.UnmarshalConfig(new FileInputStream("./config.xml"));
             users = ReadUsers.UnmarshalConfig(new FileInputStream(config.getUserFileName())).getUsers();
         } catch (Exception ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private void receptionConnection() {
 
-    }
 }

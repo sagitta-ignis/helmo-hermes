@@ -27,7 +27,6 @@ public class SortieClient {
     public void envoyer(String message) {
         outToClient.println(message);
         outToClient.flush();
-       
     }
     
     public void close(){

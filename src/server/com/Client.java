@@ -20,7 +20,7 @@ public class Client {
     private boolean admin;
     private boolean muet;
     private boolean accepte;
-    private Date time;
+    private final Date time;
     
     public Client(int idClient){
         id = idClient;

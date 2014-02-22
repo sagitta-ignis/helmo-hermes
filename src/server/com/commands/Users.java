@@ -7,7 +7,7 @@ package server.com.commands;
 
 import java.util.List;
 import pattern.Command;
-import server.Server;
+import server.ServerControleur;
 import server.com.ClientManager;
 
 /**
@@ -17,10 +17,10 @@ import server.com.ClientManager;
 
 public class Users implements Command {
 
-    private final Server server;
+    private final ServerControleur server;
     private final ClientManager clientManager;
     
-    public Users(Server server, ClientManager cl) {
+    public Users(ServerControleur server, ClientManager cl) {
         this.server = server;
         this.clientManager = cl;
     }

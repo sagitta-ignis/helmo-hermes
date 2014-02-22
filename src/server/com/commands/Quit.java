@@ -7,7 +7,7 @@ package server.com.commands;
 
 import server.com.ClientManager;
 import pattern.Command;
-import server.Server;
+import server.ServerControleur;
 import server.com.Client;
 
 /**
@@ -16,11 +16,11 @@ import server.com.Client;
  */
 public class Quit implements Command {
 
-    private final Server server;
+    private final ServerControleur server;
     private final ClientManager client;
     private final Client clientInfo;
 
-    public Quit(Server server, ClientManager client, Client clInfo) {
+    public Quit(ServerControleur server, ClientManager client, Client clInfo) {
         this.server = server;
         this.client = client;
         this.clientInfo = clInfo;

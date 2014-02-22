@@ -8,7 +8,7 @@ package server.com.commands;
 
 import server.com.ClientManager;
 import pattern.Command;
-import server.Server;
+import server.ServerControleur;
 import server.com.Client;
 
 /**
@@ -17,10 +17,10 @@ import server.com.Client;
  */
 public class Connect implements Command {
 
-    private final Server server;
+    private final ServerControleur server;
     private final Client clientInfo;
 
-    public Connect(Server server, Client client) {
+    public Connect(ServerControleur server, Client client) {
         this.server = server;
         this.clientInfo = client;
     }
