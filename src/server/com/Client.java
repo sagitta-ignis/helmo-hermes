@@ -24,7 +24,7 @@ public class Client {
     
     public Client(int idClient){
         id = idClient;
-        username = "Anonyme";
+        username = "";
         opened = true;
         admin = true;
         muet = false;
@@ -83,7 +83,7 @@ public class Client {
     
     @Override
     public String toString() {
-        return String.format("%s(%d)",username,id);
+        return String.format("%s(%d)", getUsername(),id);
     }
 
     /**

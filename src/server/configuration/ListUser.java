@@ -6,7 +6,6 @@
 
 package server.configuration;
 
-import server.configuration.User;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,7 +28,7 @@ public class ListUser {
         return users;
     }
  
-    public void setUsers(List<User> books) {
-        this.users = books;
+    public void setUsers(List<User> user) {
+        this.users = user;
     }
 }

@@ -7,7 +7,6 @@ package server.com.commands;
 
 import pattern.Command;
 import server.ServerControleur;
-import server.com.Client;
 
 /**
  *

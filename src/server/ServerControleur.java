@@ -20,6 +20,7 @@ import server.Xml.ReadConfiguration;
 import server.Xml.ReadUsers;
 import server.com.Client;
 import server.configuration.Configuration;
+import server.configuration.ListUser;
 import server.configuration.User;
 
 /**
@@ -32,13 +33,13 @@ public class ServerControleur {
     Scanner input;
     Writer output;
     List<ClientManager> clients;
-    List<User> users;
+    ListUser users;
     Configuration config;
 
     public ServerControleur() {
         server = null;
-        users = new ArrayList();
         clients = new ArrayList<>();
+        users = new ListUser();
         this.input = new Scanner(System.in);
         this.output = new PrintWriter(System.out);
         
@@ -51,7 +52,7 @@ public class ServerControleur {
         try {
             while (true) {
                 Socket clientSocket = server.accept();
-                ClientManager client = new ClientManager(this, clientSocket);
+                ClientManager client = new ClientManager(this, clientSocket,users);
                 clients.add(client);
             }
         } catch (IOException ex) {
@@ -122,7 +123,7 @@ public class ServerControleur {
     private void lectureFichiers() {
         try {
             config = ReadConfiguration.UnmarshalConfig(new FileInputStream("./config.xml"));
-            users = ReadUsers.UnmarshalConfig(new FileInputStream(config.getUserFileName())).getUsers();
+            users.setUsers((List<User>)ReadUsers.UnmarshalConfig(new FileInputStream(config.getUserFileName())).getUsers());
         } catch (Exception ex) {
             Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
         }

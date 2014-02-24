@@ -25,11 +25,9 @@ public class EcouteurClient extends Thread {
     private final ClientManager manager;
     private final BufferedReader inFromClient;
     private final ServerControleur server;
-    private final Socket socket;
 
     public EcouteurClient(Client client, Socket sck, ClientManager clientManager, ServerControleur serveur) throws IOException {
         clientInfo = client;
-        socket = sck;
         manager = clientManager;
         server = serveur;
         inFromClient = new BufferedReader(new InputStreamReader(sck.getInputStream(), Charset.forName("UTF-8")));
@@ -47,7 +45,7 @@ public class EcouteurClient extends Thread {
             String message = inFromClient.readLine();
 
             if (message == null) {
-                manager.executer("/quit");
+                connectionLost();
             } else if (message.length() > 0) {
                 manager.traiter(message);
             }
@@ -62,17 +60,18 @@ public class EcouteurClient extends Thread {
     private void connectionLost() {
         //Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
         server.afficher("[error] connection avec " + toString() + " perdue");
-        clientInfo.setOpened(false);
-        manager.executer("/quit");
+        manager.close();
+        if (clientInfo.isAccepte()) {
+            manager.executer("/quit");
+        }
     }
 
     public void close() {
         try {
             inFromClient.close();
-            socket.close();
         } catch (IOException ex) {
             Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
-            server.afficher("[error] socket avec " + toString() + " mal fermé");
+            server.afficher("[error] ecouteur " + toString() + " mal fermé");
         }
     }
 
