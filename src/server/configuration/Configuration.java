@@ -24,6 +24,7 @@ public class Configuration {
     private String userFileName;
     @XmlElement(name = "sendingthread-sleepseconds", required = true)
     private int threadSleepSeconds;
+    public static int threadSleepMillisec;
 
     public void setPort(int port) {
         this.port = port;
@@ -43,6 +44,7 @@ public class Configuration {
 
     public void setThreadSleepSeconds(int threadSleepSeconds) {
         this.threadSleepSeconds = threadSleepSeconds;
+        this.threadSleepMillisec = threadSleepSeconds * 1000;
     }
 
     public int getThreadSleepSeconds() {

@@ -51,6 +51,7 @@ public class ClientManager {
         initCommands();
 
         ecouteur.start();
+        sortie.start();
     }
 
     private void initCommands() {
@@ -109,7 +110,7 @@ public class ClientManager {
 
     public void envoyer(String message) {
         if (clientInfo.isAccepte()) {
-            sortie.envoyer(message);
+            sortie.ajouter(message);
         }
     }
 
