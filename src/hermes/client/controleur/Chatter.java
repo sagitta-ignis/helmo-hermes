@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client.controleur.chatter;
+package hermes.client.controleur;
 
-import client.Client;
-import client.ClientListener;
-import client.exception.NotConnectedException;
-import client.exception.UnopenableExecption;
-import client.exception.UnreachableServerExeception;
-import client.vue.Chat;
-import client.vue.Overlay;
+import hermes.client.Client;
+import hermes.client.ClientListener;
+import hermes.client.exception.NotConnectedException;
+import hermes.client.exception.UnopenableExecption;
+import hermes.client.exception.UnreachableServerExeception;
+import hermes.client.vue.Chat;
+import hermes.client.vue.Overlay;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

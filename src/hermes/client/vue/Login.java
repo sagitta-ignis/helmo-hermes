@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package client.vue;
+package hermes.client.vue;
 
 import java.awt.event.ActionListener;
 

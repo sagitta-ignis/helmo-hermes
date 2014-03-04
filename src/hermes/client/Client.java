@@ -1,14 +1,14 @@
-package client;
+package hermes.client;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import client.exception.NotConnectedException;
-import client.exception.UnreachableServerExeception;
-import client.exception.UnopenableExecption;
-import pattern.Command;
+import hermes.client.exception.NotConnectedException;
+import hermes.client.exception.UnreachableServerExeception;
+import hermes.client.exception.UnopenableExecption;
+import pattern.command.Command;
 import java.io.*;
 import java.net.*;
 import java.util.Map;
