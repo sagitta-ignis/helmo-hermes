@@ -4,15 +4,14 @@
  * and open the template in the editor.
  */
 
-package client.controleur.logger;
+package hermes.client.controleur;
 
-import client.controleur.chatter.Chatter;
-import client.vue.Login;
+import hermes.client.vue.Login;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
-import pattern.Command;
+import pattern.command.Command;
 
 /**
  *
@@ -51,9 +50,6 @@ public class Logger implements ActionListener {
                     login.print("Unreachable server");
                 }
             }
-
-            @Override
-            public void execute(String args) {}
         });
     }
 

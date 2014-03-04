@@ -3,12 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client.vue;
+package hermes.client.vue;
 
-import client.controleur.chatter.Chatter;
+import hermes.client.controleur.Chatter;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.List;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

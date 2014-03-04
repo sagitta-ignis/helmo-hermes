@@ -4,20 +4,16 @@
  * and open the template in the editor.
  */
 
-package client.exception;
+package hermes.client.exception;
 
 /**
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public class NotConnectedException extends Exception {
+public class UnopenableExecption extends Exception {
 
-    public NotConnectedException(String string) {
-        super(string);
-    }
-
-    public NotConnectedException() {
-        super("no connection established");
+    public UnopenableExecption() {
+        super("client not connected or logged");
     }
     
 }

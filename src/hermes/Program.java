@@ -1,10 +1,12 @@
+package hermes;
 
-import client.controleur.logger.Logger;
-import client.Client;
-import client.exception.NotConnectedException;
-import client.exception.UnopenableExecption;
-import client.exception.UnreachableServerExeception;
-import client.vue.Login;
+
+import hermes.client.controleur.Logger;
+import hermes.client.Client;
+import hermes.client.exception.NotConnectedException;
+import hermes.client.exception.UnopenableExecption;
+import hermes.client.exception.UnreachableServerExeception;
+import hermes.client.vue.Login;
 import java.util.Scanner;
 import java.util.logging.Level;
 

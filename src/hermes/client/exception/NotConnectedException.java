@@ -4,13 +4,20 @@
  * and open the template in the editor.
  */
 
-package pattern;
+package hermes.client.exception;
 
 /**
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public interface Command {
-    void execute();
-    void execute(String args);
+public class NotConnectedException extends Exception {
+
+    public NotConnectedException(String string) {
+        super(string);
+    }
+
+    public NotConnectedException() {
+        super("no connection established");
+    }
+    
 }

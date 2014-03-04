@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client.vue;
+package hermes.client.vue;
 
-import client.controleur.chatter.Chatter;
-import client.vue.stream.JTextAreaOutputStream;
+import hermes.client.controleur.Chatter;
+import hermes.client.vue.stream.JTextAreaOutputStream;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
