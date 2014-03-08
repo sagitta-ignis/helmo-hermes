@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package hermes.protocole;
 
 import hermes.format.abnf.ABNF;
 import hermes.format.abnf.Lexique;
 import java.util.AbstractMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,22 +18,23 @@ import java.util.regex.Pattern;
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
 public class Test {
-     public static void main(String[] args) {
+
+    public static void main(String[] args) {
         Test t = new Test();
-        if(t.testPattern()) {
+        if (t.testPattern()) {
             System.err.println("test pattern ok");
         }
-        if(t.testLexique()) {
+        if (t.testLexique()) {
             System.err.println("test lexique ok");
         }
-        if(t.testMessageProtocole()) {
+        if (t.testMessageProtocole()) {
             System.err.println("test message protocole ok");
         }
-        if(t.testProtocoleSwinen()) {
+        if (t.testProtocoleSwinen()) {
             System.err.println("test protocole swinen ok");
         }
     }
-     
+
     public boolean testPattern() {
         // ([0-8]+)*([0-8]+)\\(([a-zA-Z]+)\\)
         // HELLO\\s([a-zA-Z_0-9]){4,8}+\\s([\\p{Print}&&[^ \\t\\n\\x0B\\f\\r]]){4,8}+\\r\\n
@@ -42,7 +44,7 @@ public class Test {
         Matcher m = p.matcher("HELLO alice01 monpass\r\n");
         return m.matches();
     }
-    
+
     public boolean testLexique() {
         Lexique l = new Lexique();
         // 4*8(letter|digit)
@@ -52,13 +54,13 @@ public class Test {
         l.ajouter(user);
         l.ajouter(pass);
         l.ajouter(message);
-        
+
         ABNF regle = l.compiler("HELLO", "HELLO space user space pass crlf");
         Pattern p = Pattern.compile(regle.getPattern());
         Matcher m = p.matcher("HELLO aLice01 monpaS5;\r\n");
         return m.matches();
     }
-    
+
     public boolean testMessageProtocole() {
         Lexique l = new Lexique();
         // création des variables des messages avec le lexique
@@ -68,41 +70,57 @@ public class Test {
         l.ajouter(user);
         l.ajouter(pass);
         l.ajouter(message);
-        
+
         // création d'un message et configuration de ses variables
-        ABNF regle = l.compiler("HELLO", "HELLO space user space pass crlf");
-        MessageProtocole mp = new MessageProtocole(regle);
-        mp.ajouter(user);
-        mp.ajouter(pass);
-        
+        MessageProtocole mp = new MessageProtocole(l, "HELLO", "HELLO space user space pass crlf", user, pass);
+
         // formattage du message
         String alice = "aLice01";
         String mdp = "m0npaS5;";
         mp.set(user, alice);
         mp.set(pass, mdp);
-        String messageAEnvoyer = mp.remplir();
-        
+        String messageAEnvoyer;
+        try {
+            messageAEnvoyer = mp.remplir();
+        } catch (Exception ex) {
+            // Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+
         // parsage du message
-        mp.preparer(messageAEnvoyer);
+        mp.scanner(messageAEnvoyer);
         boolean verifier = true;
-        if(!mp.get(user).equals(alice)) {
+        if (!mp.get(user).equals(alice)) {
             verifier = false;
         }
-        if(!mp.get(pass).equals(mdp)) {
+        if (!mp.get(pass).equals(mdp)) {
             verifier = false;
         }
         return verifier;
     }
-    
+
     public boolean testProtocoleSwinen() {
         Protocole protocole = new ProtocoleSwinen();
+        // préparation du message
         protocole.prepare(ProtocoleSwinen.HELLO);
         String alice = "aLice01";
         String mdp = "m0npaS5;";
-        String request = protocole.make(
-                new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user, alice), 
-                new AbstractMap.SimpleEntry<>(ProtocoleSwinen.pass, mdp)
-        );
-        return ("HELLO "+alice+" "+mdp+"\r\n").equals(request);
+        // création d'un message avec des variables données
+        String request;
+        try {
+            request = protocole.make(
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user, alice),
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.pass, mdp)
+            );
+        } catch (Exception ex) {
+            // Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        // vérification du format du message
+        if (protocole.check(request)) {
+            // vérification des variables correctement insérées dans le message
+            return ("HELLO " + alice + " " + mdp + "\r\n").equals(request);
+        }
+        return false;
     }
 }

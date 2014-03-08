@@ -14,25 +14,23 @@ public class ABNF {
     private final String definition;
     private final String synthax;
     private final String pattern;
-    private boolean captured;
 
     public ABNF(String definition, String synthax, String pattern) {
         this.definition = definition;
         this.synthax = synthax;
         this.pattern = pattern;
-        captured = true;
     }
 
     public ABNF(String definition, String synthax) {
         this(definition, synthax, synthax);
-        captured = false;
     }
 
     public String getPattern() {
-        if (captured) {
-            return "(?<" + definition + ">" + pattern + ")";
-        }
         return pattern;
+    }
+    
+    public String getNamedPattern() {
+        return "(?<" + definition + ">" + pattern + ")";
     }
 
     public String getSynthax() {
