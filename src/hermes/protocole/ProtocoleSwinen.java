@@ -21,6 +21,7 @@ public class ProtocoleSwinen extends AbstractProtocole {
     public static ABNF message;
     public static ABNF sender;
     public static ABNF receiver;
+    public static ABNF digit = Lexique.digit;
 
     public static MessageProtocole HELLO;
     public static MessageProtocole MSG;
@@ -45,9 +46,9 @@ public class ProtocoleSwinen extends AbstractProtocole {
      * @see Lexique
      */
     private static void initVariable() {
-        user = lexique.compiler("user", "([letter[digit]]){4,8}+");
-        pass = lexique.compiler("pass", "(passchar){4,10}+");
-        message = lexique.compiler("message", "(character){1,500}+");
+        user = lexique.compiler("user", "[letter[digit]]{4,8}+");
+        pass = lexique.compiler("pass", "passchar{4,10}+");
+        message = lexique.compiler("message", "character{1,500}+");
         sender = lexique.compiler("sender", "user");
         receiver = lexique.compiler("receiver", "user");
     }
@@ -61,22 +62,12 @@ public class ProtocoleSwinen extends AbstractProtocole {
     }
 
     private static void initMessages() {
-        HELLO = new MessageProtocole(lexique.compiler("HELLO", "HELLO space user space pass crlf"));
-        HELLO.ajouter(user);
-        HELLO.ajouter(pass);
-        MSG = new MessageProtocole(lexique.compiler("MSG", "MSG space receiver space message crlf"));
-        MSG.ajouter(receiver);
-        MSG.ajouter(message);
-        SMSG = new MessageProtocole(lexique.compiler("SMSG", "SMSG space sender space message crlf"));
-        MSG.ajouter(sender);
-        MSG.ajouter(message);
-        ALL = new MessageProtocole(lexique.compiler("ALL", "ALL space message crlf"));
-        ALL.ajouter(message);
-        SALL = new MessageProtocole(lexique.compiler("SALL", "SALL space sender space message crlf"));
-        SALL.ajouter(sender);
-        SALL.ajouter(message);
-        QUIT = new MessageProtocole(lexique.compiler("QUIT", "QUIT crlf"));
-        response = new MessageProtocole(lexique.compiler("response", "digit (space message)? crlf"));
-        response.ajouter(message);
+        HELLO = new MessageProtocole(lexique, "HELLO", "HELLO space user space pass crlf", user, pass);
+        MSG = new MessageProtocole(lexique, "MSG", "MSG space receiver space message crlf", receiver, message);
+        SMSG = new MessageProtocole(lexique, "SMSG", "SMSG space sender space message crlf", sender, message);
+        ALL = new MessageProtocole(lexique, "ALL", "ALL space message crlf", message);
+        SALL = new MessageProtocole(lexique, "SALL", "SALL space sender space message crlf", sender, message);
+        QUIT = new MessageProtocole(lexique, "QUIT", "QUIT crlf");
+        response = new MessageProtocole(lexique, "response", "digit (?:space message)? crlf", digit, message);
     }
 }

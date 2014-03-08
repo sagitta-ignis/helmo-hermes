@@ -26,7 +26,7 @@ public class AbstractProtocole implements Protocole {
     }
 
     @Override
-    public String make(Map.Entry<ABNF,String>... args) {
+    public String make(Map.Entry<ABNF,String>... args) throws Exception {
         if(prepared == null) return null;
         prepared.effacer();
         for (Map.Entry<ABNF, String> entry : args) {
@@ -40,7 +40,7 @@ public class AbstractProtocole implements Protocole {
     @Override
     public boolean check(String message) {
         if(prepared == null) return false;
-        return prepared.verifier(message);
+        return prepared.scanner(message);
     }
     
     public String get(ABNF variable) {

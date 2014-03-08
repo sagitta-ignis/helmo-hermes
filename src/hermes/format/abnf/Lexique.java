@@ -5,10 +5,8 @@
  */
 package hermes.format.abnf;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.*;
+import java.util.regex.*;
 
 /**
  *
@@ -16,20 +14,22 @@ import java.util.regex.Pattern;
  */
 public class Lexique {
 
-    public static final ABNF letter = new ABNF("letter", "a-zA-Z");
+    public static final ABNF letter = new ABNF("letter", "[a-zA-Z]");
     public static final ABNF character = new ABNF("character", "\\p{Print}");
     public static final ABNF space = new ABNF("space", " ");
-    public static final ABNF digit = new ABNF("digit", "0-9");
+    public static final ABNF digit = new ABNF("digit", "[0-9]");
     public static final ABNF crlf = new ABNF("crlf", "\r\n");
     public static final ABNF passchar = new ABNF("passchar", "[\\p{Print}&&[^ ]]");
 
     private final Map<String, ABNF> base;
     private final Map<String, ABNF> lexique;
+    private final List<ABNF> capturees;
     private final Map<Pattern, Traducteur> traducteurs;
 
     public Lexique() {
         base = new HashMap<>();
         lexique = new HashMap<>();
+        capturees = new ArrayList();
         traducteurs = new HashMap<>();
         initBase();
         initTraducteurs();
@@ -60,13 +60,18 @@ public class Lexique {
     public void ajouter(Traducteur traducteur) {
         traducteurs.put(traducteur.getPattern(), traducteur);
     }
-
-    public ABNF compiler(String definition, String synthaxe) {
+    
+    public ABNF compiler(String definition, String synthaxe, ABNF... variables) {
+        capturees.clear();
+        if(variables != null && variables.length != 0) {
+            capturees.addAll(Arrays.asList(variables));
+        }
         String pattern;
-        pattern = remplacer(nettoyer(synthaxe));
-        // pattern = traduire(pattern);
-        pattern = convertir(pattern);
-        return new ABNF(definition, remplacer(nettoyer(synthaxe)), pattern);
+        synthaxe = remplacer(nettoyer(synthaxe), base, false);
+        // pattern = traduire(synthaxe);
+        // pattern = remplacer(pattern, lexique, true);
+        pattern = remplacer(synthaxe, lexique, true);
+        return new ABNF(definition, synthaxe, pattern);
     }
 
     public ABNF chercher(String definition) {
@@ -90,30 +95,18 @@ public class Lexique {
      * @param sequence
      * @return
      */
-    private String remplacer(String sequence) {
-        for (Map.Entry<String, ABNF> entry : base.entrySet()) {
-            String definition = entry.getKey();
-            String synthax = entry.getValue().getPattern();
-            Matcher chercher = Pattern.compile(definition).matcher(sequence);
-            sequence = chercher.replaceAll(synthax);
-        }
-        return sequence;
-    }
-
-    /**
-     * Convertit dans la séquence les mots du lexique par leur pattern.
-     *
-     * @param sequence
-     * @return
-     */
-    private String convertir(String sequence) {
+    private String remplacer(String sequence, Map<String,ABNF> lexique, boolean backslashes) {
         for (Map.Entry<String, ABNF> entry : lexique.entrySet()) {
             String definition = entry.getKey();
-            String synthax = entry.getValue().getPattern();
+            ABNF abnf = entry.getValue();
+            String synthax = abnf.getPattern();
+            if(capturees.contains(abnf)) {
+                synthax = abnf.getNamedPattern();
+            }
             Matcher chercher = Pattern.compile(definition).matcher(sequence);
             sequence = chercher.replaceAll(synthax);
         }
-        return backslash(sequence);
+        return backslashes ? backslash(sequence):sequence;
     }
     
     /**
