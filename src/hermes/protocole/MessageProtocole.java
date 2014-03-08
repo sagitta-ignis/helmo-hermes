@@ -22,12 +22,12 @@ public class MessageProtocole {
     private final ABNF format;
     
     private String message;
+    private String sequence;
     private final List<String> variables;
     private final Map<String,String> affections;
 
     public MessageProtocole(ABNF format) {
         this.format = format;
-        message = format.getSynthax();
         variables = new ArrayList<>();
         affections = new HashMap<>();
     }
@@ -44,7 +44,12 @@ public class MessageProtocole {
         return true;
     }
     
+    public boolean existe(ABNF variable) {
+        return variables.contains(variable.getDefinition());
+    }
+    
     public String remplir() {
+        message = format.getSynthax();
         for (Map.Entry<String, String> entry : affections.entrySet()) {
             String variable = entry.getKey();
             String valeur = entry.getValue();
@@ -58,7 +63,34 @@ public class MessageProtocole {
         message = chercher.replaceAll(valeur);
     }
     
+    public void effacer() {
+        affections.clear();
+    }
+    
+    public boolean preparer(String sequence) {
+        boolean verification = verifier(sequence);
+        if(verification) {
+            this.sequence = sequence;
+        }
+        return verification;
+    }
+    
     public boolean verifier(String sequence) {
         return Pattern.compile(format.getPattern()).matcher(sequence).matches();
+    }
+    
+    public String get(ABNF variable) {
+        if(sequence != null) {
+            if(existe(variable)) {
+                return extraire(variable.getDefinition());
+            }
+        }
+        return null;
+    }
+    
+    private String extraire(String variable) {
+        Matcher m =  Pattern.compile(format.getPattern()).matcher(sequence);
+        m.matches();
+        return m.group(variable);
     }
 }
