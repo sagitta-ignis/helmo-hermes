@@ -16,10 +16,10 @@ import java.util.regex.Pattern;
  */
 public class Lexique {
 
-    public static final ABNF letter = new ABNF("letter", "[a-zA-Z]");
+    public static final ABNF letter = new ABNF("letter", "a-zA-Z");
     public static final ABNF character = new ABNF("character", "\\p{Print}");
     public static final ABNF space = new ABNF("space", " ");
-    public static final ABNF digit = new ABNF("digit", "[0-9]");
+    public static final ABNF digit = new ABNF("digit", "0-9");
     public static final ABNF crlf = new ABNF("crlf", "\r\n");
     public static final ABNF passchar = new ABNF("passchar", "[\\p{Print}&&[^ ]]");
 
@@ -124,7 +124,7 @@ public class Lexique {
      * @return 
      */
     private String backslash(String sequence) {
-        Matcher chercher = Pattern.compile("p(?<posix>[a-zA-Z{}]+)").matcher(sequence);
+        Matcher chercher = Pattern.compile("p(?<posix>\\{[a-zA-Z{}]+\\})").matcher(sequence);
         sequence = chercher.replaceAll("\\\\p${posix}");
         return sequence;
     }

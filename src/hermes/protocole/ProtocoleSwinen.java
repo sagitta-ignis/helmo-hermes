@@ -7,13 +7,12 @@ package hermes.protocole;
 
 import hermes.format.abnf.ABNF;
 import hermes.format.abnf.Lexique;
-import java.util.Map.Entry;
 
 /**
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public class ProtocoleSwinen implements Protocole {
+public class ProtocoleSwinen extends AbstractProtocole {
 
     private static final Lexique lexique;
     
@@ -46,7 +45,7 @@ public class ProtocoleSwinen implements Protocole {
      * @see Lexique
      */
     private static void initVariable() {
-        user = lexique.compiler("user", "([letter][digit]){4,8}+");
+        user = lexique.compiler("user", "([letter[digit]]){4,8}+");
         pass = lexique.compiler("pass", "(passchar){4,10}+");
         message = lexique.compiler("message", "(character){1,500}+");
         sender = lexique.compiler("sender", "user");
@@ -79,29 +78,5 @@ public class ProtocoleSwinen implements Protocole {
         QUIT = new MessageProtocole(lexique.compiler("QUIT", "QUIT crlf"));
         response = new MessageProtocole(lexique.compiler("response", "digit (space message)? crlf"));
         response.ajouter(message);
-    }
-    
-    private MessageProtocole prepared;
-
-    public ProtocoleSwinen() {
-        prepared = null;
-    }
-
-    @Override
-    public void prepare(MessageProtocole message) {
-        prepared = message;
-    }
-
-    @Override
-    public String make(Entry<ABNF,String>... args) {
-        for (Entry<ABNF, String> entry : args) {
-            prepared.set(entry.getKey(), entry.getValue());
-        }
-        return prepared.remplir();
-    }
-
-    @Override
-    public boolean check(String message) {
-        return prepared.verifier(message);
     }
 }
