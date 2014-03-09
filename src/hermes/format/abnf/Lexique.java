@@ -60,22 +60,33 @@ public class Lexique {
     public void ajouter(Traducteur traducteur) {
         traducteurs.put(traducteur.getPattern(), traducteur);
     }
-    
-    public ABNF compiler(String definition, String synthaxe, ABNF... variables) {
-        capturees.clear();
-        if(variables != null && variables.length != 0) {
-            capturees.addAll(Arrays.asList(variables));
-        }
-        String pattern;
-        synthaxe = remplacer(nettoyer(synthaxe), base, false);
-        // pattern = traduire(synthaxe);
-        // pattern = remplacer(pattern, lexique, true);
-        pattern = remplacer(synthaxe, lexique, true);
-        return new ABNF(definition, synthaxe, pattern);
-    }
 
     public ABNF chercher(String definition) {
         return lexique.get(definition);
+    }
+
+    public ABNF compiler(String definition, String synthaxe, ABNF... variables) {
+        capturees.clear();
+        if (variables != null && variables.length != 0) {
+            capturees.addAll(Arrays.asList(variables));
+        }
+        String patternIntermediaire = synthaxe(synthaxe, false);
+        String pattern = pattern(patternIntermediaire);
+        return new ABNF(definition, synthaxe(synthaxe, true), pattern);
+    }
+
+    private String synthaxe(String synthaxe, boolean propre) {
+        return traiter(option(nettoyer(synthaxe), propre), base, propre);
+    }
+
+    private String pattern(String synthaxe) {
+        // pattern = traduire(synthaxe);
+        return backslash(traiter(synthaxe, lexique, false));
+    }
+
+    private String remplacer(String definition, String sequence, String synthax) {
+        Matcher chercher = Pattern.compile(definition).matcher(sequence);
+        return chercher.replaceAll(synthax);
     }
 
     /**
@@ -85,8 +96,29 @@ public class Lexique {
      * @return
      */
     private String nettoyer(String sequence) {
-        Matcher matcher = Pattern.compile(" ").matcher(sequence);
-        return matcher.replaceAll("");
+        return remplacer(" ", sequence, "");
+    }
+
+    /**
+     * Réinsère les backslashes ignorés par la fonction Matcher.replaceAll. Ceci
+     * concerne les classes de caractères POSIX : \p{posix}.
+     *
+     * @see Matcher#replaceAll(java.lang.String)
+     * @param sequence
+     * @return
+     */
+    private String backslash(String sequence) {
+        return remplacer("p(?<posix>\\{[a-zA-Z]+\\})", sequence, "\\\\p${posix}");
+    }
+
+    private String option(String sequence, boolean effacer) {
+        String ouvert = "";
+        String ferme = "";
+        if (!effacer) {
+            ouvert = "(:?";
+            ferme = ")?";
+        }
+        return remplacer("\\*(?<seq>[a-zA-Z]+)\\*", sequence, ouvert+"${seq}"+ferme);
     }
 
     /**
@@ -95,30 +127,21 @@ public class Lexique {
      * @param sequence
      * @return
      */
-    private String remplacer(String sequence, Map<String,ABNF> lexique, boolean backslashes) {
+    private String traiter(String sequence, Map<String, ABNF> lexique, boolean passerCapturees) {
+        String definition, pattern;
+        ABNF abnf;
         for (Map.Entry<String, ABNF> entry : lexique.entrySet()) {
-            String definition = entry.getKey();
-            ABNF abnf = entry.getValue();
-            String synthax = abnf.getPattern();
-            if(capturees.contains(abnf)) {
-                synthax = abnf.getNamedPattern();
+            definition = entry.getKey();
+            abnf = entry.getValue();
+            pattern = abnf.getPattern();
+            if (capturees.contains(abnf)) {
+                pattern = abnf.getNamedPattern();
+                if (passerCapturees) {
+                    continue;
+                }
             }
-            Matcher chercher = Pattern.compile(definition).matcher(sequence);
-            sequence = chercher.replaceAll(synthax);
+            sequence = remplacer(definition, sequence, pattern);
         }
-        return backslashes ? backslash(sequence):sequence;
-    }
-    
-    /**
-     * Réinsère les backslashes ignorés par la fonction Matcher.replaceAll.
-     * Ceci concerne les classes de caractères POSIX : \p{posix}.
-     * @see Matcher#replaceAll(java.lang.String) 
-     * @param sequence
-     * @return 
-     */
-    private String backslash(String sequence) {
-        Matcher chercher = Pattern.compile("p(?<posix>\\{[a-zA-Z{}]+\\})").matcher(sequence);
-        sequence = chercher.replaceAll("\\\\p${posix}");
         return sequence;
     }
 

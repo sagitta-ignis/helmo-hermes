@@ -99,8 +99,16 @@ public class Test {
         return verifier;
     }
 
+    Protocole protocole;
+    
     public boolean testProtocoleSwinen() {
-        Protocole protocole = new ProtocoleSwinen();
+        protocole = new ProtocoleSwinen();
+        boolean verification = testHello();
+        verification = testResponse();
+        return false;
+    }
+    
+    private boolean testHello() {
         // préparation du message
         protocole.prepare(ProtocoleSwinen.HELLO);
         String alice = "aLice01";
@@ -120,6 +128,30 @@ public class Test {
         if (protocole.check(request)) {
             // vérification des variables correctement insérées dans le message
             return ("HELLO " + alice + " " + mdp + "\r\n").equals(request);
+        }
+        return false;
+    }
+    
+    private boolean testResponse() {
+        // préparation du message
+        protocole.prepare(ProtocoleSwinen.response);
+        String digit = "9";
+        String message = "invalide";
+        // création d'un message avec des variables données
+        String request;
+        try {
+            request = protocole.make(
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.digit, digit),
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, message)
+            );
+        } catch (Exception ex) {
+            // Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        // vérification du format du message
+        if (protocole.check(request)) {
+            // vérification des variables correctement insérées dans le message
+            return (digit+" " + message + "\r\n").equals(request);
         }
         return false;
     }

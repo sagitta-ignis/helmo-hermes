@@ -68,7 +68,7 @@ public class ProtocoleSwinen extends AbstractProtocole {
         ALL = new MessageProtocole(lexique, "ALL", "ALL space message crlf", message);
         SALL = new MessageProtocole(lexique, "SALL", "SALL space sender space message crlf", sender, message);
         QUIT = new MessageProtocole(lexique, "QUIT", "QUIT crlf");
-        response = new MessageProtocole(lexique, "response", "digit (?:space message)? crlf", digit, message);
+        response = new MessageProtocole(lexique, "response", "digit *space message* crlf", digit, message);
     }
 
     public ProtocoleSwinen() {
