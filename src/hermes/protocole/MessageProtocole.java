@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public class MessageProtocole {
+public class MessageProtocole implements Comparable<MessageProtocole> {
     private static final String EMPTY = "empty";
     
     private final ABNF format;
@@ -103,5 +103,14 @@ public class MessageProtocole {
         Matcher m =  Pattern.compile(format.getPattern()).matcher(sequence);
         m.matches();
         return m.group(variable);
+    }
+
+    @Override
+    public int compareTo(MessageProtocole t) {
+        return getNom().compareTo(t.getNom());
+    }
+
+    public String getNom() {
+        return format.getDefinition();
     }
 }

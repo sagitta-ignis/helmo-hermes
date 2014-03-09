@@ -7,17 +7,25 @@
 package hermes.protocole;
 
 import hermes.format.abnf.ABNF;
-import java.util.Map;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
 public class AbstractProtocole implements Protocole {
+    
+    private final List<MessageProtocole> messages;
     private MessageProtocole prepared;
 
     public AbstractProtocole() {
+        messages = new ArrayList<>();
         prepared = null;
+    }
+    
+    protected void add(MessageProtocole messageProtocole) {
+        messages.add(messageProtocole);
     }
 
     @Override
@@ -26,10 +34,10 @@ public class AbstractProtocole implements Protocole {
     }
 
     @Override
-    public String make(Map.Entry<ABNF,String>... args) throws Exception {
+    public String make(Entry<ABNF,String>... args) throws Exception {
         if(prepared == null) return null;
         prepared.effacer();
-        for (Map.Entry<ABNF, String> entry : args) {
+        for (Entry<ABNF, String> entry : args) {
             if(!prepared.set(entry.getKey(), entry.getValue())) {
                 return null;
             }
@@ -43,8 +51,19 @@ public class AbstractProtocole implements Protocole {
         return prepared.scanner(message);
     }
     
+    @Override
     public String get(ABNF variable) {
         if(prepared == null) return null;
         return prepared.get(variable);
+    }
+
+    @Override
+    public MessageProtocole search(String message) {
+        for (MessageProtocole messageProtocole : messages) {
+            if(messageProtocole.scanner(message)) {
+                return messageProtocole;
+            }
+        }
+        return null;
     }
 }

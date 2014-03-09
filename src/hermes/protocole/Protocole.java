@@ -20,5 +20,7 @@ public interface Protocole {
 
     boolean check(String message);
 
-    public String get(ABNF variable);
+    String get(ABNF variable);
+    
+    MessageProtocole search(String message);
 }

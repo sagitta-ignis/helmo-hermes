@@ -70,4 +70,14 @@ public class ProtocoleSwinen extends AbstractProtocole {
         QUIT = new MessageProtocole(lexique, "QUIT", "QUIT crlf");
         response = new MessageProtocole(lexique, "response", "digit (?:space message)? crlf", digit, message);
     }
+
+    public ProtocoleSwinen() {
+        add(HELLO);
+        add(MSG);
+        add(SMSG);
+        add(ALL);
+        add(SALL);
+        add(QUIT);
+        add(response);
+    }
 }
