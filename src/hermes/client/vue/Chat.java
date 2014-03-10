@@ -59,18 +59,15 @@ public final class Chat extends javax.swing.JFrame {
         envoyer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                chat.send(message.getText());
+                chat.send(utilisateur.getText(), message.getText());
                 message.setText("");
             }
         });
     }
 
     public void entrer(String text) {
-
         conversation.append(text);
         conversation.append("\n");
-
-        
     }
 
     public void avertir(String titre, String message) {
@@ -91,6 +88,7 @@ public final class Chat extends javax.swing.JFrame {
         dialogue = new javax.swing.JPanel();
         message = new javax.swing.JTextField();
         envoyer = new javax.swing.JButton();
+        utilisateur = new javax.swing.JTextField();
         scrollPane = new javax.swing.JScrollPane();
         conversation = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -117,12 +115,22 @@ public final class Chat extends javax.swing.JFrame {
 
         message.setPreferredSize(new java.awt.Dimension(400, 40));
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 0.1;
+        gridBagConstraints.weightx = 0.3;
         dialogue.add(message, gridBagConstraints);
 
         envoyer.setText("Envoyer");
-        dialogue.add(envoyer, new java.awt.GridBagConstraints());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.weightx = 0.1;
+        dialogue.add(envoyer, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.3;
+        dialogue.add(utilisateur, gridBagConstraints);
 
         getContentPane().add(dialogue, java.awt.BorderLayout.PAGE_END);
 
@@ -226,5 +234,6 @@ public final class Chat extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JTextField message;
     private javax.swing.JScrollPane scrollPane;
+    private javax.swing.JTextField utilisateur;
     // End of variables declaration//GEN-END:variables
 }

@@ -49,7 +49,8 @@ public class Ecouteur extends Thread {
 
     public String lire() {
         try {
-            return inFromServer.readLine();
+            String message = inFromServer.readLine();
+            return message;
         } catch (SocketException ex) {
             return "[error] connexion perdue avec le serveur";
         } catch (IOException ex) {
@@ -60,8 +61,7 @@ public class Ecouteur extends Thread {
 
     private boolean traiter(String message) {
         if (message != null) {
-            client.print(message);
-            return !message.startsWith("[error]");
+            return client.parse(message);
         }
         return false;
     }

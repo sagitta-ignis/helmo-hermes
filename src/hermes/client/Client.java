@@ -5,15 +5,21 @@ package hermes.client;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import hermes.client.command.messages.*;
 import hermes.client.exception.NotConnectedException;
 import hermes.client.exception.UnreachableServerExeception;
 import hermes.client.exception.UnopenableExecption;
-import pattern.command.Command;
+import hermes.protocole.MessageProtocole;
+import hermes.protocole.Protocole;
+import hermes.protocole.ProtocoleSwinen;
 import java.io.*;
 import java.net.*;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -21,15 +27,16 @@ import java.util.logging.Logger;
  */
 public class Client {
 
+    private Protocole protocole;
     private Socket socket;
     private final Emetteur emetteur;
     private final Ecouteur ecouteur;
     private Encodeur encodeur;
-    
+
     private PrintStream output;
     private ClientListener listener;
 
-    private Map<String, Command> commands;
+    private Map<MessageProtocole, Message> request;
 
     private boolean connected;
     private boolean logged;
@@ -39,14 +46,22 @@ public class Client {
         connected = false;
         logged = false;
         opened = false;
+        request = new HashMap<>();
+        protocole = new ProtocoleSwinen();
         emetteur = new Emetteur();
         ecouteur = new Ecouteur(this);
+        initCommands();
+    }
+
+    private void initCommands() {
+        request.put(ProtocoleSwinen.SALL, new SAll(this, protocole));
+        request.put(ProtocoleSwinen.SMSG, new SMsg(this, protocole));
     }
 
     public Client(ClientListener cl, InputStream in, OutputStream out) {
         this();
         listener = cl;
-        if(in != null) {
+        if (in != null) {
             encodeur = new Encodeur(this, in);
         }
         if (out != null) {
@@ -73,14 +88,14 @@ public class Client {
         }
         return connected;
     }
-    
+
     public boolean disconnect() {
         logged = false;
         connected = false;
         try {
             socket.close();
         } catch (IOException ex) {
-            
+
         }
         socket = null;
         return canRun();
@@ -114,15 +129,11 @@ public class Client {
             return false;
         }
         if (password == null || password.isEmpty()) {
-            send(String.format("/connect %s ", nom));
-        } else {
-            send(String.format("/connect %s %s", nom, password));
+            password = "password";
         }
-        String message = ecouteur.lire();
-        if (message.startsWith("-- " + nom)) {
-            print(message);
-            logged = true;
-        }
+        Message hello = new Hello(this, protocole);
+        hello.setArgs(nom, password);
+        hello.execute();
         return logged;
     }
 
@@ -145,8 +156,47 @@ public class Client {
     }
 
     public void send(String text) {
+        text = nettoyer(text, true);
         emetteur.envoyer(text);
-        logged = !text.equals("/quit");
+        //logged = !text.equals("/quit");
+    }
+
+    private String nettoyer(String text, boolean envoi) {
+        String n = "\n";
+        String r = "\r";
+        String nPropre = "-n";
+        String rPropre = "-r";
+        if (!envoi) {
+            n = "-n";
+            r = "-r";
+            nPropre = "\n";
+            rPropre = "\r";
+        }
+        text = remplacer(n, text, nPropre);
+        return remplacer(r, text, rPropre);
+    }
+
+    private String remplacer(String definition, String sequence, String synthax) {
+        Matcher chercher = Pattern.compile(definition).matcher(sequence);
+        return chercher.replaceAll(synthax);
+    }
+
+    public boolean parse(String text) {
+        if (text.startsWith("[error]")) {
+            return false;
+        }
+        text = nettoyer(text, false);
+        for (Map.Entry<MessageProtocole, Message> entry : request.entrySet()) {
+            MessageProtocole messageProtocole = entry.getKey();
+            protocole.prepare(messageProtocole);
+            if (protocole.check(text)) {
+                Message message = entry.getValue();
+                message.setArgs(text);
+                message.execute();
+            }
+        }
+        //print(message);
+        return true;
     }
 
     public void print(String text) {
@@ -168,5 +218,31 @@ public class Client {
         }
         emetteur.fermer();
         ecouteur.fermer();
+    }
+
+    public Ecouteur getEcouteur() {
+        return ecouteur;
+    }
+
+    public String recevoir() {
+        String message = ecouteur.lire();
+        if (message == null) {
+            return null;
+        }
+        return nettoyer(message, false);
+    }
+
+    public void envoyer(String user, String text) {
+        Message message;
+        if(text.equals("/quit")) {
+            message = new Quit(this, protocole);
+        } else if (user.equals("all")) {
+            message = new All(this, protocole);
+            message.setArgs(text);
+        } else {
+            message = new Msg(this, protocole);
+            message.setArgs(user, text);
+        }
+        message.execute();
     }
 }

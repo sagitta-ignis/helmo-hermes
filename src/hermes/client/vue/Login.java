@@ -94,7 +94,7 @@ public class Login extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         logger.add(lbPassword, gridBagConstraints);
 
-        username.setText("thomas");
+        username.setText("alice");
         username.setPreferredSize(new java.awt.Dimension(150, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -106,6 +106,7 @@ public class Login extends javax.swing.JFrame {
         gridBagConstraints.weighty = 0.1;
         logger.add(username, gridBagConstraints);
 
+        password.setText("monpass");
         password.setPreferredSize(new java.awt.Dimension(150, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -134,7 +135,7 @@ public class Login extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         logger.add(lbIP, gridBagConstraints);
 
-        ip.setText("127.0.0.1");
+        ip.setText("192.168.138.90");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -159,16 +160,20 @@ public class Login extends javax.swing.JFrame {
         gridBagConstraints.weighty = 0.1;
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         logger.add(lbPort, gridBagConstraints);
+
+        informations.setPreferredSize(new java.awt.Dimension(200, 30));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         logger.add(informations, gridBagConstraints);
 
         getContentPane().add(logger, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton connecter;
     private javax.swing.JLabel informations;

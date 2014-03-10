@@ -43,8 +43,7 @@ public class Chatter implements ClientListener {
 
     public boolean login(String username, String password) {
         try {
-            client.login(username, password);
-            return true;
+            return client.login(username, password);
         } catch (NotConnectedException ex) {
             Logger.getLogger(Chatter.class.getName()).log(Level.SEVERE, null, ex);
             return false;
@@ -69,8 +68,11 @@ public class Chatter implements ClientListener {
         }
     }
 
-    public void send(String text) {
-        client.send(text);
+    public void send(String user, String text) {
+        if(user == null || user.isEmpty()) {
+            user = "all";
+        }
+        client.envoyer(user, text);
     }
 
     @Override

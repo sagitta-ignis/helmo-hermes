@@ -117,7 +117,7 @@ public class Overlay {
     }
 
     private void envoyer() {
-        chat.send(fieldEnvoyer.getText());
+        chat.send("all",fieldEnvoyer.getText());
         fieldEnvoyer.setText("");
     }
 
