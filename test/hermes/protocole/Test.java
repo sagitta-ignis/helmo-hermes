@@ -8,8 +8,6 @@ package hermes.protocole;
 import hermes.format.abnf.ABNF;
 import hermes.format.abnf.Lexique;
 import java.util.AbstractMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -100,14 +98,15 @@ public class Test {
     }
 
     Protocole protocole;
-    
+
     public boolean testProtocoleSwinen() {
         protocole = new ProtocoleSwinen();
         boolean verification = testHello();
         verification = testResponse();
+        verification = testSALL();
         return false;
     }
-    
+
     private boolean testHello() {
         // préparation du message
         protocole.prepare(ProtocoleSwinen.HELLO);
@@ -131,7 +130,7 @@ public class Test {
         }
         return false;
     }
-    
+
     private boolean testResponse() {
         // préparation du message
         protocole.prepare(ProtocoleSwinen.response);
@@ -151,7 +150,31 @@ public class Test {
         // vérification du format du message
         if (protocole.check(request)) {
             // vérification des variables correctement insérées dans le message
-            return (digit+" " + message + "\r\n").equals(request);
+            return (digit + " " + message + "\r\n").equals(request);
+        }
+        return false;
+    }
+
+    private boolean testSALL() {
+        // préparation du message
+        protocole.prepare(ProtocoleSwinen.SALL);
+        String sender = "alice";
+        String message = "coucou";
+        // création d'un message avec des variables données
+        String request;
+        try {
+            request = protocole.make(
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.sender, sender),
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, message)
+            );
+        } catch (Exception ex) {
+            // Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        // vérification du format du message
+        if (protocole.check(request)) {
+            // vérification des variables correctement insérées dans le message
+            return ("SALL" +sender + " " + message + "\r\n").equals(request);
         }
         return false;
     }

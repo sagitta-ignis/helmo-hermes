@@ -49,8 +49,8 @@ public class ProtocoleSwinen extends AbstractProtocole {
         user = lexique.compiler("user", "[letter[digit]]{4,8}+");
         pass = lexique.compiler("pass", "passchar{4,10}+");
         message = lexique.compiler("message", "character{1,500}+");
-        sender = lexique.compiler("sender", "user");
-        receiver = lexique.compiler("receiver", "user");
+        sender = lexique.compiler("sender", "[letter[digit]]{4,8}+");
+        receiver = lexique.compiler("receiver", "[letter[digit]]{4,8}+");
     }
 
     private static void initLexique() {
