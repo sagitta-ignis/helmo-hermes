@@ -6,12 +6,13 @@
 
 package pattern;
 
+import hermes.protocole.MessageProtocole;
+
 /**
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
 public interface Command {
     void execute();
-    void execute(String args);
-    String desciption();
+    void execute(MessageProtocole message);
 }

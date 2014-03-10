@@ -43,7 +43,6 @@ public class EcouteurClient extends Thread {
     private void recevoir() {
         try {
             String message = inFromClient.readLine();
-
             if (message == null) {
                 connectionLost();
             } else if (message.length() > 0) {
@@ -61,9 +60,7 @@ public class EcouteurClient extends Thread {
         //Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
         server.afficher("[error] connection avec " + toString() + " perdue");
         manager.close();
-        if (clientInfo.isAccepte()) {
-            manager.executer("/quit");
-        }
+    
     }
 
     public void close() {

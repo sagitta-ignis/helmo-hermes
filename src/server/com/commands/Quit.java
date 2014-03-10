@@ -5,49 +5,37 @@
  */
 package server.com.commands;
 
-import server.com.ClientManager;
+import hermes.protocole.MessageProtocole;
 import pattern.Command;
 import server.ServerControleur;
-import server.com.Client;
+import server.com.ClientManager;
 
 /**
  *
- * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
+ * @author David
  */
 public class Quit implements Command {
 
-    private final ServerControleur server;
-    private final ClientManager client;
-    private final Client clientInfo;
+    private ClientManager client;
+    private ServerControleur serveur;
+    private final All sendAll;
 
-    public Quit(ServerControleur server, ClientManager client, Client clInfo) {
-        this.server = server;
+    public Quit(ClientManager client, ServerControleur serveur, Command sendAll) {
         this.client = client;
-        this.clientInfo = clInfo;
+        this.serveur = serveur;
+        this.sendAll = (All) sendAll;
     }
 
     @Override
     public void execute() {
-        execute(null);
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void execute(String args) {
-        StringBuilder message = new StringBuilder();
-        message.append("-- ").append(clientInfo.getUsername());
-        message.append("(").append(clientInfo.getId()).append(") ");
-        message.append("a quitté le serveur");
-        if(args!=null && !args.isEmpty()) {
-            message.append(" (").append(args).append(")");
-        }
-        server.transmettre(message.toString());
-        server.retirer(client);
-        clientInfo.setOpened(false);
+    public void execute(MessageProtocole message) {
+        sendAll.execute("Serveur", client.getClient().getUsername() + " deconnecte");
+        serveur.afficher(client.getClient().getUsername() + " déconnecté");
         client.close();
     }
 
-    @Override
-    public String desciption() {
-        return "Quitter le serveur";
-    }
 }

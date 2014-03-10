@@ -5,9 +5,11 @@
  */
 package server.com.etat;
 
-import server.ServerControleur;
-import server.com.Client;
+import hermes.protocole.MessageProtocole;
+import hermes.protocole.Protocole;
+import hermes.protocole.ProtocoleSwinen;
 import server.com.ClientManager;
+import server.com.response.SentResponse;
 
 /**
  *
@@ -16,20 +18,24 @@ import server.com.ClientManager;
 public class Connecte {
 
     private final ClientManager manager;
-    private final Client clientInfo;
-    private final ServerControleur server;
 
-    public Connecte(ClientManager clientManager, Client client, ServerControleur serveur) {
-        manager = clientManager;
-        clientInfo = client;
-        server = serveur;
+    
+    private final SentResponse response;
+
+    public Connecte(ClientManager clientManager, SentResponse response) {
+        manager = clientManager; 
+        this.response = response;
     }
 
     public void traiter(String message) {
-        if (message.charAt(0) == '/') {
-            manager.executer(message);
-        } else if (!clientInfo.isMuet()) {
-            server.transmettre(clientInfo.toString() + " : " + message);
+        
+        Protocole pt = new ProtocoleSwinen();
+        MessageProtocole mp = pt.search(message);
+        
+        if(mp == null){
+            response.response(9);
+        }else{
+            manager.executer(mp);
         }
     }
 }

@@ -39,8 +39,8 @@ public class SortieClient extends Thread {
         outToClient.close();
     }
 
-    private void envoyer() {
-        outToClient.println(fileMessages.poll());
+    public synchronized void envoyer(String message) {
+        outToClient.println(message);
         outToClient.flush();
     }
 
@@ -48,7 +48,7 @@ public class SortieClient extends Thread {
     public void run() {
         while (true) {
             if (fileMessages.size() != 0) {
-                envoyer();
+                envoyer(fileMessages.poll());
             } else {
                 try {
                     sleep(Configuration.threadSleepMillisec);

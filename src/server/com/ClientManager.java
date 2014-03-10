@@ -5,17 +5,22 @@
  */
 package server.com;
 
+import hermes.protocole.MessageProtocole;
+import hermes.protocole.ProtocoleSwinen;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import pattern.Command;
 import server.ServerControleur;
 import server.com.commands.*;
 import server.com.etat.Connecte;
 import server.com.etat.Waiting;
+import server.com.response.SentResponse;
 import server.configuration.ListUser;
 
 /**
@@ -32,42 +37,39 @@ public class ClientManager {
     private final SortieClient sortie;
     private final Client clientInfo;
     private final Socket socket;
+    private final ListUser listeUtilisateurs;
 
+    private final SentResponse response;
     private final Connecte connecte;
     private final Waiting waiting;
 
-    private Map<String, Command> commands;
-    private Map<String, Command> commandsAdmin;
+    private Map<MessageProtocole, Command> commandsProtocole;
 
     public ClientManager(ServerControleur srv, Socket sck, ListUser listeUtilisateurs) throws IOException {
+        this.listeUtilisateurs = listeUtilisateurs;
         clientInfo = new Client(increment++);
+        response = new SentResponse(this);
 
         server = srv;
         socket = sck;
-        connecte = new Connecte(this, clientInfo, server);
-        waiting = new Waiting(this, server, clientInfo, listeUtilisateurs);
+        connecte = new Connecte(this, response);
+
         ecouteur = new EcouteurClient(clientInfo, sck, this, server);
         sortie = new SortieClient(sck);
         initCommands();
+        waiting = new Waiting(this, commandsProtocole.get(ProtocoleSwinen.HELLO), response);
 
         ecouteur.start();
         sortie.start();
     }
 
     private void initCommands() {
-        commandsAdmin = new HashMap<>();
-        commandsAdmin.put("/mute", new Mute(server));
-        commandsAdmin.put("/unmute", new UnMute(server));
+        commandsProtocole = new HashMap<>();
 
-        commands = new HashMap<>();
-        commands.put("/quit", new Quit(server, this, clientInfo));
-        commands.put("/connect", new Connect(server, clientInfo));
-        commands.put("/set", new Set(this));
-        commands.put("/time", new Time(server, clientInfo, this));
-        commands.put("/users", new Users(server, this));
-
-        //DOIT TOUJOURS ETRE LE DERNIER AJOUT
-        commands.put("/help", new Help(this, commands, commandsAdmin));
+        commandsProtocole.put(ProtocoleSwinen.ALL, new All(server, clientInfo));
+        commandsProtocole.put(ProtocoleSwinen.HELLO, new Hello(this, clientInfo, listeUtilisateurs, response, server, commandsProtocole.get(ProtocoleSwinen.ALL)));
+        commandsProtocole.put(ProtocoleSwinen.MSG, new Msg(server, response));
+        commandsProtocole.put(ProtocoleSwinen.QUIT, new Quit(this, server, commandsProtocole.get(ProtocoleSwinen.ALL)));
     }
 
     public Client getClient() {
@@ -75,6 +77,7 @@ public class ClientManager {
     }
 
     public void traiter(String message) {
+        message = nettoyer(message, false);
         if (clientInfo.isAccepte()) {
             connecte.traiter(message);
         } else {
@@ -82,36 +85,20 @@ public class ClientManager {
         }
     }
 
-    public void executer(String requete) {
-        String[] r = requete.split(" ", 2);
-        if (r.length >= 1) {
-
-            Command commandPublique = commands.get(r[0]);
-            Command commandAdmin = commandsAdmin.get(r[0]);
-
-            if (commandPublique != null) {
-                if (r.length == 2) {
-                    commandPublique.execute(r[1]);
-                } else {
-                    commandPublique.execute();
-                }
-
-            } else if (clientInfo.isAdmin() && commandAdmin != null) {
-                if (r.length == 2) {
-                    commandAdmin.execute(r[1]);
-                } else {
-                    commandAdmin.execute();
-                }
-            } else {
-                envoyer(String.format("server : commande %s inconnue\n", requete));
-            }
-        }
+    public void executer(MessageProtocole message) {
+        Command command = commandsProtocole.get(message);
+        command.execute(message);
     }
 
     public void envoyer(String message) {
-        if (clientInfo.isAccepte()) {
-            sortie.ajouter(message);
-        }
+        message = nettoyer(message, true);
+        sortie.ajouter(message);
+
+    }
+
+    public void envoitImmediat(String message) {
+        message = nettoyer(message, true);
+        sortie.envoyer(message);
     }
 
     public void close() {
@@ -125,6 +112,27 @@ public class ClientManager {
             Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
             server.afficher("[error] socket avec " + toString() + " mal fermé");
         }
+    }
+
+    private String nettoyer(String text, boolean envoi) {
+        String n = "\n";
+        String r = "\r";
+        String nPropre = "-n";
+        String rPropre = "-r";
+        if (!envoi) {
+            n = "-n";
+            r = "-r";
+            nPropre = "\n";
+            rPropre = "\r";
+        }
+        text = remplacer(n, text, nPropre);
+        return remplacer(r, text, rPropre);
+
+    }
+
+    private String remplacer(String definition, String sequence, String synthax) {
+        Matcher chercher = Pattern.compile(definition).matcher(sequence);
+        return chercher.replaceAll(synthax);
     }
 
 }

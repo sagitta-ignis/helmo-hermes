@@ -5,11 +5,12 @@
  */
 package server.com.etat;
 
-import server.ServerControleur;
-import server.com.Client;
+import hermes.protocole.MessageProtocole;
+import hermes.protocole.Protocole;
+import hermes.protocole.ProtocoleSwinen;
+import pattern.Command;
 import server.com.ClientManager;
-import server.configuration.ListUser;
-import server.configuration.User;
+import server.com.response.SentResponse;
 
 /**
  *
@@ -17,53 +18,28 @@ import server.configuration.User;
  */
 public class Waiting {
 
-    private int tentativesConnection;
     private final ClientManager manager;
-    private final ServerControleur serveur;
-    private final Client clientInfo;
-    private final ListUser utilisateurs;
+    private final SentResponse response;
+    private final Command hello;
 
-    public Waiting(ClientManager clientManager, ServerControleur server, Client client, ListUser listeUtilisateurs) {
+    public Waiting(ClientManager clientManager, Command hello, SentResponse response) {
         manager = clientManager;
-        serveur = server;
-        clientInfo = client;
-        tentativesConnection = 0;
-        utilisateurs = listeUtilisateurs;
+        this.response = response;
+        this.hello = hello;
     }
 
     public void traiter(String message) {
-        
-        String[] r = message.split(" ", 3);
-        if (r[0].equals("/connect")) {
-            if (r.length == 3) {
-                verifierDonnees(r[1], r[2]);
+
+        Protocole pt = new ProtocoleSwinen();
+        MessageProtocole mp = pt.search(message);
+
+        if (mp != null) {
+            if (mp.equals(ProtocoleSwinen.HELLO)) {
+                hello.execute(mp);
             }
-        }
-
-        tentativesConnection++;
-        nombresDeConnectionValides();
-    }
-
-    private void nombresDeConnectionValides() {
-        if (tentativesConnection >= 3) {
+        } else {
+            response.response(9);
             manager.close();
         }
-    }
-
-    private void verifierDonnees(String pseudo, String motDePasse) {
-        if (pseudo != null && motDePasse != null) {
-            for (User myUser : utilisateurs.getUsers()) {
-                if (myUser.getNickname().equals(pseudo) && myUser.getPassword().equals(motDePasse)) {
-                    connectionAvecSucces(pseudo);
-                }
-            }
-        }
-    }
-
-    private void connectionAvecSucces(String pseudo) {
-        clientInfo.setAccepte(true);
-        clientInfo.setUsername(pseudo);
-        serveur.transmettre(pseudo + " connecté");
-        manager.envoyer("Bienvenue sur Hermes !");
     }
 }
