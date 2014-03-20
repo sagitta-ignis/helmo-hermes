@@ -12,7 +12,7 @@ import java.util.AbstractMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import pattern.Command;
+import pattern.CommandArgument;
 import server.ServerControleur;
 import server.com.ClientManager;
 import server.com.etat.Waiting;
@@ -22,7 +22,7 @@ import server.com.response.SentResponse;
  *
  * @author David
  */
-public class Msg implements Command {
+public class Msg extends CommandArgument {
 
     private final ServerControleur serveur;
     private final SentResponse response;
@@ -33,13 +33,26 @@ public class Msg implements Command {
         this.response = response;
     }
 
-    @Override
-    public void execute() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void transmettre(ClientManager client, String text, String auteur) {
+        Protocole protocole = new ProtocoleSwinen();
+        protocole.prepare(ProtocoleSwinen.SMSG);
+        String message = "";
+        try {
+            message = protocole.make(
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.sender, auteur),
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, text)
+            );
+        } catch (Exception ex) {
+            Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        serveur.afficher(auteur + " -> " + client.getClient().getUsername() + ": " + text);
+        client.envoyer(message);
     }
 
     @Override
-    public void execute(MessageProtocole message) {
+    public void execute() {
+        MessageProtocole message = (MessageProtocole) args[0];
         boolean found = false;
         String destinataire = message.get(ProtocoleSwinen.receiver);
         String text = message.get(ProtocoleSwinen.message);
@@ -47,35 +60,16 @@ public class Msg implements Command {
 
         for (ClientManager client : clientConnecte) {
             if (client.getClient().getUsername().equals(destinataire)) {
-                found = true;                
+                found = true;
                 transmettre(client, text, client.getClient().getUsername());
 
             }
         }
 
         if (!found) {
-            response.response(1);
+            response.sent(1);
         } else {
-            response.response(0);
+            response.sent(0);
         }
-
     }
-
-    private void transmettre(ClientManager client, String text, String auteur) {
-        Protocole protocole = new ProtocoleSwinen();
-        protocole.prepare(ProtocoleSwinen.SMSG);
-        String message = "";
-        try {
-            message = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.sender,auteur),
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message,text)
-            );
-        } catch (Exception ex) {
-            Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        serveur.afficher(auteur+" -> "+client.getClient().getUsername()+": "+text);
-        client.envoyer(message);
-    }
-
 }

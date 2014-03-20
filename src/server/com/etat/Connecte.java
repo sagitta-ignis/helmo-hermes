@@ -33,7 +33,8 @@ public class Connecte {
         MessageProtocole mp = pt.search(message);
         
         if(mp == null){
-            response.response(9);
+            response.sent(9);
+            System.err.println("Protocol inconnu: "+message);
         }else{
             manager.executer(mp);
         }

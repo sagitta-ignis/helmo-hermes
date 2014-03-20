@@ -15,11 +15,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import pattern.Command;
+import pattern.CommandArgument;
+import pattern.command.Command;
 import server.ServerControleur;
 import server.com.commands.*;
 import server.com.etat.Connecte;
 import server.com.etat.Waiting;
+import server.com.response.SentAll;
 import server.com.response.SentResponse;
 import server.configuration.ListUser;
 
@@ -40,6 +42,7 @@ public class ClientManager {
     private final ListUser listeUtilisateurs;
 
     private final SentResponse response;
+    private final SentAll sentAll;
     private final Connecte connecte;
     private final Waiting waiting;
 
@@ -48,16 +51,19 @@ public class ClientManager {
     public ClientManager(ServerControleur srv, Socket sck, ListUser listeUtilisateurs) throws IOException {
         this.listeUtilisateurs = listeUtilisateurs;
         clientInfo = new Client(increment++);
-        response = new SentResponse(this);
-
+        
         server = srv;
         socket = sck;
+        
+        response = new SentResponse(this);
+        sentAll = new SentAll(server);
+        
         connecte = new Connecte(this, response);
 
         ecouteur = new EcouteurClient(clientInfo, sck, this, server);
         sortie = new SortieClient(sck);
         initCommands();
-        waiting = new Waiting(this, commandsProtocole.get(ProtocoleSwinen.HELLO), response);
+        waiting = new Waiting(this, response);
 
         ecouteur.start();
         sortie.start();
@@ -66,10 +72,10 @@ public class ClientManager {
     private void initCommands() {
         commandsProtocole = new HashMap<>();
 
-        commandsProtocole.put(ProtocoleSwinen.ALL, new All(server, clientInfo));
-        commandsProtocole.put(ProtocoleSwinen.HELLO, new Hello(this, clientInfo, listeUtilisateurs, response, server, commandsProtocole.get(ProtocoleSwinen.ALL)));
+        commandsProtocole.put(ProtocoleSwinen.ALL, new All(sentAll, clientInfo));
+        commandsProtocole.put(ProtocoleSwinen.HELLO, new Hello(this, clientInfo, listeUtilisateurs, response, sentAll));
         commandsProtocole.put(ProtocoleSwinen.MSG, new Msg(server, response));
-        commandsProtocole.put(ProtocoleSwinen.QUIT, new Quit(this, server, commandsProtocole.get(ProtocoleSwinen.ALL)));
+        commandsProtocole.put(ProtocoleSwinen.QUIT, new Quit(this, sentAll));
     }
 
     public Client getClient() {
@@ -87,7 +93,8 @@ public class ClientManager {
 
     public void executer(MessageProtocole message) {
         Command command = commandsProtocole.get(message);
-        command.execute(message);
+        ((CommandArgument)command).setArgs(message);
+        command.execute();
     }
 
     public void envoyer(String message) {

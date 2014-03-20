@@ -23,7 +23,7 @@ public class SentResponse {
 
     private final Protocole protocole;
     private final ClientManager manager;
-    private Map<Integer, Response> errorList;
+    private final Map<Integer, Response> errorList;
 
     public SentResponse(ClientManager manager) {
         protocole = new ProtocoleSwinen();
@@ -32,7 +32,7 @@ public class SentResponse {
         initErrors();
     }
 
-    public void response(int idError) {
+    public void sent(int idError) {
 
         if (errorList.get(idError) != null) {
             protocole.prepare(ProtocoleSwinen.response);

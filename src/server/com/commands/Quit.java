@@ -5,36 +5,27 @@
  */
 package server.com.commands;
 
-import hermes.protocole.MessageProtocole;
-import pattern.Command;
-import server.ServerControleur;
+import pattern.CommandArgument;
 import server.com.ClientManager;
+import server.com.response.SentAll;
 
 /**
  *
  * @author David
  */
-public class Quit implements Command {
+public class Quit extends CommandArgument {
 
-    private ClientManager client;
-    private ServerControleur serveur;
-    private final All sendAll;
+    private final ClientManager client;
+    private final SentAll sentAll;
 
-    public Quit(ClientManager client, ServerControleur serveur, Command sendAll) {
+    public Quit(ClientManager client, SentAll sentAll) {
         this.client = client;
-        this.serveur = serveur;
-        this.sendAll = (All) sendAll;
+        this.sentAll = sentAll;
     }
 
     @Override
     public void execute() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void execute(MessageProtocole message) {
-        sendAll.execute("Serveur", client.getClient().getUsername() + " deconnecte");
-        serveur.afficher(client.getClient().getUsername() + " déconnecté");
+        sentAll.sent("Serveur", client.getClient().getUsername() + " deconnecte");
         client.close();
     }
 

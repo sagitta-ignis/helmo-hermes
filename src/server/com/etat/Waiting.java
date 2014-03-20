@@ -8,7 +8,6 @@ package server.com.etat;
 import hermes.protocole.MessageProtocole;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import pattern.Command;
 import server.com.ClientManager;
 import server.com.response.SentResponse;
 
@@ -20,12 +19,10 @@ public class Waiting {
 
     private final ClientManager manager;
     private final SentResponse response;
-    private final Command hello;
 
-    public Waiting(ClientManager clientManager, Command hello, SentResponse response) {
+    public Waiting(ClientManager clientManager, SentResponse response) {
         manager = clientManager;
         this.response = response;
-        this.hello = hello;
     }
 
     public void traiter(String message) {
@@ -35,10 +32,10 @@ public class Waiting {
 
         if (mp != null) {
             if (mp.equals(ProtocoleSwinen.HELLO)) {
-                hello.execute(mp);
+                manager.executer(mp);
             }
         } else {
-            response.response(9);
+            response.sent(9);
             manager.close();
         }
     }

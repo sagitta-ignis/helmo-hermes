@@ -6,57 +6,30 @@
 package server.com.commands;
 
 import hermes.protocole.MessageProtocole;
-import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import java.util.AbstractMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import pattern.Command;
-import server.ServerControleur;
+import pattern.CommandArgument;
 import server.com.Client;
-import server.com.etat.Waiting;
+import server.com.response.SentAll;
 
 /**
  *
  * @author David
  */
-public class All implements Command {
+public class All extends CommandArgument {
 
-    private final ServerControleur server;
+    private final SentAll sentAll;
     private final Client client;
 
-    public All(ServerControleur server, Client client) {
-        this.server = server;
+    public All(SentAll sentAll, Client client) {
+        this.sentAll = sentAll;
         this.client = client;
-    }
-
-    public void execute(String auteur, String message) {
-        Protocole protocole = new ProtocoleSwinen();
-
-        protocole.prepare(ProtocoleSwinen.SALL);
-        String messageProtocole = "";
-        try {
-            messageProtocole = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.sender, auteur),
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, message)
-            );
-        } catch (Exception ex) {
-            Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        server.transmettre(messageProtocole);
-    }
-
-    @Override
-    public void execute(MessageProtocole message) {
-        String messageUtilisateur = message.get(ProtocoleSwinen.message);
-
-        execute(client.getUsername(),messageUtilisateur);       
-        server.afficher(client.getUsername()+": " +messageUtilisateur);        
     }
 
     @Override
     public void execute() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        MessageProtocole message = (MessageProtocole) args[0];
+        String messageUtilisateur = message.get(ProtocoleSwinen.message);
+        sentAll.sent(client.getUsername(), messageUtilisateur);
     }
 
 }

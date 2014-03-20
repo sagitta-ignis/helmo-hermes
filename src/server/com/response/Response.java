@@ -12,8 +12,8 @@ package server.com.response;
  */
 public class Response {
    
-    private String id;
-    private String message;
+    private final String id;
+    private final String message;
     
     public Response(String id, String message){
         this.id = id;
