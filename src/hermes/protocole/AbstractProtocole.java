@@ -34,15 +34,15 @@ public class AbstractProtocole implements Protocole {
     }
 
     @Override
-    public String make(Entry<ABNF,String>... args) throws Exception {
-        if(prepared == null) return null;
-        prepared.effacer();
-        for (Entry<ABNF, String> entry : args) {
-            if(!prepared.set(entry.getKey(), entry.getValue())) {
-                return null;
+    public String make(Entry<ABNF,String>... args) throws Exception{
+            if(prepared == null) return null;
+            prepared.effacer();
+            for (Entry<ABNF, String> entry : args) {
+                if(!prepared.set(entry.getKey(), entry.getValue())) {
+                    return null;
+                }
             }
-        }
-        return prepared.remplir();
+            return prepared.remplir();
     }
 
     @Override

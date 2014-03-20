@@ -15,7 +15,7 @@ import hermes.format.abnf.Lexique;
 public class ProtocoleSwinen extends AbstractProtocole {
 
     private static final Lexique lexique;
-    
+
     public static ABNF user;
     public static ABNF pass;
     public static ABNF message;
@@ -29,15 +29,20 @@ public class ProtocoleSwinen extends AbstractProtocole {
     public static MessageProtocole ALL;
     public static MessageProtocole SALL;
     public static MessageProtocole QUIT;
-    public static MessageProtocole response;
-    
+    public static MessageProtocole RESPONSE;
+    public static MessageProtocole USERS;
+    public static MessageProtocole SUSERS;
+    public static MessageProtocole JOIN;
+    public static MessageProtocole LEAVE;
+    public static MessageProtocole REGISTER;
+
     static {
         lexique = new Lexique();
         initVariable();
         initLexique();
         initMessages();
     }
-    
+
     /**
      * Compile les variables du protocole à partir des mots du lexique. Le
      * lexique n'est pas encore capable de traduire l'ABNF. Il faut utiliser la
@@ -68,7 +73,12 @@ public class ProtocoleSwinen extends AbstractProtocole {
         ALL = new MessageProtocole(lexique, "ALL", "ALL space message crlf", message);
         SALL = new MessageProtocole(lexique, "SALL", "SALL space sender space message crlf", sender, message);
         QUIT = new MessageProtocole(lexique, "QUIT", "QUIT crlf");
-        response = new MessageProtocole(lexique, "response", "digit *space message* crlf", digit, message);
+        RESPONSE = new MessageProtocole(lexique, "REPONSE", "digit *space message* crlf", digit, message);
+        USERS = new MessageProtocole(lexique, "USERS", "USER crlf");
+        SUSERS = new MessageProtocole(lexique, "SUSERS", "SUSERS space crlf", user);
+        JOIN = new MessageProtocole(lexique, "JOIN", "JOIN space user crlf", user);
+        LEAVE = new MessageProtocole(lexique, "LEAVE", "LEAVE space user crlf", user);
+        REGISTER = new MessageProtocole(lexique, "REGISTER", "REGISTER space user space pass crlf", user, pass);
     }
 
     public ProtocoleSwinen() {
@@ -78,6 +88,11 @@ public class ProtocoleSwinen extends AbstractProtocole {
         add(ALL);
         add(SALL);
         add(QUIT);
-        add(response);
+        add(RESPONSE);
+        add(USERS);
+        add(SUSERS);
+        add(JOIN);
+        add(LEAVE);
+        add(REGISTER);
     }
 }
