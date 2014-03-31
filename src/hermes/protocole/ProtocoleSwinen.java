@@ -35,6 +35,8 @@ public class ProtocoleSwinen extends AbstractProtocole {
     public static MessageProtocole JOIN;
     public static MessageProtocole LEAVE;
     public static MessageProtocole REGISTER;
+    public static MessageProtocole TYPING;
+    public static MessageProtocole STYPING;
 
     static {
         lexique = new Lexique();
@@ -79,6 +81,8 @@ public class ProtocoleSwinen extends AbstractProtocole {
         JOIN = new MessageProtocole(lexique, "JOIN", "JOIN space user crlf", user);
         LEAVE = new MessageProtocole(lexique, "LEAVE", "LEAVE space user crlf", user);
         REGISTER = new MessageProtocole(lexique, "REGISTER", "REGISTER space user space pass crlf", user, pass);
+        TYPING = new MessageProtocole(lexique, "TYPING", "TYPING crlf");
+        STYPING = new MessageProtocole(lexique, "STYPING", "STYPING space user crlf",user);
     }
 
     public ProtocoleSwinen() {

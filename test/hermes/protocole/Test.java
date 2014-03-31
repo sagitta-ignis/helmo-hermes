@@ -133,7 +133,7 @@ public class Test {
 
     private boolean testResponse() {
         // préparation du message
-        protocole.prepare(ProtocoleSwinen.response);
+        protocole.prepare(ProtocoleSwinen.RESPONSE);
         String digit = "9";
         String message = "invalide";
         // création d'un message avec des variables données
