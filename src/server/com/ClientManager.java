@@ -6,7 +6,6 @@
 package server.com;
 
 import hermes.protocole.MessageProtocole;
-import hermes.protocole.ProtocoleSwinen;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
@@ -18,8 +17,9 @@ import java.util.regex.Pattern;
 import pattern.CommandArgument;
 import pattern.command.Command;
 import server.ServerControleur;
-import server.com.commands.*;
 import server.com.etat.Connecte;
+import server.com.etat.Etat;
+import server.com.etat.EtatAbstract;
 import server.com.etat.Waiting;
 import server.com.response.SentAll;
 import server.com.response.SentResponse;
@@ -43,11 +43,9 @@ public class ClientManager {
 
     private final SentResponse response;
     private final SentAll sentAll;
-    private final Connecte connecte;
-    private final Waiting waiting;
 
-    private Map<MessageProtocole, Command> commandsProtocole;
-
+    private Map<Integer, EtatAbstract> etat;
+   
     public ClientManager(ServerControleur srv, Socket sck, ListUser listeUtilisateurs) throws IOException {
         this.listeUtilisateurs = listeUtilisateurs;
         clientInfo = new Client(increment++);
@@ -57,25 +55,20 @@ public class ClientManager {
         
         response = new SentResponse(this);
         sentAll = new SentAll(server);
-        
-        connecte = new Connecte(this, response);
-
+     
         ecouteur = new EcouteurClient(clientInfo, sck, this, server);
         sortie = new SortieClient(sck);
         initCommands();
-        waiting = new Waiting(this, response);
 
         ecouteur.start();
         sortie.start();
     }
 
     private void initCommands() {
-        commandsProtocole = new HashMap<>();
+        etat = new HashMap<>();
 
-        commandsProtocole.put(ProtocoleSwinen.ALL, new All(sentAll, clientInfo));
-        commandsProtocole.put(ProtocoleSwinen.HELLO, new Hello(this, clientInfo, listeUtilisateurs, response, sentAll));
-        commandsProtocole.put(ProtocoleSwinen.MSG, new Msg(server, response));
-        commandsProtocole.put(ProtocoleSwinen.QUIT, new Quit(this, sentAll));
+        etat.put(0,new Waiting(this, clientInfo, listeUtilisateurs, response, server));
+        etat.put(3,new Connecte(clientInfo, sentAll, server, response, this));
     }
 
     public Client getClient() {
@@ -84,17 +77,9 @@ public class ClientManager {
 
     public void traiter(String message) {
         message = nettoyer(message, false);
-        if (clientInfo.isAccepte()) {
-            connecte.traiter(message);
-        } else {
-            waiting.traiter(message);
-        }
-    }
-
-    public void executer(MessageProtocole message) {
-        Command command = commandsProtocole.get(message);
-        ((CommandArgument)command).setArgs(message);
-        command.execute();
+        
+        EtatAbstract etatReaction = etat.get(clientInfo.getEtat());
+        etatReaction.verifier(message);
     }
 
     public void envoyer(String message) {

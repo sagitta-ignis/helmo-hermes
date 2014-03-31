@@ -35,7 +35,7 @@ public class SentResponse {
     public void sent(int idError) {
 
         if (errorList.get(idError) != null) {
-            protocole.prepare(ProtocoleSwinen.response);
+            protocole.prepare(ProtocoleSwinen.RESPONSE);
             String response = "";
             try {
                 response = protocole.make(

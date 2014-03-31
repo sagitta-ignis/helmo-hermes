@@ -14,6 +14,7 @@ import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.ServerControleur;
+import server.com.commands.Quit;
 
 /**
  *
@@ -58,9 +59,8 @@ public class EcouteurClient extends Thread {
 
     private void connectionLost() {
         //Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
-        server.afficher("[error] connection avec " + toString() + " perdue");
-        manager.close();
-    
+        Quit quit = new Quit(manager, server);
+        quit.execute();    
     }
 
     public void close() {

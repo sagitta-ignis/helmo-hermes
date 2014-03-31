@@ -17,18 +17,14 @@ public class Client {
     private int id;
     private String username;
     private boolean opened;
-    private boolean admin;
-    private boolean muet;
-    private boolean accepte;
+    private int etat;
     private final Date time;
     
     public Client(int idClient){
         id = idClient;
         username = "";
         opened = true;
-        admin = true;
-        muet = false;
-        accepte = false;
+        etat = 0;
         time = new Date();
     }
 
@@ -87,45 +83,17 @@ public class Client {
     }
 
     /**
-     * @return the admin
+     * @return the etat
      */
-    public boolean isAdmin() {
-        return admin;
+    public int getEtat() {
+        return etat;
     }
 
     /**
-     * @param admin the admin to set
+     * @param etat the etat to set
      */
-    public void setAdmin(boolean admin) {
-        this.admin = admin;
+    public void setEtat(int etat) {
+        this.etat = etat;
     }
 
-    /**
-     * @return the muet
-     */
-    public boolean isMuet() {
-        return muet;
-    }
-
-    /**
-     * @param muet the muet to set
-     */
-    public void setMuet(boolean muet) {
-        this.muet = muet;
-    }
-
-    /**
-     * @return the accepte
-     */
-    public boolean isAccepte() {
-        return accepte;
-    }
-
-    /**
-     * @param accepte the accepte to set
-     */
-    public void setAccepte(boolean accepte) {
-        this.accepte = accepte;
-    }
-    
 }

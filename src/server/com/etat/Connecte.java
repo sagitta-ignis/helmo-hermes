@@ -5,38 +5,45 @@
  */
 package server.com.etat;
 
-import hermes.protocole.MessageProtocole;
-import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
+import server.ServerControleur;
+import server.com.Client;
 import server.com.ClientManager;
+import server.com.commands.All;
+import server.com.commands.Msg;
+import server.com.commands.Quit;
+import server.com.commands.Typing;
+import server.com.commands.Users;
+import server.com.response.SentAll;
 import server.com.response.SentResponse;
 
 /**
  *
  * @author David
  */
-public class Connecte {
+public class Connecte extends EtatAbstract {
 
-    private final ClientManager manager;
-
-    
+    private final Client client;
+    private final SentAll sentAll;
+    private final ServerControleur server;
     private final SentResponse response;
-
-    public Connecte(ClientManager clientManager, SentResponse response) {
-        manager = clientManager; 
+    private final ClientManager manager;
+    
+    public Connecte(Client client, SentAll sentAll, ServerControleur server, SentResponse response, ClientManager manager) {
+        super(response);
+        this.client = client;
+        this.sentAll = sentAll;
+        this.server = server;
         this.response = response;
+        this.manager = manager;
     }
 
-    public void traiter(String message) {
-        
-        Protocole pt = new ProtocoleSwinen();
-        MessageProtocole mp = pt.search(message);
-        
-        if(mp == null){
-            response.sent(9);
-            System.err.println("Protocol inconnu: "+message);
-        }else{
-            manager.executer(mp);
-        }
+    @Override
+    public void initialiserCommandes() {
+        commandsProtocole.put(ProtocoleSwinen.ALL, new All(sentAll, client));
+        commandsProtocole.put(ProtocoleSwinen.MSG, new Msg(server, response));
+        commandsProtocole.put(ProtocoleSwinen.QUIT, new Quit(manager, server));
+        commandsProtocole.put(ProtocoleSwinen.USERS, new Users());
+        commandsProtocole.put(ProtocoleSwinen.TYPING, new Typing(server, client));
     }
 }

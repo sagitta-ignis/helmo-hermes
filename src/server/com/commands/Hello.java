@@ -8,9 +8,10 @@ package server.com.commands;
 import hermes.protocole.MessageProtocole;
 import hermes.protocole.ProtocoleSwinen;
 import pattern.CommandArgument;
+import server.ServerControleur;
 import server.com.Client;
 import server.com.ClientManager;
-import server.com.response.SentAll;
+import server.com.response.SentJoin;
 import server.com.response.SentResponse;
 import server.configuration.ListUser;
 import server.configuration.User;
@@ -25,24 +26,26 @@ public class Hello extends CommandArgument {
     private final Client clientInfo;
     private final ListUser utilisateurs;
     private final SentResponse response;
-    private final SentAll sentAll;
+    private final ServerControleur server;
 
-    public Hello(ClientManager clientManager, Client client, ListUser listeUtilisateurs, SentResponse response, SentAll sentAll) {
+    public Hello(ClientManager clientManager, Client client, ListUser listeUtilisateurs, SentResponse response, ServerControleur server) {
         manager = clientManager;
         clientInfo = client;
         this.response = response;
 
-        this.sentAll = sentAll;
+        this.server = server;
         utilisateurs = listeUtilisateurs;
 
     }
 
     private void connectionAvecSucces(String pseudo) {
-        clientInfo.setAccepte(true);
+        SentJoin sentJoin = new SentJoin(manager, server);
+        sentJoin.sent();
+        clientInfo.setEtat(3);
         clientInfo.setUsername(pseudo);
 
         response.sent(0);
-        sentAll.sent("Serveur", pseudo + " connecte");
+        
 
     }
 
@@ -59,7 +62,7 @@ public class Hello extends CommandArgument {
                 }
             }
         }
-        if (!clientInfo.isAccepte()) {
+        if (clientInfo.getEtat() != 3) {
             response.sent(1);
             manager.close();
         }

@@ -7,53 +7,44 @@ package server.com.commands;
 
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import static hermes.protocole.ProtocoleSwinen.message;
 import java.util.AbstractMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pattern.CommandArgument;
 import server.ServerControleur;
-import server.com.ClientManager;
+import server.com.Client;
 import server.com.etat.Waiting;
 
 /**
  *
  * @author David
  */
-public class Quit extends CommandArgument {
+public class Typing extends CommandArgument {
 
-    private final Protocole protocole;
-    private final ClientManager client;
     private final ServerControleur server;
+    private final Client clientInfo;
+    private final Protocole protocole;
 
-    public Quit(ClientManager client,ServerControleur server) {
-        protocole = new ProtocoleSwinen();
-        this.client = client;
+    public Typing(ServerControleur server, Client clientInfo) {
         this.server = server;
+        this.clientInfo = clientInfo;
+        protocole = new ProtocoleSwinen();
     }
 
     @Override
     public void execute() {
-        sent();
-        client.close();
 
-    }
-
-    private void sent() {
-
-        protocole.prepare(ProtocoleSwinen.LEAVE);
+        protocole.prepare(ProtocoleSwinen.STYPING);
         String messageProtocole = "";
         try {
             messageProtocole = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user, client.getClient().getUsername())
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user,clientInfo.getUsername())
             );
         } catch (Exception ex) {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        server.afficher(client.getClient().getUsername() + " a été deconnecté");
         server.transmettre(messageProtocole);
-
     }
 
 }

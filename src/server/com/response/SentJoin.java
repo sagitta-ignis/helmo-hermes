@@ -3,15 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package server.com.commands;
+package server.com.response;
 
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import static hermes.protocole.ProtocoleSwinen.message;
 import java.util.AbstractMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import pattern.CommandArgument;
 import server.ServerControleur;
 import server.com.ClientManager;
 import server.com.etat.Waiting;
@@ -20,40 +18,32 @@ import server.com.etat.Waiting;
  *
  * @author David
  */
-public class Quit extends CommandArgument {
+public class SentJoin {
 
     private final Protocole protocole;
     private final ClientManager client;
     private final ServerControleur server;
 
-    public Quit(ClientManager client,ServerControleur server) {
-        protocole = new ProtocoleSwinen();
+    public SentJoin(ClientManager client, ServerControleur server) {
+        this.protocole = new ProtocoleSwinen();
         this.client = client;
         this.server = server;
     }
 
-    @Override
-    public void execute() {
-        sent();
-        client.close();
+    public void sent() {
 
-    }
-
-    private void sent() {
-
-        protocole.prepare(ProtocoleSwinen.LEAVE);
+        protocole.prepare(ProtocoleSwinen.JOIN);
         String messageProtocole = "";
         try {
             messageProtocole = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user, client.getClient().getUsername())
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user,client.getClient().getUsername())
             );
         } catch (Exception ex) {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        server.afficher(client.getClient().getUsername() + " a été deconnecté");
+        server.afficher(client.getClient().getUsername() + " connecté");
         server.transmettre(messageProtocole);
 
     }
-
 }
