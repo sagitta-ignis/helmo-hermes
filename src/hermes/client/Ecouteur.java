@@ -21,10 +21,12 @@ import java.util.logging.Logger;
 public class Ecouteur extends Thread {
 
     Client client;
+    ServerRequestHandler serverRequest;
     BufferedReader inFromServer;
 
     public Ecouteur(Client clt) {
         client = clt;
+        serverRequest = new ServerRequestHandler(client);
     }
 
     public void lier(Socket socket) throws IOException {
@@ -38,18 +40,16 @@ public class Ecouteur extends Thread {
 
     @Override
     public void run() {
-        while (client.canRun()) {
+        while (client.getConnectionHandler().canRun()) {
             String message = lire();
-            if(!traiter(message)) {
-                client.setOpened(false);
-                break;
-            }
+            traiter(message);
         }
     }
 
     public String lire() {
         try {
-            return inFromServer.readLine();
+            String message = inFromServer.readLine();
+            return message + "\r\n";
         } catch (SocketException ex) {
             return "[error] connexion perdue avec le serveur";
         } catch (IOException ex) {
@@ -60,22 +60,24 @@ public class Ecouteur extends Thread {
 
     private boolean traiter(String message) {
         if (message != null) {
-            client.print(message);
-            return !message.startsWith("[error]");
+            serverRequest.parser(message);
+            return false;
         }
-        return false;
+        return true;
     }
 
-    public void fermer() {
+    public void fermer() throws IOException {
         this.interrupt();
         try {
             if (inFromServer != null) {
                 inFromServer.close();
             }
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            client.print("[error] socket avec serveur mal fermé");
+            String message = "[error] socket avec serveur mal fermé";
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, message, ex);
+            throw new IOException(message);
+        } finally {
+            inFromServer = null;
         }
-        inFromServer = null;
     }
 }

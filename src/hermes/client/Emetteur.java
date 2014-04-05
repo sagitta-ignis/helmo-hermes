@@ -31,7 +31,9 @@ public class Emetteur {
     }
 
     public void envoyer(String message) {
-        outToServer.println(message);
+        if(outToServer != null) {
+            outToServer.println(message);
+        }
     }
 
     public void fermer() {
