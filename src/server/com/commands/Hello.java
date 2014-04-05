@@ -38,14 +38,12 @@ public class Hello extends CommandArgument {
 
     }
 
-    private void connectionAvecSucces(String pseudo) {
-        SentJoin sentJoin = new SentJoin(manager, server);
-        sentJoin.sent();
+    private void connectionAvecSucces(String pseudo) {        
         clientInfo.setEtat(3);
         clientInfo.setUsername(pseudo);
-
         response.sent(0);
-        
+        SentJoin sentJoin = new SentJoin(manager, server);
+        sentJoin.sent();
 
     }
 

@@ -44,6 +44,5 @@ public class SentJoin {
 
         server.afficher(client.getClient().getUsername() + " connecté");
         server.transmettre(messageProtocole);
-
     }
 }

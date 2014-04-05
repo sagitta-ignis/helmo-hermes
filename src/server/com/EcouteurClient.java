@@ -47,7 +47,7 @@ public class EcouteurClient extends Thread {
             if (message == null) {
                 connectionLost();
             } else if (message.length() > 0) {
-                manager.traiter(message);
+                manager.traiter(message + "\r\n");
             }
 
         } catch (SocketException ex) {

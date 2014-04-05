@@ -50,7 +50,6 @@ public class Waiting extends EtatAbstract {
         if (command != null) {
             ((CommandArgument) command).setArgs(messageProtocole);
             command.execute();
-
         } else {
             response.sent(9);
             manager.close();

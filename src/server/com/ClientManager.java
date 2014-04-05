@@ -76,20 +76,19 @@ public class ClientManager {
     }
 
     public void traiter(String message) {
-        message = nettoyer(message, false);
+        //message = nettoyer(message, false);
         
         EtatAbstract etatReaction = etat.get(clientInfo.getEtat());
         etatReaction.verifier(message);
     }
 
     public void envoyer(String message) {
-        message = nettoyer(message, true);
+        //message = nettoyer(message, true);
         sortie.ajouter(message);
-
     }
 
     public void envoitImmediat(String message) {
-        message = nettoyer(message, true);
+        //message = nettoyer(message, true);
         sortie.envoyer(message);
     }
 
