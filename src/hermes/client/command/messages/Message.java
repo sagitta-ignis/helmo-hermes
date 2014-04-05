@@ -3,10 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package hermes.client.command.messages;
 
 import hermes.client.Client;
+import hermes.client.ClientConnectionHandler;
+import hermes.client.Ecouteur;
+import hermes.client.Emetteur;
 import hermes.client.command.CommandArgument;
 import hermes.protocole.Protocole;
 
@@ -15,21 +17,18 @@ import hermes.protocole.Protocole;
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
 public abstract class Message extends CommandArgument {
-    
-    protected Client client;
-    protected Protocole protocole;
 
-    public Message(Client client,Protocole protocole) {
+    protected final Client client;
+    protected final Protocole protocole;
+    protected final Emetteur emetteur;
+    protected final Ecouteur ecouteur;
+    protected final ClientConnectionHandler connection;
+
+    public Message(Client client) {
         this.client = client;
-        this.protocole = protocole;
-    }
-    
-    protected boolean verifierArguments(int nombre) {
-        if(args == null && nombre == 0) return true;
-        if(args.length != nombre) return false;
-        for (Object arg : args) {
-            if(!(arg instanceof String)) return false;
-        }
-        return true;
+        protocole = client.getProtocole();
+        emetteur = client.getEmetteur();
+        ecouteur = client.getEcouteur();
+        connection = client.getConnectionHandler();
     }
 }

@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package hermes.client.command.messages;
 
 import hermes.client.Client;
+import hermes.client.ClientConnectionHandler;
+import hermes.client.Emetteur;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
 import java.util.logging.Level;
@@ -19,25 +20,26 @@ import java.util.logging.Logger;
 public class Quit extends Message {
 
     public Quit(Client client, Protocole protocole) {
-        super(client, protocole);
+        super(client);
     }
 
     @Override
     public void execute() {
-        if(verifierArguments(0)) {
+        if (verifierArguments(0)) {
+            ClientConnectionHandler connection = client.getConnectionHandler();
             protocole.prepare(ProtocoleSwinen.QUIT);
             String request;
             try {
                 request = protocole.make();
-                if(request != null && protocole.check(request)) {
-                    client.send(request);
-                    client.disconnect();
+                if (request != null && protocole.check(request)) {
+                    emetteur.envoyer(request);
+                    connection.disconnect();
                     return;
                 }
             } catch (Exception ex) {
                 Logger.getLogger(Quit.class.getName()).log(Level.SEVERE, null, ex);
             }
-            client.print("-- bad protocol [s]");
+            client.afficher("-- bad protocol [s]");
         }
     }
 }

@@ -1,8 +1,9 @@
 package hermes;
 
-
 import hermes.client.controleur.Logger;
 import hermes.client.Client;
+import hermes.client.ClientListener;
+import hermes.client.Encodeur;
 import hermes.client.exception.NotConnectedException;
 import hermes.client.exception.UnopenableExecption;
 import hermes.client.exception.UnreachableServerExeception;
@@ -23,14 +24,25 @@ public class Program {
 
     public void startConsole() {
         Scanner input = new Scanner(System.in);
-        Client c = new Client(System.in, System.out);
+        Client c = new Client();
         try {
             c.connect("127.0.0.1", 12345);
             System.out.println("-- client a démarré");
             System.out.println("Entrer un nom : ");
             String nom = input.nextLine();
-            c.login(nom, null);
-            c.open();
+            if (c.login(nom, null)) {
+                Encodeur enc = new Encodeur(c, System.in);
+                ClientListener cl = new ClientListener() {
+                    @Override
+                    public void lire(String text) {
+                        System.out.println(text);
+                    }
+                };
+                c.addListener(cl);
+                enc.start();
+                c.open();
+            }
+            c.close();
         } catch (UnreachableServerExeception ex) {
             java.util.logging.Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("[error] impossible de se connecter : création du socket client a échoué");
@@ -40,9 +52,12 @@ public class Program {
         } catch (UnopenableExecption ex) {
             java.util.logging.Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("[error] impossible de continuer : client n'est pas connecté ou authentifié");
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("[error] client s'est mal fermé");
+        } finally {
+            System.exit(0);
         }
-        c.close();
-        System.exit(0);
     }
 
     public void startInterface() {

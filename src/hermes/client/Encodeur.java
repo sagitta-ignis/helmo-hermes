@@ -19,14 +19,14 @@ public class Encodeur extends Thread {
 
     public Encodeur(Client client, InputStream in) {
         this.client = client;
-        this.input = new Scanner(in);
+        input = new Scanner(in);
     }
     
     @Override
     public void run() {
         while (client.canRun()) {
             String message = input.nextLine();
-            client.send(message);
+            client.envoyer("all", message);
         }
     }
 }

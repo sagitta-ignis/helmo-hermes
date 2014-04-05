@@ -5,21 +5,18 @@ package hermes.client;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import hermes.client.command.CommandArgument;
 import hermes.client.command.messages.*;
 import hermes.client.exception.NotConnectedException;
 import hermes.client.exception.UnreachableServerExeception;
 import hermes.client.exception.UnopenableExecption;
-import hermes.protocole.MessageProtocole;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
 import java.io.*;
-import java.net.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  *
@@ -27,103 +24,57 @@ import java.util.regex.Pattern;
  */
 public class Client {
 
-    private Protocole protocole;
-    private Socket socket;
+    private final Protocole protocole;
+    private final ClientConnectionHandler connectionHandler;
     private final Emetteur emetteur;
     private final Ecouteur ecouteur;
-    private Encodeur encodeur;
 
-    private PrintStream output;
-    private ClientListener listener;
-
-    private Map<MessageProtocole, Message> request;
-
-    private boolean connected;
-    private boolean logged;
-    private boolean opened;
+    private final List<ClientListener> listeners;
 
     public Client() {
-        connected = false;
-        logged = false;
-        opened = false;
-        request = new HashMap<>();
         protocole = new ProtocoleSwinen();
+        connectionHandler = new ClientConnectionHandler();
         emetteur = new Emetteur();
         ecouteur = new Ecouteur(this);
-        initCommands();
+
+        listeners = new ArrayList<>();
     }
 
-    private void initCommands() {
-        request.put(ProtocoleSwinen.SALL, new SAll(this, protocole));
-        request.put(ProtocoleSwinen.SMSG, new SMsg(this, protocole));
+    public void addListener(ClientListener listener) {
+        listeners.add(listener);
     }
 
-    public Client(ClientListener cl, InputStream in, OutputStream out) {
-        this();
-        listener = cl;
-        if (in != null) {
-            encodeur = new Encodeur(this, in);
-        }
-        if (out != null) {
-            output = new PrintStream(out);
-        }
+    public Protocole getProtocole() {
+        return protocole;
     }
 
-    public Client(ClientListener cl) {
-        this(cl, null, null);
+    public ClientConnectionHandler getConnectionHandler() {
+        return connectionHandler;
     }
 
-    public Client(InputStream in, OutputStream out) {
-        this(null, in, out);
+    public Emetteur getEmetteur() {
+        return emetteur;
+    }
+
+    public Ecouteur getEcouteur() {
+        return ecouteur;
     }
 
     public boolean connect(String host, int port) throws UnreachableServerExeception {
-        try {
-            socket = new Socket(host, port);
-            emetteur.lier(socket);
-            ecouteur.lier(socket);
-            connected = true;
-        } catch (IOException ex) {
-            throw new UnreachableServerExeception();
-        }
-        return connected;
-    }
-
-    public boolean disconnect() {
-        logged = false;
-        connected = false;
-        try {
-            socket.close();
-        } catch (IOException ex) {
-
-        }
-        socket = null;
-        return canRun();
-    }
-
-    public boolean isConnected() {
-        return connected;
-    }
-
-    public boolean isLogged() {
-        return logged;
-    }
-
-    public void setLogged(boolean b) {
-        logged = b;
-    }
-
-    public void setOpened(boolean b) {
-        opened = b;
-    }
-
-    public boolean canRun() {
-        return connected && logged && opened;
+        return connectionHandler.connect(host, port);
     }
 
     public final boolean login(String nom, String password) throws NotConnectedException {
-        if (!connected) {
+        if (!connectionHandler.isConnected()) {
             throw new NotConnectedException();
+        }
+        try {
+            ecouteur.lier(connectionHandler.getSocket());
+            emetteur.lier(connectionHandler.getSocket());
+        } catch (IOException ex) {
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            connectionHandler.setConnected(false);
+            return false;
         }
         if (nom == null || nom.isEmpty()) {
             return false;
@@ -131,118 +82,60 @@ public class Client {
         if (password == null || password.isEmpty()) {
             password = "password";
         }
-        Message hello = new Hello(this, protocole);
+        Message hello = new Hello(this);
         hello.setArgs(nom, password);
         hello.execute();
-        return logged;
+        return connectionHandler.isLogged();
     }
 
-    public synchronized void open() throws UnopenableExecption {
-        if (!connected || !logged) {
+    public void open() throws UnopenableExecption {
+        if (!connectionHandler.isConnected() || !connectionHandler.isLogged()) {
             throw new UnopenableExecption();
         }
-        opened = true;
-        if (encodeur != null) {
-            encodeur.start();
-        }
+        connectionHandler.setOpened(true);
         ecouteur.start();
-        while ((encodeur != null && encodeur.isAlive()) || ecouteur.isAlive()) {
-            try {
-                wait(1000);
-            } catch (InterruptedException ex) {
-                break;
-            }
+        while (ecouteur.isAlive()) {
         }
     }
 
-    public void send(String text) {
-        text = nettoyer(text, true);
-        emetteur.envoyer(text);
-        //logged = !text.equals("/quit");
-    }
-
-    private String nettoyer(String text, boolean envoi) {
-        String n = "\n";
-        String r = "\r";
-        String nPropre = "-n";
-        String rPropre = "-r";
-        if (!envoi) {
-            n = "-n";
-            r = "-r";
-            nPropre = "\n";
-            rPropre = "\r";
-        }
-        text = remplacer(n, text, nPropre);
-        return remplacer(r, text, rPropre);
-    }
-
-    private String remplacer(String definition, String sequence, String synthax) {
-        Matcher chercher = Pattern.compile(definition).matcher(sequence);
-        return chercher.replaceAll(synthax);
-    }
-
-    public boolean parse(String text) {
-        if (text.startsWith("[error]")) {
-            return false;
-        }
-        text = nettoyer(text, false);
-        for (Map.Entry<MessageProtocole, Message> entry : request.entrySet()) {
-            MessageProtocole messageProtocole = entry.getKey();
-            protocole.prepare(messageProtocole);
-            if (protocole.check(text)) {
-                Message message = entry.getValue();
-                message.setArgs(text);
-                message.execute();
-            }
-        }
-        //print(message);
-        return true;
-    }
-
-    public void print(String text) {
-        if (output != null) {
-            output.println(text);
-        }
-        if (listener != null) {
-            listener.lire(text);
-        }
-    }
-
-    public void close() {
-        disconnect();
+    public void close() throws Exception {
         try {
-            socket.close();
+            connectionHandler.disconnect();
+            emetteur.fermer();
+            ecouteur.fermer();
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            print("[error] fermeture du socket client a échoué");
+            String message = "[error] fermeture du socket client a échoué";
+            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, message, ex);
+            throw new Exception(message);
         }
-        emetteur.fermer();
-        ecouteur.fermer();
     }
 
-    public Ecouteur getEcouteur() {
-        return ecouteur;
+    public boolean canRun() {
+        return connectionHandler.canRun();
     }
 
-    public String recevoir() {
-        String message = ecouteur.lire();
-        if (message == null) {
-            return null;
+    public synchronized void afficher(String text) {
+        if (listeners != null) {
+            for (ClientListener listener : listeners) {
+                listener.lire(text);
+            }
         }
-        return nettoyer(message, false);
     }
 
     public void envoyer(String user, String text) {
-        Message message;
-        if(text.equals("/quit")) {
-            message = new Quit(this, protocole);
-        } else if (user.equals("all")) {
-            message = new All(this, protocole);
+        CommandArgument message;
+        if (user == null) {
+            message = new All(this);
             message.setArgs(text);
         } else {
-            message = new Msg(this, protocole);
+            message = new Msg(this);
             message.setArgs(user, text);
         }
+        message.execute();
+    }
+
+    public void quitter() {
+        CommandArgument message = new Quit(this, protocole);
         message.execute();
     }
 }

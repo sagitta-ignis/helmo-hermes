@@ -7,6 +7,7 @@
 package hermes.client.command.messages;
 
 import hermes.client.Client;
+import hermes.client.Emetteur;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
 import java.util.AbstractMap;
@@ -17,8 +18,8 @@ import java.util.AbstractMap;
  */
 public class All extends Message {
 
-    public All(Client client, Protocole protocole) {
-        super(client, protocole);
+    public All(Client client) {
+        super(client);
     }
     @Override
     public void execute() {
@@ -35,9 +36,9 @@ public class All extends Message {
                 return;
             }
             if (request != null && protocole.check(request)) {
-                client.send(request);
+                emetteur.envoyer(request);
             } else {
-                client.print("-- le message n'a pas pu être transmis");
+                client.afficher("-- le message n'a pas pu être transmis");
             }
         }
     }

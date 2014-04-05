@@ -24,11 +24,12 @@ public class Chatter implements ClientListener {
     private final Client client;
     private final Chat fenetre;
     private final Overlay overlay;
-    
+
     public Chatter() {
-        this.fenetre = new Chat(this);
-        this.overlay = new Overlay(this);
-        this.client = new Client(this, System.in, System.out);
+        fenetre = new Chat(this);
+        overlay = new Overlay(this);
+        client = new Client();
+        client.addListener(this);
     }
 
     public boolean connect(String ip, int port) {
@@ -51,25 +52,22 @@ public class Chatter implements ClientListener {
     }
 
     public void open() {
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    client.open();
-                } catch (UnopenableExecption ex) {
-                    Logger.getLogger(Chatter.class.getName()).log(Level.SEVERE, null, ex);
-                    fenetre.avertir("Erreur", "le client n'a pas pu être ouvert");
-                }
-            }
-        });
-        t.start();
-        if(client.isLogged()) {
+        try {
+            client.open();
+            if (client.canRun()) {
             fenetre.setVisible(true);
+            }
+        } catch (UnopenableExecption ex) {
+            Logger.getLogger(Chatter.class.getName()).log(Level.SEVERE, null, ex);
+            fenetre.avertir("Erreur", "le client n'a pas pu être ouvert");
         }
     }
 
     public void send(String user, String text) {
-        if(user == null || user.isEmpty()) {
+        if(text != null && text.equals("/quit")) {
+            client.quitter();
+        }
+        if (user == null || user.isEmpty()) {
             user = "all";
         }
         client.envoyer(user, text);
@@ -77,20 +75,28 @@ public class Chatter implements ClientListener {
 
     @Override
     public void lire(String text) {
+        System.out.println(text);
         fenetre.entrer(text);
         overlay.entrer(text);
     }
 
-    public void close() {    
+    public void close() {
         desactiverOverlay();
-        client.close();
+        try {
+            client.close();
+        } catch (Exception ex) {
+            String message = "le client n'a pas pu être fermé correctement";
+            Logger.getLogger(Chatter.class.getName()).log(Level.SEVERE, message, ex);
+            fenetre.avertir("Erreur", message);
+        }
         System.exit(0);
     }
-    
-    public void afficherOverlay(int dimension){
+
+    public void afficherOverlay(int dimension) {
         overlay.initialiser(dimension);
     }
-    public void desactiverOverlay(){
+
+    public void desactiverOverlay() {
         overlay.setVisible(false);
     }
 }

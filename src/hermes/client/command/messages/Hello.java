@@ -6,7 +6,6 @@
 package hermes.client.command.messages;
 
 import hermes.client.Client;
-import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
 import java.util.AbstractMap;
 
@@ -16,8 +15,8 @@ import java.util.AbstractMap;
  */
 public class Hello extends Message {
 
-    public Hello(Client client, Protocole protocole) {
-        super(client, protocole);
+    public Hello(Client client) {
+        super(client);
     }
 
     @Override
@@ -32,22 +31,34 @@ public class Hello extends Message {
                         new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user, user),
                         new AbstractMap.SimpleEntry<>(ProtocoleSwinen.pass, pass)
                 );
-                if(request == null) return;
-                client.send(request);
-                String message = client.recevoir();
-                if(message == null) return;
-                protocole.prepare(ProtocoleSwinen.response);
-                if (protocole.check(message) && protocole.get(ProtocoleSwinen.digit).equals("0")) {
-                    client.print("-- " + user + " a rejoint le serveur");
-                    client.setLogged(true);
-                } else if (protocole.get(ProtocoleSwinen.digit).equals("1")) {
-                    client.print("-- unknown user");
-                } else if (protocole.get(ProtocoleSwinen.digit).equals("9")) {
-                    client.print("-- bad protocole [r]");
+                if (request == null) {
+                    return;
+                }
+                emetteur.envoyer(request);
+                String message = ecouteur.lire();
+                if (message == null) {
+                    return;
+                }
+                protocole.prepare(ProtocoleSwinen.RESPONSE);
+                if (protocole.check(message)) {
+                    switch (protocole.get(ProtocoleSwinen.digit)) {
+                        case "0":
+                            client.afficher("-- " + user + " a rejoint le serveur");
+                            connection.setLogged(true);
+                            break;
+                        case "1":
+                            client.afficher("-- unknown user");
+                            break;
+                        case "9":
+                            client.afficher("-- bad protocole [r]");
+                            break;
+                    }
+                } else {
+                    client.afficher("-- bad protocole [s]");
                 }
             } catch (Exception ex) {
                 // Logger.getLogger(Hello.class.getName()).log(Level.SEVERE, null, ex);
-                client.print("-- bad protocole [s]");
+                client.afficher("-- bad protocole [s]");
             }
         }
     }

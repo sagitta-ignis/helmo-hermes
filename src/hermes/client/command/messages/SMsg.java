@@ -6,7 +6,6 @@
 package hermes.client.command.messages;
 
 import hermes.client.Client;
-import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
 
 /**
@@ -15,8 +14,8 @@ import hermes.protocole.ProtocoleSwinen;
  */
 public class SMsg extends Message {
 
-    public SMsg(Client client, Protocole protocole) {
-        super(client, protocole);
+    public SMsg(Client client) {
+        super(client);
     }
 
     @Override
@@ -27,9 +26,9 @@ public class SMsg extends Message {
             if (protocole.check(text)) {
                 String sender = protocole.get(ProtocoleSwinen.sender);
                 String message = protocole.get(ProtocoleSwinen.message);
-                client.print("[pm]"+sender + " : " + message);
+                client.afficher("[pm]"+sender + " : " + message);
             } else {
-                client.print("-- bad protocole [r]");
+                client.afficher("-- bad protocole [r]");
             }
         }
     }

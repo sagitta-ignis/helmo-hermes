@@ -16,21 +16,22 @@ import hermes.protocole.ProtocoleSwinen;
  */
 public class SAll extends Message {
 
-    public SAll(Client client, Protocole protocole) {
-        super(client, protocole);
+    public SAll(Client client) {
+        super(client);
     }
 
     @Override
     public void execute() {
         if(verifierArguments(1)) {
             String text = (String) args[0];
+            Protocole protocole = client.getProtocole();
             protocole.prepare(ProtocoleSwinen.SALL);
             if(protocole.check(text)) {
                 String sender = protocole.get(ProtocoleSwinen.sender);
                 String message = protocole.get(ProtocoleSwinen.message);
-                client.print(sender + " : " + message);
+                client.afficher(sender + " : " + message);
             } else {
-                client.print("-- bad protocole [r]");
+                client.afficher("-- bad protocole [r]");
             }
         }
     }
