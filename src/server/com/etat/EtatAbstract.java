@@ -54,7 +54,7 @@ public abstract class EtatAbstract {
         }
     }
 
-    private void traiter(MessageProtocole messageProtocole) {
+    protected void traiter(MessageProtocole messageProtocole) {
 
         Command command = commandsProtocole.get(messageProtocole);
 

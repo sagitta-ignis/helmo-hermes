@@ -46,7 +46,7 @@ public class Msg extends CommandArgument {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        serveur.afficher(auteur + " -> " + client.getClient().getUsername() + ": " + text);
+        serveur.afficher(message);
         client.envoyer(message);
     }
 

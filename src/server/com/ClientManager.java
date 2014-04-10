@@ -75,20 +75,16 @@ public class ClientManager {
         return clientInfo;
     }
 
-    public void traiter(String message) {
-        //message = nettoyer(message, false);
-        
+    public void traiter(String message) {        
         EtatAbstract etatReaction = etat.get(clientInfo.getEtat());
         etatReaction.verifier(message);
     }
 
     public void envoyer(String message) {
-        //message = nettoyer(message, true);
         sortie.ajouter(message);
     }
 
     public void envoitImmediat(String message) {
-        //message = nettoyer(message, true);
         sortie.envoyer(message);
     }
 
@@ -100,30 +96,9 @@ public class ClientManager {
             sortie.close();
             socket.close();
         } catch (IOException ex) {
-            Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
-            server.afficher("[error] socket avec " + toString() + " mal fermé");
+            Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);            
+            server.afficher(response.getError(101));
         }
-    }
-
-    private String nettoyer(String text, boolean envoi) {
-        String n = "\n";
-        String r = "\r";
-        String nPropre = "-n";
-        String rPropre = "-r";
-        if (!envoi) {
-            n = "-n";
-            r = "-r";
-            nPropre = "\n";
-            rPropre = "\r";
-        }
-        text = remplacer(n, text, nPropre);
-        return remplacer(r, text, rPropre);
-
-    }
-
-    private String remplacer(String definition, String sequence, String synthax) {
-        Matcher chercher = Pattern.compile(definition).matcher(sequence);
-        return chercher.replaceAll(synthax);
     }
 
 }
