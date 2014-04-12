@@ -5,6 +5,7 @@
  */
 package hermes.protocole;
 
+import hermes.protocole.message.MessageProtocole;
 import hermes.format.abnf.ABNF;
 import hermes.format.abnf.Lexique;
 

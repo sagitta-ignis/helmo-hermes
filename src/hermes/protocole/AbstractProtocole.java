@@ -6,6 +6,7 @@
 
 package hermes.protocole;
 
+import hermes.protocole.message.MessageProtocole;
 import hermes.format.abnf.ABNF;
 import java.util.*;
 import java.util.Map.Entry;

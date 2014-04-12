@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package hermes.protocole;
+package hermes.protocole.message;
 
 import hermes.format.abnf.ABNF;
 import hermes.format.abnf.Lexique;
@@ -19,12 +19,13 @@ import java.util.regex.Pattern;
  */
 public class MessageProtocole implements Comparable<MessageProtocole> {
     private static final String EMPTY = "empty";
+    private static final Remplaceur remplaceur = new Remplaceur();
     
     private final ABNF format;
     
     private String message;
     private String sequence;
-    private final Map<String,String> affections;
+    private final Map<String,Object> affections;
 
     public MessageProtocole(Lexique lexique, String nom, String synthaxe, ABNF... variables) {
         format = lexique.compiler(nom, synthaxe, variables);
@@ -55,24 +56,19 @@ public class MessageProtocole implements Comparable<MessageProtocole> {
     
     public String remplir() throws Exception {
         message = format.getSynthax();
-        for (Map.Entry<String, String> entry : affections.entrySet()) {
+        for (Map.Entry<String, Object> entry : affections.entrySet()) {
             String variable = entry.getKey();
-            String valeur = entry.getValue();
+            Object valeur = entry.getValue();
             if(valeur.equals(EMPTY)) {
                 throw new Exception(variable + "not initialized");
             }
-            remplacer(variable, valeur);
+            message = remplaceur.remplacer(message, variable, valeur);
         }
         return message;
     }
     
-    private void remplacer(String variable, String valeur) {
-        Matcher chercher = Pattern.compile(variable).matcher(message);
-        message = chercher.replaceAll(valeur);
-    }
-    
     public void effacer() {
-        for (Map.Entry<String, String> entry : affections.entrySet()) {
+        for (Map.Entry<String, Object> entry : affections.entrySet()) {
             String key = entry.getKey();
             affections.put(key, EMPTY);
         }
