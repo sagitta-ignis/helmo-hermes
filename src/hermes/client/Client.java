@@ -9,7 +9,7 @@ import hermes.client.command.message.All;
 import hermes.client.command.message.Msg;
 import hermes.client.command.message.Hello;
 import hermes.client.command.message.Message;
-import hermes.client.command.CommandArgument;
+import pattern.command.CommandArgument;
 import hermes.client.exception.NotConnectedException;
 import hermes.client.exception.UnreachableServerExeception;
 import hermes.client.exception.UnopenableExecption;

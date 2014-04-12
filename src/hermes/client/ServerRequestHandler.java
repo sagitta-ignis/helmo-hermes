@@ -6,7 +6,7 @@
 package hermes.client;
 
 import hermes.client.command.requete.*;
-import hermes.protocole.MessageProtocole;
+import hermes.protocole.message.MessageProtocole;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
 import java.util.HashMap;

@@ -5,7 +5,7 @@
  */
 package hermes.client;
 
-import hermes.client.command.CommandArgument;
+import pattern.command.CommandArgument;
 import hermes.client.command.message.*;
 import hermes.client.controleur.Chatter;
 import java.util.*;

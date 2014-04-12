@@ -9,7 +9,7 @@ import hermes.client.Client;
 import hermes.client.ClientConnectionHandler;
 import hermes.client.Ecouteur;
 import hermes.client.Emetteur;
-import hermes.client.command.CommandArgument;
+import pattern.command.CommandArgument;
 import hermes.protocole.Protocole;
 
 /**

@@ -6,6 +6,7 @@
 
 package hermes.client.command;
 
+import pattern.command.CommandArgument;
 import java.util.HashMap;
 import java.util.Map;
 

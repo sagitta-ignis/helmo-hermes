@@ -7,7 +7,7 @@
 package hermes.client.command.requete;
 
 import hermes.client.Client;
-import hermes.client.command.CommandArgument;
+import pattern.command.CommandArgument;
 import hermes.protocole.Protocole;
 
 /**

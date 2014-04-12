@@ -7,7 +7,7 @@ package hermes.client.vue;
 
 import hermes.client.Client;
 import hermes.client.Utilisateurs;
-import hermes.client.command.CommandArgument;
+import pattern.command.CommandArgument;
 import hermes.client.command.CommandMapper;
 import java.util.Arrays;
 import java.util.Observable;
