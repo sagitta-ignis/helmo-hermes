@@ -5,13 +5,13 @@
  */
 package server.com.etat;
 
-import hermes.protocole.MessageProtocole;
+import hermes.protocole.message.MessageProtocole;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
 import java.util.HashMap;
 import java.util.Map;
-import pattern.CommandArgument;
 import pattern.command.Command;
+import pattern.command.CommandArgument;
 import server.com.response.SentResponse;
 
 /**

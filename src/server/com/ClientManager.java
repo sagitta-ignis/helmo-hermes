@@ -5,20 +5,14 @@
  */
 package server.com;
 
-import hermes.protocole.MessageProtocole;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import pattern.CommandArgument;
-import pattern.command.Command;
 import server.ServerControleur;
 import server.com.etat.Connecte;
-import server.com.etat.Etat;
 import server.com.etat.EtatAbstract;
 import server.com.etat.Waiting;
 import server.com.response.SentAll;

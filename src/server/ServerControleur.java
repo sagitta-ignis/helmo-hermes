@@ -6,8 +6,8 @@ package server;
  * and open the template in the editor.
  */
 import hermeslogger.LoggerImplements;
-import hermesxml.Xml;
-import hermesxml.XmlImpl;
+import hermes.xml.Xml;
+import hermes.xml.XmlImpl;
 import server.com.ClientManager;
 import java.io.*;
 import java.net.*;

@@ -5,10 +5,10 @@
  */
 package server.com.etat;
 
-import hermes.protocole.MessageProtocole;
+import hermes.protocole.message.MessageProtocole;
 import hermes.protocole.ProtocoleSwinen;
-import pattern.CommandArgument;
 import pattern.command.Command;
+import pattern.command.CommandArgument;
 import server.ServerControleur;
 import server.com.Client;
 import server.com.ClientManager;

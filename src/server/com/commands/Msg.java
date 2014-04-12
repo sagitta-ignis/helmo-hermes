@@ -5,14 +5,14 @@
  */
 package server.com.commands;
 
-import hermes.protocole.MessageProtocole;
+import hermes.protocole.message.MessageProtocole;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import pattern.CommandArgument;
+import pattern.command.CommandArgument;
 import server.ServerControleur;
 import server.com.Client;
 import server.com.ClientManager;

@@ -10,7 +10,7 @@ import hermes.protocole.ProtocoleSwinen;
 import java.util.AbstractMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import pattern.CommandArgument;
+import pattern.command.CommandArgument;
 import server.ServerControleur;
 import server.com.ClientManager;
 import server.com.etat.Waiting;

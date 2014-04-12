@@ -6,7 +6,7 @@
 
 package server.com.commands;
 
-import pattern.CommandArgument;
+import pattern.command.CommandArgument;
 
 /**
  *
