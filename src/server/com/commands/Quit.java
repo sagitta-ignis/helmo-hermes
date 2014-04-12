@@ -7,7 +7,6 @@ package server.com.commands;
 
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import static hermes.protocole.ProtocoleSwinen.message;
 import java.util.AbstractMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,7 +50,7 @@ public class Quit extends CommandArgument {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        server.afficher(client.getClient().getUsername() + " a été deconnecté");
+        server.afficher(messageProtocole);
         server.transmettre(messageProtocole);
 
     }

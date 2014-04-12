@@ -44,7 +44,8 @@ public class Waiting extends EtatAbstract {
         commandsProtocole.put(ProtocoleSwinen.REGISTER, new Register());
     }
 
-    private void traiter(MessageProtocole messageProtocole) {
+    @Override
+    protected void traiter(MessageProtocole messageProtocole) {
         Command command = commandsProtocole.get(messageProtocole);
 
         if (command != null) {

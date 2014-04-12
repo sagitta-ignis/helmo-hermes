@@ -15,6 +15,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.ServerControleur;
 import server.com.commands.Quit;
+import server.com.response.Response;
+import server.com.response.SentResponse;
 
 /**
  *
@@ -26,11 +28,13 @@ public class EcouteurClient extends Thread {
     private final ClientManager manager;
     private final BufferedReader inFromClient;
     private final ServerControleur server;
+    private final SentResponse responseNS;
 
     public EcouteurClient(Client client, Socket sck, ClientManager clientManager, ServerControleur serveur) throws IOException {
         clientInfo = client;
         manager = clientManager;
         server = serveur;
+        responseNS = new SentResponse();
         inFromClient = new BufferedReader(new InputStreamReader(sck.getInputStream(), Charset.forName("UTF-8")));
     }
 
@@ -53,7 +57,7 @@ public class EcouteurClient extends Thread {
         } catch (SocketException ex) {
             connectionLost();
         } catch (IOException ex) {
-            server.afficher("[error] reception depuis " + toString() + " a échouée");
+            server.afficher(responseNS.getError(102));
         }
     }
 
@@ -68,7 +72,7 @@ public class EcouteurClient extends Thread {
             inFromClient.close();
         } catch (IOException ex) {
             Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
-            server.afficher("[error] ecouteur " + toString() + " mal fermé");
+            server.afficher(responseNS.getError(103));
         }
     }
 

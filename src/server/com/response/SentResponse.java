@@ -32,29 +32,46 @@ public class SentResponse {
         initErrors();
     }
 
-    public void sent(int idError) {
+    public SentResponse() {
+        protocole = new ProtocoleSwinen();
+        errorList = new HashMap<>();
+        manager = null;
+        initErrors();
+    }
 
-        if (errorList.get(idError) != null) {
+    public void sent(int idError) {
+        manager.envoitImmediat(getError(idError));
+    }
+
+    public String getError(int id) {
+        if (errorList.get(id) != null) {
             protocole.prepare(ProtocoleSwinen.RESPONSE);
             String response = "";
             try {
                 response = protocole.make(
-                        new AbstractMap.SimpleEntry<>(ProtocoleSwinen.digit, errorList.get(idError).getId()),
-                        new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, errorList.get(idError).getMessage())
+                        new AbstractMap.SimpleEntry<>(ProtocoleSwinen.digit, errorList.get(id).getId()),
+                        new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, errorList.get(id).getMessage())
                 );
             } catch (Exception ex) {
                 Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-            manager.envoitImmediat(response);
+            return response;
         } else {
-            System.err.println("Réponse" + idError + " inconnue");
+            System.err.println("Réponse" + id + " inconnue");
         }
+        return null;
     }
 
     private void initErrors() {
         errorList.put(0, new Response("0", "OK"));
         errorList.put(1, new Response("1", "utilisateur inconnu"));
         errorList.put(9, new Response("9", "message invalide"));
+
+        //Erreurs serveur
+        errorList.put(101, new Response("101", "socket mal fermé"));
+        errorList.put(102, new Response("102", "la reception a échouée"));
+        errorList.put(103, new Response("103", "ecouteur mal fermé"));
+        errorList.put(104, new Response("104", "création du socket serveur a échouée"));
+        errorList.put(105, new Response("105", "connexion au client a échouée"));
     }
 }

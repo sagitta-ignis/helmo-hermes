@@ -5,6 +5,9 @@ package server;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import hermeslogger.LoggerImplements;
+import hermesxml.Xml;
+import hermesxml.XmlImpl;
 import server.com.ClientManager;
 import java.io.*;
 import java.net.*;
@@ -13,11 +16,10 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import server.Xml.ReadConfiguration;
-import server.Xml.ReadUsers;
+import javax.xml.bind.JAXBException;
+import server.com.response.SentResponse;
 import server.configuration.Configuration;
 import server.configuration.ListUser;
-import server.configuration.User;
 
 /**
  *
@@ -25,21 +27,24 @@ import server.configuration.User;
  */
 public class ServerControleur {
 
-    ServerSocket server;
-    Scanner input;
-    Writer output;
-    List<ClientManager> clients;
-    ListUser users;
-    Configuration config;
+    private ServerSocket server;
+    private final Scanner input;
+    private final Writer output;
+    private final List<ClientManager> clients;
+    private final hermeslogger.Logger log;
+    private ListUser users;
+    private Configuration config;
+    private final SentResponse responseNS;
 
     public ServerControleur() {
         server = null;
         clients = new ArrayList<>();
         users = new ListUser();
+        responseNS = new SentResponse();
         this.input = new Scanner(System.in);
         this.output = new PrintWriter(System.out);
-        
-        
+        log = new LoggerImplements("General");
+
         lectureFichiers();
         connection();
     }
@@ -48,12 +53,12 @@ public class ServerControleur {
         try {
             while (true) {
                 Socket clientSocket = server.accept();
-                ClientManager client = new ClientManager(this, clientSocket,users);
+                ClientManager client = new ClientManager(this, clientSocket, users);
                 clients.add(client);
             }
         } catch (IOException ex) {
             Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
-            afficher("[error] connexion au client a échouée");
+            afficher(responseNS.getError(105));
         }
     }
 
@@ -65,12 +70,17 @@ public class ServerControleur {
 
     public void afficher(String message) {
         try {
-            output.write(message + "\n");
+            log.ajouterMessage(message);
+
+            output.write(message);
             output.flush();
+
         } catch (IOException ex) {
             Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("[warning] flux de sortie du serveur n'a pu être utilisé");
             System.out.println(message);
+        } catch (JAXBException ex) {
+            Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -82,9 +92,13 @@ public class ServerControleur {
         for (ClientManager client : clients) {
             client.close();
         }
+        try {
+            log.close();
+        } catch (JAXBException ex) {
+            Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
+        }
         server.close();
     }
-
 
     public List<ClientManager> getConnected() {
         return clients;
@@ -95,18 +109,18 @@ public class ServerControleur {
             server = new ServerSocket(config.getPort());
         } catch (IOException ex) {
             Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
-            afficher("[error] création du socket serveur a échouée");
+            afficher(responseNS.getError(104));
         }
     }
 
     private void lectureFichiers() {
+        Xml xml = new XmlImpl();
         try {
-            config = ReadConfiguration.UnmarshalConfig(new FileInputStream("./config.xml"));
-            users.setUsers((List<User>)ReadUsers.UnmarshalConfig(new FileInputStream(config.getUserFileName())).getUsers());
+            config = (Configuration) xml.read(new FileInputStream("./config.xml"), Configuration.class);
+            users = (ListUser) xml.read(new FileInputStream(config.getUserFileName()), ListUser.class);
         } catch (Exception ex) {
             Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
 
 }

@@ -42,7 +42,7 @@ public class SentJoin {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        server.afficher(client.getClient().getUsername() + " connecté");
+        server.afficher(messageProtocole);
         server.transmettre(messageProtocole);
     }
 }

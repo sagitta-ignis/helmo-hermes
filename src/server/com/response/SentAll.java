@@ -40,7 +40,7 @@ public class SentAll {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        server.afficher(auteur + ": " + message);
+        server.afficher(messageProtocole);
         server.transmettre(messageProtocole);
 
     }
