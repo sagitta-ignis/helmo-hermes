@@ -17,13 +17,13 @@ import pattern.command.Command;
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public class Logger implements ActionListener {
+public class Authentifier implements ActionListener {
     private final Login login;
     private final Chatter chat;
     
     private Map<String, Command> commands;
     
-    public Logger() {
+    public Authentifier() {
         chat = new Chatter();
         initCommands();
         login = new Login(this);

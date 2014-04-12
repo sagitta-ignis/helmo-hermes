@@ -1,16 +1,17 @@
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * and ouvrir the template in the editor.
  */
 package hermes.client.controleur;
 
 import hermes.client.Client;
-import hermes.client.ClientListener;
+import hermes.client.ClientMessageHandler;
+import hermes.client.Utilisateurs;
 import hermes.client.exception.NotConnectedException;
 import hermes.client.exception.UnopenableExecption;
 import hermes.client.exception.UnreachableServerExeception;
-import hermes.client.vue.Chat;
+import hermes.client.vue.IRCChat;
 import hermes.client.vue.Overlay;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,17 +20,30 @@ import java.util.logging.Logger;
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public class Chatter implements ClientListener {
+public class Chatter {
 
+    private final Utilisateurs users;
     private final Client client;
-    private final Chat fenetre;
+    private final ClientMessageHandler requestHandler;
+    private final IRCChat fenetre;
     private final Overlay overlay;
 
     public Chatter() {
-        fenetre = new Chat(this);
+        fenetre = new IRCChat(this);
         overlay = new Overlay(this);
-        client = new Client();
-        client.addListener(this);
+        users = new Utilisateurs();
+        users.addObserver(fenetre);
+        client = new Client(users);
+        client.addObserver(fenetre);
+        requestHandler = new ClientMessageHandler(this);
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public IRCChat getFenetre() {
+        return fenetre;
     }
 
     public boolean connect(String ip, int port) {
@@ -53,9 +67,9 @@ public class Chatter implements ClientListener {
 
     public void open() {
         try {
-            client.open();
+            client.ouvrir();
             if (client.canRun()) {
-            fenetre.setVisible(true);
+                fenetre.setVisible(true);
             }
         } catch (UnopenableExecption ex) {
             Logger.getLogger(Chatter.class.getName()).log(Level.SEVERE, null, ex);
@@ -63,27 +77,23 @@ public class Chatter implements ClientListener {
         }
     }
 
-    public void send(String user, String text) {
-        if(text != null && text.equals("/quit")) {
-            client.quitter();
+    public void entrer(String user, String text) {
+        if (text == null) {
+            return;
         }
-        if (user == null || user.isEmpty()) {
-            user = "all";
+        if (!requestHandler.traiter(text)) {
+            if (user == null || user.isEmpty()) {
+                client.envoyer(text);
+            } else {
+                client.envoyer(user, text);
+            }
         }
-        client.envoyer(user, text);
     }
 
-    @Override
-    public void lire(String text) {
-        System.out.println(text);
-        fenetre.entrer(text);
-        overlay.entrer(text);
-    }
-
-    public void close() {
+    public void fermer() {
         desactiverOverlay();
         try {
-            client.close();
+            client.fermer();
         } catch (Exception ex) {
             String message = "le client n'a pas pu être fermé correctement";
             Logger.getLogger(Chatter.class.getName()).log(Level.SEVERE, message, ex);

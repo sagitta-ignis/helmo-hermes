@@ -1,7 +1,7 @@
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * and ouvrir the template in the editor.
  */
 package hermes.client;
 
@@ -21,11 +21,13 @@ import java.util.logging.Logger;
 public class Ecouteur extends Thread {
 
     Client client;
+    MessageQueueHandler messageQueue;
     ServerRequestHandler serverRequest;
     BufferedReader inFromServer;
 
     public Ecouteur(Client clt) {
         client = clt;
+        messageQueue = new MessageQueueHandler();
         serverRequest = new ServerRequestHandler(client);
     }
 
@@ -38,32 +40,57 @@ public class Ecouteur extends Thread {
         );
     }
 
+    public MessageQueueHandler getMessageQueue() {
+        return messageQueue;
+    }
+
     @Override
     public void run() {
         while (client.getConnectionHandler().canRun()) {
             String message = lire();
-            traiter(message);
+            System.out.println("");
+            if(message == null) continue;
+            if (message.startsWith("[error]")) {
+                break;
+            }
+            if (!traiter(message)) {
+                client.setEtat(Client.UnknownRequestReceived, message);
+            }
         }
     }
 
-    public String lire() {
+    public synchronized String lire() {
+        String message;
         try {
-            String message = inFromServer.readLine();
-            return message + "\r\n";
+            do {
+                System.out.println("readline");
+                message = inFromServer.readLine();
+                if(veriferAttente(message)) {
+                    return null;
+                }
+            } while (message.length() < 1);
         } catch (SocketException ex) {
-            return "[error] connexion perdue avec le serveur";
+            //Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            client.setEtat(Client.ConnexionLost);
+            message = "[error] connexion perdue avec le serveur";
         } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            return "[error] reception depuis serveur a échoué";
+            //Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            client.setEtat(Client.ReceptionFailed);
+            message = "[error] reception depuis serveur a échoué";
         }
+        return message;
+    }
+
+    private boolean veriferAttente(String message) {
+        if(message.length() < 1) return false;
+        return messageQueue.traiter(message);
     }
 
     private boolean traiter(String message) {
         if (message != null) {
-            serverRequest.parser(message);
-            return false;
+            return serverRequest.parser(message + "\r\n");
         }
-        return true;
+        return false;
     }
 
     public void fermer() throws IOException {
@@ -73,7 +100,7 @@ public class Ecouteur extends Thread {
                 inFromServer.close();
             }
         } catch (IOException ex) {
-            String message = "[error] socket avec serveur mal fermé";
+            String message = "[error] socket depuis serveur mal fermé";
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, message, ex);
             throw new IOException(message);
         } finally {

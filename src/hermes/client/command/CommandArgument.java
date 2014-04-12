@@ -18,12 +18,16 @@ public abstract class CommandArgument implements Command {
     public void setArgs(Object... args) {
         this.args = args;
     }
-
+    
     protected boolean verifierArguments(int nombre) {
-        if (args == null && nombre == 0) {
+        return verifierArguments(nombre, nombre);
+    }
+
+    protected boolean verifierArguments(int min, int max) {
+        if (args == null && min == 0) {
             return true;
         }
-        if (args.length != nombre) {
+        if (args.length < min || args.length > max) {
             return false;
         }
         for (Object arg : args) {

@@ -135,7 +135,7 @@ public class Login extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         logger.add(lbIP, gridBagConstraints);
 
-        ip.setText("192.168.138.90");
+        ip.setText("localhost");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;

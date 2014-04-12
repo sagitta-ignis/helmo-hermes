@@ -1,9 +1,9 @@
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * and ouvrir the template in the editor.
  */
-package hermes.client.command.messages;
+package hermes.client.command.message;
 
 import hermes.client.Client;
 import hermes.client.ClientConnectionHandler;
@@ -31,4 +31,10 @@ public abstract class Message extends CommandArgument {
         ecouteur = client.getEcouteur();
         connection = client.getConnectionHandler();
     }
+    
+    protected void waitResponse() {
+        ecouteur.getMessageQueue().ajouter(this);
+    }
+    
+    public abstract void response(String response);
 }
