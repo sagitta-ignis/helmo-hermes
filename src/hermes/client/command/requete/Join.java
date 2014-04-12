@@ -4,19 +4,18 @@
  * and open the template in the editor.
  */
 
-package hermes.client.command.messages;
+package hermes.client.command.requete;
 
 import hermes.client.Client;
-import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
 
 /**
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public class SAll extends Message {
+public class Join extends Requete {
 
-    public SAll(Client client) {
+    public Join(Client client) {
         super(client);
     }
 
@@ -24,14 +23,13 @@ public class SAll extends Message {
     public void execute() {
         if(verifierArguments(1)) {
             String text = (String) args[0];
-            Protocole protocole = client.getProtocole();
-            protocole.prepare(ProtocoleSwinen.SALL);
+            protocole.prepare(ProtocoleSwinen.JOIN);
             if(protocole.check(text)) {
-                String sender = protocole.get(ProtocoleSwinen.sender);
-                String message = protocole.get(ProtocoleSwinen.message);
-                client.afficher(sender + " : " + message);
+                String user = protocole.get(ProtocoleSwinen.user);
+                client.getUsers().ajouter(user);
+                //client.afficher("-- "+user+" a rejoint le serveur");
             } else {
-                client.afficher("-- bad protocole [r]");
+                client.setEtat(Client.BadProtocoleReceived);
             }
         }
     }

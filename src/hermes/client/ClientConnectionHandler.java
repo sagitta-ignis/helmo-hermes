@@ -16,9 +16,8 @@ import java.net.Socket;
 public class ClientConnectionHandler {
 
     private Socket socket;
-    private boolean connected;
-    private boolean logged;
-    private boolean opened;
+    private boolean connected = false;
+    private boolean logged = false;
 
     public boolean connect(String host, int port) throws UnreachableServerExeception {
         try {
@@ -57,15 +56,7 @@ public class ClientConnectionHandler {
         this.logged = logged;
     }
 
-    public boolean isOpened() {
-        return opened;
-    }
-
-    public void setOpened(boolean opened) {
-        this.opened = opened;
-    }
-
     public boolean canRun() {
-        return connected && logged && opened;
+        return connected && logged;
     }
 }

@@ -1,14 +1,12 @@
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * and ouvrir the template in the editor.
  */
 package hermes.client;
 
-import hermes.client.command.messages.Message;
-import hermes.client.command.messages.SAll;
-import hermes.client.command.messages.SMsg;
-import hermes.protocole.MessageProtocole;
+import hermes.client.command.requete.*;
+import hermes.protocole.message.MessageProtocole;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
 import java.util.HashMap;
@@ -22,7 +20,7 @@ public class ServerRequestHandler {
 
     private final Client client;
 
-    private final Map<MessageProtocole, Message> requeteDeServeur;
+    private final Map<MessageProtocole, Requete> requeteDeServeur;
 
     public ServerRequestHandler(Client client) {
         this.client = client;
@@ -31,24 +29,25 @@ public class ServerRequestHandler {
     }
 
     private void initCommands() {
+        requeteDeServeur.put(ProtocoleSwinen.RESPONSE, new Response(client));
         requeteDeServeur.put(ProtocoleSwinen.SALL, new SAll(client));
         requeteDeServeur.put(ProtocoleSwinen.SMSG, new SMsg(client));
+        requeteDeServeur.put(ProtocoleSwinen.JOIN, new Join(client));
+        requeteDeServeur.put(ProtocoleSwinen.LEAVE, new Leave(client));
     }
 
     public boolean parser(String text) {
-        if (text.startsWith("[error]")) {
-            return false;
-        }
         Protocole protocole = client.getProtocole();
-        for (Map.Entry<MessageProtocole, Message> entry : requeteDeServeur.entrySet()) {
+        for (Map.Entry<MessageProtocole, Requete> entry : requeteDeServeur.entrySet()) {
             MessageProtocole messageProtocole = entry.getKey();
             protocole.prepare(messageProtocole);
             if (protocole.check(text)) {
-                Message message = entry.getValue();
-                message.setArgs(text);
-                message.execute();
+                Requete requete = entry.getValue();
+                requete.setArgs(text);
+                requete.execute();
+                return true;
             }
         }
-        return true;
+        return false;
     }
 }

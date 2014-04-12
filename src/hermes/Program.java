@@ -1,20 +1,22 @@
 package hermes;
 
-import hermes.client.controleur.Logger;
+import hermes.client.controleur.Authentifier;
 import hermes.client.Client;
-import hermes.client.ClientListener;
 import hermes.client.Encodeur;
+import hermes.client.Utilisateurs;
 import hermes.client.exception.NotConnectedException;
 import hermes.client.exception.UnopenableExecption;
 import hermes.client.exception.UnreachableServerExeception;
 import hermes.client.vue.Login;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Scanner;
 import java.util.logging.Level;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * and ouvrir the template in the editor.
  */
 /**
  *
@@ -24,7 +26,8 @@ public class Program {
 
     public void startConsole() {
         Scanner input = new Scanner(System.in);
-        Client c = new Client();
+        Utilisateurs u = new Utilisateurs();
+        Client c = new Client(u);
         try {
             c.connect("127.0.0.1", 12345);
             System.out.println("-- client a démarré");
@@ -32,17 +35,25 @@ public class Program {
             String nom = input.nextLine();
             if (c.login(nom, null)) {
                 Encodeur enc = new Encodeur(c, System.in);
-                ClientListener cl = new ClientListener() {
+                Observer o = new Observer() {
                     @Override
-                    public void lire(String text) {
-                        System.out.println(text);
+                    public void update(Observable o, Object o1) {
+                        if (o instanceof Client) {
+                            Client client = (Client)o;
+                            String text = lire(client.getEtat());
+                            System.out.println(text);
+                        }
+                    }
+
+                    private String lire(int etat) {
+                        return "";
                     }
                 };
-                c.addListener(cl);
+                c.addObserver(o);
                 enc.start();
-                c.open();
+                c.ouvrir();
             }
-            c.close();
+            c.fermer();
         } catch (UnreachableServerExeception ex) {
             java.util.logging.Logger.getLogger(Program.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("[error] impossible de se connecter : création du socket client a échoué");
@@ -88,7 +99,7 @@ public class Program {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                Logger logger = new Logger();
+                Authentifier logger = new Authentifier();
             }
         });
     }

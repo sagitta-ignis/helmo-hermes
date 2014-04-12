@@ -23,7 +23,7 @@ import javax.swing.JTextField;
  *
  * @author David
  */
-public class Overlay {
+public class Overlay extends AbstractChat {
 
     private JFrame frame;
     private JTextField fieldEnvoyer;
@@ -34,6 +34,7 @@ public class Overlay {
     private final int CHARPARLIGNE = 60;
 
     public Overlay(Chatter chatter) {
+
         frame = new JFrame("Overlay");
         labels = new ArrayList<>();
         chat = chatter;
@@ -117,11 +118,12 @@ public class Overlay {
     }
 
     private void envoyer() {
-        chat.send("all",fieldEnvoyer.getText());
+        chat.entrer("all",fieldEnvoyer.getText());
         fieldEnvoyer.setText("");
     }
 
-    public void entrer(String text) {
+    @Override
+    public void afficher(String text) {
         ArrayList<String> myLittlePoney = decomposer(text);
         String oldLady[] = new String[labels.size()];
         int compter = 0;
@@ -140,6 +142,10 @@ public class Overlay {
             compter++;
         }
 
+    }
+    
+    @Override
+    public void avertir(String titre, String message) {
     }
 
     private ArrayList<String> decomposer(String text) {

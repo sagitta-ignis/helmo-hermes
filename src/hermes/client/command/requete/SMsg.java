@@ -1,9 +1,9 @@
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * and ouvrir the template in the editor.
  */
-package hermes.client.command.messages;
+package hermes.client.command.requete;
 
 import hermes.client.Client;
 import hermes.protocole.ProtocoleSwinen;
@@ -12,7 +12,7 @@ import hermes.protocole.ProtocoleSwinen;
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public class SMsg extends Message {
+public class SMsg extends Requete {
 
     public SMsg(Client client) {
         super(client);
@@ -26,9 +26,10 @@ public class SMsg extends Message {
             if (protocole.check(text)) {
                 String sender = protocole.get(ProtocoleSwinen.sender);
                 String message = protocole.get(ProtocoleSwinen.message);
-                client.afficher("[pm]"+sender + " : " + message);
+                client.setEtat(Client.SMSG, sender, message);
+                //client.afficher("[pm]"+sender + " : " + message);
             } else {
-                client.afficher("-- bad protocole [r]");
+                client.setEtat(Client.BadProtocoleReceived);
             }
         }
     }
