@@ -101,72 +101,35 @@ public class Test {
 
     public boolean testProtocoleSwinen() {
         protocole = new ProtocoleSwinen();
-        boolean verification = testHello();
-        verification = testResponse();
-        verification = testSALL();
-        return false;
-    }
-
-    private boolean testHello() {
-        // préparation du message
-        protocole.prepare(ProtocoleSwinen.HELLO);
         String alice = "aLice01";
         String mdp = "m0npaS5;";
-        // création d'un message avec des variables données
-        String request;
-        try {
-            request = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user, alice),
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.pass, mdp)
-            );
-        } catch (Exception ex) {
-            // Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-        // vérification du format du message
-        if (protocole.check(request)) {
-            // vérification des variables correctement insérées dans le message
-            return ("HELLO " + alice + " " + mdp + "\r\n").equals(request);
-        }
-        return false;
-    }
-
-    private boolean testResponse() {
-        // préparation du message
-        protocole.prepare(ProtocoleSwinen.RESPONSE);
+        boolean verification = testMakeAndCheck(
+                ProtocoleSwinen.HELLO, "HELLO " + alice + " " + mdp + "\r\n",
+                new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user, alice),
+                new AbstractMap.SimpleEntry<>(ProtocoleSwinen.pass, mdp));
         String digit = "9";
         String message = "invalide";
-        // création d'un message avec des variables données
-        String request;
-        try {
-            request = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.digit, digit),
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, message)
-            );
-        } catch (Exception ex) {
-            // Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-        // vérification du format du message
-        if (protocole.check(request)) {
-            // vérification des variables correctement insérées dans le message
-            return (digit + " " + message + "\r\n").equals(request);
-        }
-        return false;
+        verification = verification && testMakeAndCheck(
+                ProtocoleSwinen.RESPONSE, digit + " " + message + "\r\n",
+                new AbstractMap.SimpleEntry<>(ProtocoleSwinen.digit, digit),
+                new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, message)
+        );
+        String sender = "alice";
+        message = "coucou";
+        verification = verification && testMakeAndCheck(
+                ProtocoleSwinen.SALL, "SALL" + sender + " " + message + "\r\n",
+                new AbstractMap.SimpleEntry<>(ProtocoleSwinen.sender, sender),
+                new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, message)
+        );
+        return verification;
     }
 
-    private boolean testSALL() {
-        // préparation du message
-        protocole.prepare(ProtocoleSwinen.SALL);
-        String sender = "alice";
-        String message = "coucou";
+    private boolean testMakeAndCheck(MessageProtocole mp, String messageExpected, AbstractMap.SimpleEntry<ABNF, String>... args) {
+        protocole.prepare(mp);
         // création d'un message avec des variables données
         String request;
         try {
-            request = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.sender, sender),
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, message)
-            );
+            request = protocole.make(args);
         } catch (Exception ex) {
             // Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
             return false;
@@ -174,7 +137,7 @@ public class Test {
         // vérification du format du message
         if (protocole.check(request)) {
             // vérification des variables correctement insérées dans le message
-            return ("SALL" +sender + " " + message + "\r\n").equals(request);
+            return messageExpected.equals(request);
         }
         return false;
     }
