@@ -41,7 +41,7 @@ public class Connecte extends EtatAbstract {
     @Override
     public void initialiserCommandes() {
         commandsProtocole.put(ProtocoleSwinen.ALL, new All(sentAll, client));
-        commandsProtocole.put(ProtocoleSwinen.MSG, new Msg(server, response));
+        commandsProtocole.put(ProtocoleSwinen.MSG, new Msg(client, server, response));
         commandsProtocole.put(ProtocoleSwinen.QUIT, new Quit(manager, server));
         commandsProtocole.put(ProtocoleSwinen.USERS, new Users());
         commandsProtocole.put(ProtocoleSwinen.TYPING, new Typing(server, client));

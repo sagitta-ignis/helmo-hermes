@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import pattern.CommandArgument;
 import server.ServerControleur;
+import server.com.Client;
 import server.com.ClientManager;
 import server.com.etat.Waiting;
 import server.com.response.SentResponse;
@@ -24,11 +25,13 @@ import server.com.response.SentResponse;
  */
 public class Msg extends CommandArgument {
 
+    private final Client client;
     private final ServerControleur serveur;
     private final SentResponse response;
     private List<ClientManager> clientConnecte;
 
-    public Msg(ServerControleur serveur, SentResponse response) {
+    public Msg(Client client, ServerControleur serveur, SentResponse response) {
+        this.client = client;
         this.serveur = serveur;
         this.response = response;
     }
@@ -58,18 +61,15 @@ public class Msg extends CommandArgument {
         String text = message.get(ProtocoleSwinen.message);
         clientConnecte = serveur.getConnected();
 
-        for (ClientManager client : clientConnecte) {
-            if (client.getClient().getUsername().equals(destinataire)) {
+        for (ClientManager clientManager : clientConnecte) {
+            if (clientManager.getClient().getUsername().equals(destinataire)) {
                 found = true;
-                transmettre(client, text, client.getClient().getUsername());
-
+                response.sent(0);
+                transmettre(clientManager, text, this.client.getUsername());
             }
         }
-
         if (!found) {
             response.sent(1);
-        } else {
-            response.sent(0);
         }
     }
 }
