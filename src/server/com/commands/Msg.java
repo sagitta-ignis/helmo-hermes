@@ -61,6 +61,11 @@ public class Msg extends CommandArgument {
         String text = message.get(ProtocoleSwinen.message);
         clientConnecte = serveur.getConnected();
 
+        if(destinataire.equals(client.getUsername())){
+            response.sent(3);
+            return;
+        }
+        
         for (ClientManager clientManager : clientConnecte) {
             if (clientManager.getClient().getUsername().equals(destinataire)) {
                 found = true;

@@ -7,6 +7,7 @@ package server.com.commands;
 
 import hermes.protocole.message.MessageProtocole;
 import hermes.protocole.ProtocoleSwinen;
+import java.util.List;
 import pattern.command.CommandArgument;
 import server.ServerControleur;
 import server.com.Client;
@@ -38,7 +39,36 @@ public class Hello extends CommandArgument {
 
     }
 
-    private void connectionAvecSucces(String pseudo) {        
+    private boolean verifierParametresConnection(String pseudo, String motDePasse) {
+        if (pseudo != null && motDePasse != null) {
+            for (User myUser : utilisateurs.getUsers()) {
+                if (myUser.getNickname().equals(pseudo) && myUser.getPassword().equals(motDePasse)) {
+                    return true;
+                    // connectionAvecSucces(pseudo);
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean verifierSiUtilisateurPasDejaConnecte(String pseudo) {
+        List<ClientManager> usersConnected = server.getConnected();
+
+        for (ClientManager clientConnected : usersConnected) {
+            if (clientConnected.getClient().getUsername().equals(pseudo)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private void fermerConnection(int idErreur) {
+        response.sent(idErreur);
+        manager.close();
+    }
+
+    private void connectionAvecSucces(String pseudo) {
         clientInfo.setEtat(3);
         clientInfo.setUsername(pseudo);
         response.sent(0);
@@ -53,16 +83,16 @@ public class Hello extends CommandArgument {
         String pseudo = message.get(ProtocoleSwinen.user);
         String motDePasse = message.get(ProtocoleSwinen.pass);
 
-        if (pseudo != null && motDePasse != null) {
-            for (User myUser : utilisateurs.getUsers()) {
-                if (myUser.getNickname().equals(pseudo) && myUser.getPassword().equals(motDePasse)) {
-                    connectionAvecSucces(pseudo);
-                }
+        if (verifierParametresConnection(pseudo, motDePasse)) {
+            
+            if (verifierSiUtilisateurPasDejaConnecte(pseudo)) {
+                
+                connectionAvecSucces(pseudo);                
+            } else {                
+                 fermerConnection(2);
             }
-        }
-        if (clientInfo.getEtat() != 3) {
-            response.sent(1);
-            manager.close();
+        } else {
+            fermerConnection(1);
         }
     }
 

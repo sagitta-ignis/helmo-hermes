@@ -65,6 +65,8 @@ public class SentResponse {
     private void initErrors() {
         errorList.put(0, new Response("0", "OK"));
         errorList.put(1, new Response("1", "utilisateur inconnu"));
+        errorList.put(2, new Response("2", "utilisateur deja connecte"));
+        errorList.put(3, new Response("3", "impossible de ce MP"));
         errorList.put(9, new Response("9", "message invalide"));
 
         //Erreurs serveur
