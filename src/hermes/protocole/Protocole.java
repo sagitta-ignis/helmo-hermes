@@ -1,5 +1,6 @@
 package hermes.protocole;
 
+import hermes.protocole.message.MessageProtocole;
 import hermes.format.abnf.ABNF;
 import java.util.Map.Entry;
 
@@ -20,5 +21,7 @@ public interface Protocole {
 
     boolean check(String message);
 
-    public String get(ABNF variable);
+    String get(ABNF variable);
+    
+    MessageProtocole search(String message);
 }
