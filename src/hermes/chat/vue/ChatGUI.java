@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hermes.client.vue;
+package hermes.chat.vue;
 
-import hermes.client.controleur.Chatter;
+import hermes.chat.Chat;
+import hermes.chat.controleur.Chatter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;

@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hermes.client.vue;
+package hermes.chat;
 
 import hermes.client.Client;
+import hermes.client.StatusHandler;
 import hermes.client.Utilisateurs;
 import pattern.command.CommandArgument;
 import hermes.client.command.CommandMapper;
@@ -21,15 +22,9 @@ import javax.swing.DefaultListModel;
 public abstract class AbstractChat implements Observer, StatusHandler, Chat {
 
     private final CommandMapper statusReader;
-    private final DefaultListModel utilisateurs;
-
-    public DefaultListModel getUtilisateurs() {
-        return utilisateurs;
-    }
-
+    
     public AbstractChat() {
         statusReader = new CommandMapper();
-        utilisateurs = new DefaultListModel();
         initEtats();
     }
 
@@ -44,6 +39,12 @@ public abstract class AbstractChat implements Observer, StatusHandler, Chat {
             @Override
             public void execute() {
                 unknownUser();
+            }
+        });
+        statusReader.ajouter(String.valueOf(Client.MSGToSelf), new CommandArgument() {
+            @Override
+            public void execute() {
+                msgToSelf();
             }
         });
         statusReader.ajouter(String.valueOf(Client.LoggedIn), new CommandArgument() {
@@ -108,6 +109,10 @@ public abstract class AbstractChat implements Observer, StatusHandler, Chat {
         afficher("-- utilisateur inconnu");
     }
     
+    public void msgToSelf() {
+        afficher("-- impossible d'envoyer un message à soi-même (avez-vous besoin d'un psychologue ?)");
+    }
+    
     @Override
     public void loggedIn() {
         afficher("-- user logged in");
@@ -119,7 +124,6 @@ public abstract class AbstractChat implements Observer, StatusHandler, Chat {
             afficher("-- "+message);
         } else {
             System.out.println("-- "+message);
-            System.err.println("");
         }
     }
 
@@ -140,13 +144,11 @@ public abstract class AbstractChat implements Observer, StatusHandler, Chat {
 
     @Override
     public void join(String user) {
-        utilisateurs.addElement(user);
         afficher("-- " + user + " a rejoint le serveur");
     }
 
     @Override
     public void leave(String user) {
-        utilisateurs.removeElement(user);
         afficher("-- " + user + " a quitté le serveur");
     }
 

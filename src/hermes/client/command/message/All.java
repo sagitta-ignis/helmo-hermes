@@ -27,13 +27,14 @@ public class All extends Message {
             String request;
             try {
                 request = protocole.make(
-                        new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, message)
+                        new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, (Object) message)
                 );
             } catch (Exception ex) {
                 // Logger.getLogger(Hello.class.getName()).log(Level.SEVERE, null, ex);
                 return;
             }
             if (request != null && protocole.check(request)) {
+                System.out.print(request);
                 emetteur.envoyer(request);
             } else {
                 client.setEtat(Client.BadMessageMaked);

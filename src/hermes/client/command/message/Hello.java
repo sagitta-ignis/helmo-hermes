@@ -21,9 +21,9 @@ public class Hello extends Message {
 
     @Override
     public void execute() {
-        if (verifierArguments(2)) {
-            String user = (String) args[0];
-            String pass = (String) args[1];
+        if (verifierArguments(3)) {
+            String user = (String) args[1];
+            String pass = (String) args[2];
             hello(user, pass);
         }
     }
@@ -33,8 +33,8 @@ public class Hello extends Message {
         String request;
         try {
             request = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user, user),
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.pass, pass)
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user, (Object) user),
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.pass, (Object) pass)
             );
         } catch (Exception ex) {
             // Logger.getLogger(Hello.class.getName()).log(Level.SEVERE, null, ex);
@@ -44,6 +44,7 @@ public class Hello extends Message {
         }
         if (request != null) {
             waitResponse();
+            System.out.print(request);
             emetteur.envoyer(request);
             ecouteur.lire();
             return true;
@@ -63,6 +64,10 @@ public class Hello extends Message {
                         break;
                     case "1":
                         client.setEtat(Client.UnknownUser);
+                        //client.afficher("-- unknown user");
+                        break;
+                    case "2":
+                        client.setEtat(Client.AlreadyLoggedIn);
                         //client.afficher("-- unknown user");
                         break;
                     case "9":

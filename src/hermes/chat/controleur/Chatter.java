@@ -3,18 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and ouvrir the template in the editor.
  */
-package hermes.client.controleur;
+package hermes.chat.controleur;
 
 import hermes.client.Client;
-import hermes.client.ClientMessageHandler;
 import hermes.client.Utilisateurs;
 import hermes.client.exception.NotConnectedException;
 import hermes.client.exception.UnopenableExecption;
 import hermes.client.exception.UnreachableServerExeception;
-import hermes.client.vue.IRCChat;
-import hermes.client.vue.Overlay;
+import hermes.chat.vue.IRCChat;
+import hermes.chat.vue.Overlay;
+import hermes.client.command.message.All;
+import hermes.client.command.message.Msg;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import pattern.command.CommandArgument;
 
 /**
  *
@@ -24,7 +26,6 @@ public class Chatter {
 
     private final Utilisateurs users;
     private final Client client;
-    private final ClientMessageHandler requestHandler;
     private final IRCChat fenetre;
     private final Overlay overlay;
 
@@ -35,7 +36,6 @@ public class Chatter {
         users.addObserver(fenetre);
         client = new Client(users);
         client.addObserver(fenetre);
-        requestHandler = new ClientMessageHandler(this);
     }
 
     public Client getClient() {
@@ -81,13 +81,27 @@ public class Chatter {
         if (text == null) {
             return;
         }
-        if (!requestHandler.traiter(text)) {
+        if (!client.getMessageHandler().traiter(text)) {
             if (user == null || user.isEmpty()) {
-                client.envoyer(text);
+                envoyer(text);
             } else {
-                client.envoyer(user, text);
+                envoyer(user, text);
             }
         }
+    }
+    
+    private void envoyer(String text) {
+        CommandArgument message;
+        message = new All(client);
+        message.setArgs(text);
+        message.execute();
+    }
+
+    private void envoyer(String user, String text) {
+        CommandArgument message;
+        message = new Msg(client);
+        message.setArgs(user, text);
+        message.execute();
     }
 
     public void fermer() {

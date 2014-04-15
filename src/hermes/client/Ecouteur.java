@@ -48,7 +48,6 @@ public class Ecouteur extends Thread {
     public void run() {
         while (client.getConnectionHandler().canRun()) {
             String message = lire();
-            System.out.println("");
             if(message == null) continue;
             if (message.startsWith("[error]")) {
                 break;
@@ -63,7 +62,6 @@ public class Ecouteur extends Thread {
         String message;
         try {
             do {
-                System.out.println("readline");
                 message = inFromServer.readLine();
                 if(veriferAttente(message)) {
                     return null;

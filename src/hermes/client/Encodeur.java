@@ -25,8 +25,8 @@ public class Encodeur extends Thread {
     @Override
     public void run() {
         while (client.canRun()) {
-            String message = input.nextLine();
-            client.envoyer("all", message);
+            String commandLine = input.nextLine();
+            client.getMessageHandler().traiter(commandLine);
         }
     }
 }

@@ -27,22 +27,24 @@ import java.util.logging.Logger;
 public class Client extends Observable {
 
     public final static int Initial = 0;
-    
+
     public final static int Connected = 1;
     public final static int ConnexionLost = -1;
-    
+
     public final static int LoggedIn = 2;
     public final static int UnknownUser = -20;
-    public final static int BadMessageMaked = -21;
-    
+    public final static int AlreadyLoggedIn = -21;
+    public final static int BadMessageMaked = -29;
+
     public final static int Opened = 3;
     public final static int BadProtocoleMaked = -30;
     public final static int BadProtocoleReceived = -31;
     public final static int BadProtocoleSended = -32;
-    
+
     public final static int MessageSended = 4;
     public final static int MSG = 42;
-    
+    public final static int MSGToSelf = -420;
+
     public final static int RESPONSE = 50;
     public final static int SALL = 51;
     public final static int SMSG = 52;
@@ -51,16 +53,17 @@ public class Client extends Observable {
     public final static int STYPING = 55;
     public final static int UnknownRequestReceived = -50;
     public final static int ReceptionFailed = -51;
-        
+
     public final static int LoggedOut = 6;
-    
+
     public final static int InputStreamUnclosed = -71;
     public final static int OutputStreamUnclosed = -72;
-    
-    private int etat;    
+
+    private int etat;
     private final Utilisateurs users;
     private final Protocole protocole;
     private final ClientConnectionHandler connectionHandler;
+    private final ClientMessageHandler messageHandler;
     private final Emetteur emetteur;
     private final Ecouteur ecouteur;
 
@@ -71,6 +74,7 @@ public class Client extends Observable {
         connectionHandler = new ClientConnectionHandler();
         emetteur = new Emetteur();
         ecouteur = new Ecouteur(this);
+        messageHandler = new ClientMessageHandler(this);
     }
 
     public void setEtat(int etat) {
@@ -78,7 +82,7 @@ public class Client extends Observable {
         setChanged();
         notifyObservers();
     }
-    
+
     public void setEtat(int etat, Object... args) {
         this.etat = etat;
         setChanged();
@@ -88,7 +92,7 @@ public class Client extends Observable {
     public int getEtat() {
         return etat;
     }
-    
+
     public Utilisateurs getUsers() {
         return users;
     }
@@ -101,6 +105,10 @@ public class Client extends Observable {
         return connectionHandler;
     }
 
+    public ClientMessageHandler getMessageHandler() {
+        return messageHandler;
+    }
+    
     public Emetteur getEmetteur() {
         return emetteur;
     }
@@ -131,9 +139,8 @@ public class Client extends Observable {
         if (password == null || password.isEmpty()) {
             password = "password";
         }
-        Message hello = new Hello(this);
-        hello.setArgs(nom, password);
-        hello.execute();
+        messageHandler.traiter("/hello "+nom+" "+password);
+        messageHandler.traiter("/users");
         return connectionHandler.isLogged();
     }
 
@@ -146,6 +153,7 @@ public class Client extends Observable {
 
     public void fermer() throws Exception {
         try {
+            messageHandler.traiter("/quit");
             connectionHandler.disconnect();
             emetteur.fermer();
             ecouteur.fermer();
@@ -158,19 +166,5 @@ public class Client extends Observable {
 
     public boolean canRun() {
         return connectionHandler.canRun();
-    }
-
-    public void envoyer(String text) {
-        CommandArgument message;
-        message = new All(this);
-        message.setArgs(text);
-        message.execute();
-    }
-
-    public void envoyer(String user, String text) {
-        CommandArgument message;
-        message = new Msg(this);
-        message.setArgs(user, text);
-        message.execute();
     }
 }
