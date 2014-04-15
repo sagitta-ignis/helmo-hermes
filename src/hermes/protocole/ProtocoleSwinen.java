@@ -14,15 +14,13 @@ import hermes.format.abnf.Lexique;
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
 public class ProtocoleSwinen extends AbstractProtocole {
-
-    private static final Lexique lexique;
-
+    
     public static ABNF user;
     public static ABNF pass;
     public static ABNF message;
     public static ABNF sender;
     public static ABNF receiver;
-    public static ABNF digit = Lexique.digit;
+    public static ABNF digit;
 
     public static MessageProtocole HELLO;
     public static MessageProtocole MSG;
@@ -40,50 +38,56 @@ public class ProtocoleSwinen extends AbstractProtocole {
     public static MessageProtocole STYPING;
 
     static {
-        lexique = new Lexique();
-        initVariable();
-        initLexique();
+        initVariables();
         initMessages();
     }
 
     /**
-     * Compile les variables du protocole à partir des mots du lexique. Le
-     * lexique n'est pas encore capable de traduire l'ABNF. Il faut utiliser la
-     * synthaxe Java pour le reste.
+     * Compile les variables du protocole à partir des mots du lexique.
      *
+     * user = 4*8(letter|digit) ; 4 à 8 lettres ou chiffres
+     * pass = 4*10passchar ; 4 à 10 caractères imprimables sans espace
+     * receiver = user ; définition identique (pour la lisibilité)
+     * sender = user ; définition identique (pour la lisibilité)
+     * message = 1*500character ; 1 à 500 caractères imprimables (espace compris)
+     * 
+     * @see ABNF
      * @see Lexique
+     * @see ABNFSyntaxicalParser
      */
-    private static void initVariable() {
-        user = lexique.compiler("user", "[letter[digit]]{4,8}+");
-        pass = lexique.compiler("pass", "passchar{4,10}+");
-        message = lexique.compiler("message", "character{1,500}+");
-        sender = lexique.compiler("sender", "[letter[digit]]{4,8}+");
-        receiver = lexique.compiler("receiver", "[letter[digit]]{4,8}+");
+    private static void initVariables() {   
+        user = ABNF.compilerEtAjouter("user = 4*8(letter|digit)");
+        pass = ABNF.compilerEtAjouter("pass = 4*10passchar");
+        receiver = ABNF.compilerEtAjouter("receiver = user");
+        sender = ABNF.compilerEtAjouter("sender = user");
+        message = ABNF.compilerEtAjouter("message = 1*500character");
+        digit = Lexique.digit;
     }
 
-    private static void initLexique() {
-        lexique.ajouter(user);
-        lexique.ajouter(pass);
-        lexique.ajouter(message);
-        lexique.ajouter(sender);
-        lexique.ajouter(receiver);
-    }
-
-    private static void initMessages() {
-        HELLO = new MessageProtocole(lexique, "HELLO", "HELLO space user space pass crlf", user, pass);
-        MSG = new MessageProtocole(lexique, "MSG", "MSG space receiver space message crlf", receiver, message);
-        SMSG = new MessageProtocole(lexique, "SMSG", "SMSG space sender space message crlf", sender, message);
-        ALL = new MessageProtocole(lexique, "ALL", "ALL space message crlf", message);
-        SALL = new MessageProtocole(lexique, "SALL", "SALL space sender space message crlf", sender, message);
-        QUIT = new MessageProtocole(lexique, "QUIT", "QUIT crlf");
-        RESPONSE = new MessageProtocole(lexique, "REPONSE", "digit *space message* crlf", digit, message);
-        USERS = new MessageProtocole(lexique, "USERS", "USER crlf");
-        SUSERS = new MessageProtocole(lexique, "SUSERS", "SUSERS space crlf", user);
-        JOIN = new MessageProtocole(lexique, "JOIN", "JOIN space user crlf", user);
-        LEAVE = new MessageProtocole(lexique, "LEAVE", "LEAVE space user crlf", user);
-        REGISTER = new MessageProtocole(lexique, "REGISTER", "REGISTER space user space pass crlf", user, pass);
-        TYPING = new MessageProtocole(lexique, "TYPING", "TYPING crlf");
-        STYPING = new MessageProtocole(lexique, "STYPING", "STYPING space user crlf",user);
+    /**
+     * hello = "HELLO" space user space pass crlf
+     * msg = "MSG" space receiver space message crlf
+     * smsg = "SMSG" space sender space message crlf
+     * all = "ALL" space message crlf
+     * sall = "SALL" space sender space message crlf
+     * quit = "QUIT" crlf
+     * response = digit [space message] crlf
+     */
+    private static void initMessages() {     
+        HELLO = new MessageProtocole("hello = \"HELLO\" space user space pass crlf", user, pass);
+        MSG = new MessageProtocole("msg = \"MSG\" space receiver space message crlf", receiver, message);
+        SMSG = new MessageProtocole("smsg = \"SMSG\" space sender space message crlf", sender, message);
+        ALL = new MessageProtocole("all = \"ALL\" space message crlf", message);
+        SALL = new MessageProtocole("sall = \"SALL\" space sender space message crlf", sender, message);
+        QUIT = new MessageProtocole("quit = \"QUIT\" crlf");
+        RESPONSE = new MessageProtocole("response = digit [space message] crlf", digit, message);
+        USERS = new MessageProtocole("users = \"USERS\" crlf");
+        SUSERS = new MessageProtocole("susers = \"SUSERS\" *(space user) crlf", user);
+        JOIN = new MessageProtocole("join = \"JOIN\" space user crlf", user);
+        LEAVE = new MessageProtocole("leave = \"LEAVE\" space user crlf", user);
+        REGISTER = new MessageProtocole("register = \"REGISTER\" space user space pass crlf", user, pass);
+        TYPING = new MessageProtocole("typing = \"TYPING\" crlf");
+        STYPING = new MessageProtocole("styping = \"STYPING\" space user crlf",user);
     }
 
     public ProtocoleSwinen() {
@@ -99,5 +103,7 @@ public class ProtocoleSwinen extends AbstractProtocole {
         add(JOIN);
         add(LEAVE);
         add(REGISTER);
+        add(TYPING);
+        add(STYPING);
     }
 }

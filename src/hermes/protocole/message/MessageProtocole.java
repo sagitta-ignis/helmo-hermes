@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package hermes.protocole.message;
 
 import hermes.format.abnf.ABNF;
-import hermes.format.abnf.Lexique;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,59 +18,52 @@ import java.util.regex.Pattern;
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
 public class MessageProtocole implements Comparable<MessageProtocole> {
-    private static final String EMPTY = "empty";
-    private static final Remplaceur remplaceur = new Remplaceur();
-    
+
+    public static final String EMPTY = "empty";
+    public static final String NULL = null;
+
     private final ABNF format;
     
-    private String message;
     private String sequence;
-    private final Map<String,Object> affections;
+    private final Map<ABNF, Object> affections;
 
-    public MessageProtocole(Lexique lexique, String nom, String synthaxe, ABNF... variables) {
-        format = lexique.compiler(nom, synthaxe, variables);
+    public MessageProtocole(String rule, ABNF... variables) {
+        this.format = ABNF.compiler(rule, variables);
         affections = new HashMap<>();
         initVariables(variables);
     }
-    
+
     private void initVariables(ABNF[] variables) {
         for (ABNF abnf : variables) {
-            affections.put(abnf.getDefinition(), "empty");
+            affections.put(abnf, NULL);
         }
     }
 
-    public boolean set(ABNF variable, String valeur){
-        if(!existe(variable)) {
+    public boolean set(ABNF variable, Object valeur) {
+        if (!existe(variable)) {
             return false;
         }
-        if(!verifier(valeur, variable)) {
+        if (!verifier(valeur, variable)) {
             return false;
         }
-        affections.put(variable.getDefinition(), valeur);
+        affections.put(variable, valeur);
         return true;
     }
-    
+
     public boolean existe(ABNF variable) {
-        return affections.containsKey(variable.getDefinition());
+        return affections.containsKey(variable);
     }
-    
+
     public String remplir() throws Exception {
-        message = format.getSynthax();
-        for (Map.Entry<String, Object> entry : affections.entrySet()) {
-            String variable = entry.getKey();
-            Object valeur = entry.getValue();
-            if(valeur.equals(EMPTY)) {
-                throw new Exception(variable + "not initialized");
-            }
-            message = remplaceur.remplacer(message, variable, valeur);
-        }
-        return message;
+        MessageProtocoleFiller filler = new MessageProtocoleFiller();
+        filler.setLexique(ABNF.lexique);
+        return filler.fillWith(format.getRule(), affections);
     }
-    
+
     public void effacer() {
-        for (Map.Entry<String, Object> entry : affections.entrySet()) {
-            String key = entry.getKey();
-            affections.put(key, EMPTY);
+        for (Map.Entry<ABNF, Object> entry : affections.entrySet()) {
+            ABNF key = entry.getKey();
+            affections.put(key, NULL);
         }
     }
     
@@ -82,23 +75,63 @@ public class MessageProtocole implements Comparable<MessageProtocole> {
         return verification;
     }
     
-    private boolean verifier(String sequence, ABNF format) {
-        return Pattern.compile(format.getPattern()).matcher(sequence).matches();
+    private boolean verifier(Object valeur, ABNF format) {
+        if(valeur instanceof String || valeur instanceof List) {
+            if(valeur instanceof String) {
+                return match((String)valeur, format);
+            }
+            if (valeur instanceof List) {
+                List list = (List) valeur;
+                for (Object object : list) {
+                    if(!verifier(object, format)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private boolean match(String valeur, ABNF format) {
+        return Pattern.compile(format.getPattern()).matcher(valeur).matches();
     }
     
     public String get(ABNF variable) {
         if(sequence != null) {
             if(existe(variable)) {
-                return extraire(variable.getDefinition());
+                return extraire(variable);
             }
         }
         return null;
     }
     
-    private String extraire(String variable) {
+    public List<String> getAll(ABNF variable) {
+        if(sequence != null) {
+            if(existe(variable)) {
+                return extraireAll(variable);
+            }
+        }
+        return null;
+    }
+    
+    private String extraire(ABNF variable) {
         Matcher m =  Pattern.compile(format.getPattern()).matcher(sequence);
         m.matches();
-        return m.group(variable);
+        return m.group(variable.getName());
+    }
+    
+    private List<String> extraireAll(ABNF variable) {
+        List<String> list = new ArrayList<>();
+        String element;
+        Matcher m =  Pattern.compile("("+variable.getPattern()+")").matcher(sequence);
+        while(m.find()) {
+            element = m.group();
+            if(element != null) {
+                list.add(element);
+            }
+        }
+        return list;
     }
 
     @Override
@@ -107,6 +140,6 @@ public class MessageProtocole implements Comparable<MessageProtocole> {
     }
 
     public String getNom() {
-        return format.getDefinition();
+        return format.getName();
     }
 }

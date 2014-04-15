@@ -5,10 +5,15 @@
  */
 package hermes.protocole;
 
+import com.sun.org.apache.xerces.internal.xs.StringList;
 import hermes.protocole.message.MessageProtocole;
 import hermes.format.abnf.ABNF;
-import hermes.format.abnf.Lexique;
 import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,14 +22,11 @@ import java.util.regex.Pattern;
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
 public class Test {
-
+    
     public static void main(String[] args) {
         Test t = new Test();
         if (t.testPattern()) {
             System.err.println("test pattern ok");
-        }
-        if (t.testLexique()) {
-            System.err.println("test lexique ok");
         }
         if (t.testMessageProtocole()) {
             System.err.println("test message protocole ok");
@@ -37,52 +39,57 @@ public class Test {
     public boolean testPattern() {
         // ([0-8]+)*([0-8]+)\\(([a-zA-Z]+)\\)
         // HELLO\\s([a-zA-Z_0-9]){4,8}+\\s([\\p{Print}&&[^ \\t\\n\\x0B\\f\\r]]){4,8}+\\r\\n
+        // HELLO ([[a-zA-Z][[0-9]]]){4,8}+ ([\\p{Print}&&[^ ]]){4,10}+\\r\\n
         // ([[a-zA-Z][[0-9]]]){4,8}+
+        // SUSERS( ([a-zA-Z_0-9]){4,8}+)*\r\n
+        // [\\x41-\\x5A\\x61-\\x7A]+
+        // [[\x41-\x5A][\x61-\x7A]]
+        // (?<digit>\x30-\x39)(?:\x20(?<letter>[\x41-\x5A\x61-\x7A]))?\x0D\x0A
+        // (?<digit>[\x30-\x39])(?:\x20(?<letter>[[\x41-\x5A][\x61-\x7A]]))?\x0D\x0A
+        // (?:[[[\x41-\x5A][\x61-\x7A]][\x30-\x39]]){4,8}?
+        // [\x20-\xFF]{1,500}?
+        // SUSERS(?:\x20(?<user>(?:[[a-zA-Z][0-9]]){4,8}?))+?\x0D\x0A
         // 
-        Pattern p = Pattern.compile("HELLO ([[a-zA-Z][[0-9]]]){4,8}+ ([\\p{Print}&&[^ ]]){4,10}+\\r\\n");
-        Matcher m = p.matcher("HELLO alice01 monpass\r\n");
-        return m.matches();
-    }
-
-    public boolean testLexique() {
-        Lexique l = new Lexique();
-        // 4*8(letter|digit)
-        ABNF user = l.compiler("user", "[letter[digit]]{4,8}+");
-        ABNF pass = l.compiler("pass", "passchar{4,10}+");
-        ABNF message = l.compiler("message", "character{1,500}+");
-        l.ajouter(user);
-        l.ajouter(pass);
-        l.ajouter(message);
-
-        ABNF regle = l.compiler("HELLO", "HELLO space user space pass crlf");
-        Pattern p = Pattern.compile(regle.getPattern());
-        Matcher m = p.matcher("HELLO aLice01 monpaS5;\r\n");
+        Pattern p = Pattern.compile("SUSERS(?:\\x20(?<user>(?:[[a-zA-Z][0-9]]){4,8}))+\\x0D\\x0A");
+        Matcher m = p.matcher("SUSERS alice bobby carl\r\n");
+        //Matcher m = p.matcher("abcdefghijklmnopqrstuvwxyz"+("abcdefghijklmnopqrstuvwxyz").toUpperCase());
+        Pattern p2 = Pattern.compile("((?:[[a-zA-Z][0-9]]){4,8})");
+        // ((?:[[a-zA-Z][0-9]]){4,8})
+        Matcher m2 = p2.matcher("SUSERS Alice bobby2 carl7\r\n");
+        List<String> list = new ArrayList<>();
+        String element;
+        while(m2.find()) {
+            element = m2.group();
+            if(element != null) {
+                list.add(element);
+            }
+        }
         return m.matches();
     }
 
     public boolean testMessageProtocole() {
-        Lexique l = new Lexique();
-        // création des variables des messages avec le lexique
-        ABNF user = l.compiler("user", "[letter[digit]]{4,8}+");
-        ABNF pass = l.compiler("pass", "passchar{4,10}+");
-        ABNF message = l.compiler("message", "character{1,500}+");
-        l.ajouter(user);
-        l.ajouter(pass);
-        l.ajouter(message);
+        // création des variables des messages + ajout au lexique
+        ABNF user = ABNF.compilerEtAjouter("user = 4*8(letter|digit)");
+        ABNF pass = ABNF.compilerEtAjouter("pass = 4*10passchar");
+        ABNF message = ABNF.compilerEtAjouter("message = 1*500character");
 
         // création d'un message et configuration de ses variables
-        MessageProtocole mp = new MessageProtocole(l, "HELLO", "HELLO space user space pass crlf", user, pass);
+        MessageProtocole mp = new MessageProtocole("susers = \"SUSERS\" *(space user) crlf", user);
+        // HELLO\x20(?<user>(?:[[a-zA-Z][0-9]]){4,8}?)\x20(?<pass>[\x21-\xFF]{4,10}?)\x0D\x0A
 
-        // formattage du message
+        // affectation des variables
         String alice = "aLice01";
         String mdp = "m0npaS5;";
-        mp.set(user, alice);
-        mp.set(pass, mdp);
-        String messageAEnvoyer;
+        List list = Arrays.asList(new String[] {"Alice", "bobby1", "carl7"});
+        if (!mp.set(user, list)) return false;
+        //mp.set(pass, mdp);
+        //mp.set(message, "OK");
+        // formattage du message
+        String messageAEnvoyer = "HELLO "+alice+" "+mdp+"\r\n";
         try {
             messageAEnvoyer = mp.remplir();
         } catch (Exception ex) {
-            // Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Test.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
 
@@ -98,10 +105,7 @@ public class Test {
         return verifier;
     }
 
-    Protocole protocole;
-
     public boolean testProtocoleSwinen() {
-        protocole = new ProtocoleSwinen();
         String alice = "aLice01";
         String mdp = "m0npaS5;";
         boolean verification = testMakeAndCheck(
@@ -111,21 +115,21 @@ public class Test {
         String digit = "9";
         String message = "invalide";
         verification = verification && testMakeAndCheck(
-                ProtocoleSwinen.RESPONSE, digit + " " + message + "\r\n",
+                ProtocoleSwinen.RESPONSE, digit + "\r\n",
                 new AbstractMap.SimpleEntry<>(ProtocoleSwinen.digit, digit),
                 new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, message)
         );
         String sender = "alice";
         message = "coucou";
         verification = verification && testMakeAndCheck(
-                ProtocoleSwinen.SALL, "SALL" + sender + " " + message + "\r\n",
+                ProtocoleSwinen.SALL, "SALL " + sender + " " + message + "\r\n",
                 new AbstractMap.SimpleEntry<>(ProtocoleSwinen.sender, sender),
                 new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, message)
         );
         return verification;
     }
-
     private boolean testMakeAndCheck(MessageProtocole mp, String messageExpected, AbstractMap.SimpleEntry<ABNF, String>... args) {
+        Protocole protocole = new ProtocoleSwinen();
         protocole.prepare(mp);
         // création d'un message avec des variables données
         String request;
