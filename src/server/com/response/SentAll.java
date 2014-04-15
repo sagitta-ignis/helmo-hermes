@@ -33,8 +33,8 @@ public class SentAll {
         String messageProtocole = "";
         try {
             messageProtocole = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.sender, auteur),
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, message)
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.sender, (Object)auteur),
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message,(Object) message)
             );
         } catch (Exception ex) {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);

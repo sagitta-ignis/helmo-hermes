@@ -42,8 +42,8 @@ public class Msg extends CommandArgument {
         String message = "";
         try {
             message = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.sender, auteur),
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, text)
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.sender, (Object)auteur),
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message,(Object)text)
             );
         } catch (Exception ex) {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);

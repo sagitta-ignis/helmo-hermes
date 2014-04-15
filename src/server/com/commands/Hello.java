@@ -69,12 +69,12 @@ public class Hello extends CommandArgument {
     }
 
     private void connectionAvecSucces(String pseudo) {
-        clientInfo.setEtat(3);
         clientInfo.setUsername(pseudo);
-        response.sent(0);
         SentJoin sentJoin = new SentJoin(manager, server);
         sentJoin.sent();
 
+        clientInfo.setEtat(3);
+        response.sent(0);
     }
 
     @Override
@@ -84,12 +84,12 @@ public class Hello extends CommandArgument {
         String motDePasse = message.get(ProtocoleSwinen.pass);
 
         if (verifierParametresConnection(pseudo, motDePasse)) {
-            
+
             if (verifierSiUtilisateurPasDejaConnecte(pseudo)) {
-                
-                connectionAvecSucces(pseudo);                
-            } else {                
-                 fermerConnection(2);
+
+                connectionAvecSucces(pseudo);
+            } else {
+                fermerConnection(2);
             }
         } else {
             fermerConnection(1);

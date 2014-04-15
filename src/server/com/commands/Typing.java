@@ -38,7 +38,7 @@ public class Typing extends CommandArgument {
         String messageProtocole = "";
         try {
             messageProtocole = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user,clientInfo.getUsername())
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user,(Object)clientInfo.getUsername())
             );
         } catch (Exception ex) {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);

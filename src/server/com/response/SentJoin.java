@@ -36,7 +36,7 @@ public class SentJoin {
         String messageProtocole = "";
         try {
             messageProtocole = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user,client.getClient().getUsername())
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user,(Object)client.getClient().getUsername())
             );
         } catch (Exception ex) {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);

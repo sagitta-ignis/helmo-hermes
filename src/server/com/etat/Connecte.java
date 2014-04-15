@@ -43,7 +43,7 @@ public class Connecte extends EtatAbstract {
         commandsProtocole.put(ProtocoleSwinen.ALL, new All(sentAll, client));
         commandsProtocole.put(ProtocoleSwinen.MSG, new Msg(client, server, response));
         commandsProtocole.put(ProtocoleSwinen.QUIT, new Quit(manager, server));
-        commandsProtocole.put(ProtocoleSwinen.USERS, new Users());
+        commandsProtocole.put(ProtocoleSwinen.SUSERS, new Users(server));
         commandsProtocole.put(ProtocoleSwinen.TYPING, new Typing(server, client));
     }
 }

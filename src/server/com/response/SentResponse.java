@@ -49,8 +49,8 @@ public class SentResponse {
             String response = "";
             try {
                 response = protocole.make(
-                        new AbstractMap.SimpleEntry<>(ProtocoleSwinen.digit, errorList.get(id).getId()),
-                        new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, errorList.get(id).getMessage())
+                        new AbstractMap.SimpleEntry<>(ProtocoleSwinen.digit, (Object)errorList.get(id).getId()),
+                        new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, (Object)errorList.get(id).getMessage())
                 );
             } catch (Exception ex) {
                 Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);

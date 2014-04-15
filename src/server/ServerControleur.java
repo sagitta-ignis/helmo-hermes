@@ -64,7 +64,9 @@ public class ServerControleur {
 
     public void transmettre(String message) {
         for (ClientManager client : clients) {
-            client.envoyer(message);
+            if (client.getClient().getEtat() != 0) {
+                client.envoyer(message);
+            }
         }
     }
 
