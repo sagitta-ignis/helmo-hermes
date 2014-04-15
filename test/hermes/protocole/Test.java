@@ -110,25 +110,25 @@ public class Test {
         String mdp = "m0npaS5;";
         boolean verification = testMakeAndCheck(
                 ProtocoleSwinen.HELLO, "HELLO " + alice + " " + mdp + "\r\n",
-                new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user, alice),
-                new AbstractMap.SimpleEntry<>(ProtocoleSwinen.pass, mdp));
+                new AbstractMap.SimpleEntry<ABNF, Object>(ProtocoleSwinen.user, alice),
+                new AbstractMap.SimpleEntry<ABNF, Object>(ProtocoleSwinen.pass, mdp));
         String digit = "9";
         String message = "invalide";
         verification = verification && testMakeAndCheck(
                 ProtocoleSwinen.RESPONSE, digit + "\r\n",
-                new AbstractMap.SimpleEntry<>(ProtocoleSwinen.digit, digit),
-                new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, message)
+                new AbstractMap.SimpleEntry<ABNF, Object>(ProtocoleSwinen.digit, digit),
+                new AbstractMap.SimpleEntry<ABNF, Object>(ProtocoleSwinen.message, message)
         );
         String sender = "alice";
         message = "coucou";
         verification = verification && testMakeAndCheck(
                 ProtocoleSwinen.SALL, "SALL " + sender + " " + message + "\r\n",
-                new AbstractMap.SimpleEntry<>(ProtocoleSwinen.sender, sender),
-                new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, message)
+                new AbstractMap.SimpleEntry<ABNF, Object>(ProtocoleSwinen.sender, sender),
+                new AbstractMap.SimpleEntry<ABNF, Object>(ProtocoleSwinen.message, message)
         );
         return verification;
     }
-    private boolean testMakeAndCheck(MessageProtocole mp, String messageExpected, AbstractMap.SimpleEntry<ABNF, String>... args) {
+    private boolean testMakeAndCheck(MessageProtocole mp, String messageExpected, AbstractMap.SimpleEntry<ABNF, Object>... args) {
         Protocole protocole = new ProtocoleSwinen();
         protocole.prepare(mp);
         // création d'un message avec des variables données
