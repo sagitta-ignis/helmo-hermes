@@ -5,7 +5,6 @@
  */
 package hermes.protocole;
 
-import com.sun.org.apache.xerces.internal.xs.StringList;
 import hermes.protocole.message.MessageProtocole;
 import hermes.format.abnf.ABNF;
 import java.util.AbstractMap;
@@ -28,9 +27,11 @@ public class Test {
         if (t.testPattern()) {
             System.err.println("test pattern ok");
         }
+        /*
         if (t.testMessageProtocole()) {
             System.err.println("test message protocole ok");
         }
+        */
         if (t.testProtocoleSwinen()) {
             System.err.println("test protocole swinen ok");
         }
@@ -51,7 +52,7 @@ public class Test {
         // SUSERS(?:\x20(?<user>(?:[[a-zA-Z][0-9]]){4,8}?))+?\x0D\x0A
         // 
         Pattern p = Pattern.compile("SUSERS(?:\\x20(?<user>(?:[[a-zA-Z][0-9]]){4,8}))+\\x0D\\x0A");
-        Matcher m = p.matcher("SUSERS alice bobby carl\r\n");
+        Matcher m = p.matcher("SUSERS alice\r\n");
         //Matcher m = p.matcher("abcdefghijklmnopqrstuvwxyz"+("abcdefghijklmnopqrstuvwxyz").toUpperCase());
         Pattern p2 = Pattern.compile("((?:[[a-zA-Z][0-9]]){4,8})");
         // ((?:[[a-zA-Z][0-9]]){4,8})
@@ -115,7 +116,7 @@ public class Test {
         String digit = "9";
         String message = "invalide";
         verification = verification && testMakeAndCheck(
-                ProtocoleSwinen.RESPONSE, digit + "\r\n",
+                ProtocoleSwinen.RESPONSE, digit + " "+message+"\r\n",
                 new AbstractMap.SimpleEntry<ABNF, Object>(ProtocoleSwinen.digit, digit),
                 new AbstractMap.SimpleEntry<ABNF, Object>(ProtocoleSwinen.message, message)
         );
@@ -125,6 +126,11 @@ public class Test {
                 ProtocoleSwinen.SALL, "SALL " + sender + " " + message + "\r\n",
                 new AbstractMap.SimpleEntry<ABNF, Object>(ProtocoleSwinen.sender, sender),
                 new AbstractMap.SimpleEntry<ABNF, Object>(ProtocoleSwinen.message, message)
+        );
+        List list = Arrays.asList(new String[] {"Alice", "bobby1", "cArl7"});
+        verification = verification && testMakeAndCheck(
+                ProtocoleSwinen.SUSERS, "SUSERS Alice bobby1 cArl7\r\n",
+                new AbstractMap.SimpleEntry<ABNF, Object>(ProtocoleSwinen.user, list)
         );
         return verification;
     }
