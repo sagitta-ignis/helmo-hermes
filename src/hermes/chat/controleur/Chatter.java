@@ -26,16 +26,23 @@ public class Chatter {
 
     private final Utilisateurs users;
     private final Client client;
+    
+    private final MessageLogger logger;
+    
     private final IRCChat fenetre;
     private final Overlay overlay;
 
     public Chatter() {
+        logger = new MessageLogger();
+        
         fenetre = new IRCChat(this);
         overlay = new Overlay(this);
+        
         users = new Utilisateurs();
         users.addObserver(fenetre);
         client = new Client(users);
         client.addObserver(fenetre);
+        client.addObserver(logger);
     }
 
     public Client getClient() {
@@ -107,6 +114,7 @@ public class Chatter {
     public void fermer() {
         desactiverOverlay();
         try {
+            logger.close();
             client.fermer();
         } catch (Exception ex) {
             String message = "le client n'a pas pu être fermé correctement";

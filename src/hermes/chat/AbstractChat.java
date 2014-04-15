@@ -13,7 +13,6 @@ import hermes.client.command.CommandMapper;
 import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
-import javax.swing.DefaultListModel;
 
 /**
  *
@@ -22,7 +21,7 @@ import javax.swing.DefaultListModel;
 public abstract class AbstractChat implements Observer, StatusHandler, Chat {
 
     private final CommandMapper statusReader;
-    
+
     public AbstractChat() {
         statusReader = new CommandMapper();
         initEtats();
@@ -66,7 +65,7 @@ public abstract class AbstractChat implements Observer, StatusHandler, Chat {
             public void execute() {
                 String user = (String) args[0];
                 String msg = (String) args[1];
-                sAll(user,msg);
+                sAll(user, msg);
             }
         });
         statusReader.ajouter(String.valueOf(Client.MSG), new CommandArgument() {
@@ -74,7 +73,7 @@ public abstract class AbstractChat implements Observer, StatusHandler, Chat {
             public void execute() {
                 String user = (String) args[0];
                 String msg = (String) args[1];
-                msg(user,msg);
+                msg(user, msg);
             }
         });
         statusReader.ajouter(String.valueOf(Client.SMSG), new CommandArgument() {
@@ -82,7 +81,14 @@ public abstract class AbstractChat implements Observer, StatusHandler, Chat {
             public void execute() {
                 String user = (String) args[0];
                 String msg = (String) args[1];
-                sMsg(user,msg);
+                sMsg(user, msg);
+            }
+        });
+        statusReader.ajouter(Utilisateurs.SUsers, new CommandArgument() {
+            @Override
+            public void execute() {
+                Utilisateurs users = (Utilisateurs) args[0];
+                sUsers(users);
             }
         });
         statusReader.ajouter(Utilisateurs.Join, new CommandArgument() {
@@ -100,30 +106,30 @@ public abstract class AbstractChat implements Observer, StatusHandler, Chat {
             }
         });
     }
-    
+
     public void unknownRequest() {
         afficher("-- unknown request received");
     }
-    
+
     public void unknownUser() {
         afficher("-- utilisateur inconnu");
     }
-    
+
     public void msgToSelf() {
         afficher("-- impossible d'envoyer un message à soi-même (avez-vous besoin d'un psychologue ?)");
     }
-    
+
     @Override
     public void loggedIn() {
         afficher("-- user logged in");
     }
-    
+
     @Override
     public void response(String digit, String message) {
-        if(!digit.equals("0")) {
-            afficher("-- "+message);
+        if (!digit.equals("0")) {
+            afficher("-- " + message);
         } else {
-            System.out.println("-- "+message);
+            System.out.println("-- " + message);
         }
     }
 
@@ -136,10 +142,15 @@ public abstract class AbstractChat implements Observer, StatusHandler, Chat {
     public void msg(String user, String message) {
         afficher("[pm to] " + user + " : " + message);
     }
-    
+
     @Override
     public void sMsg(String user, String message) {
         afficher("[pm from] " + user + " : " + message);
+    }
+
+    @Override
+    public void sUsers(Utilisateurs users) {
+        afficher("-- connectés : "+users.toString());
     }
 
     @Override
@@ -159,7 +170,7 @@ public abstract class AbstractChat implements Observer, StatusHandler, Chat {
             statusReader.execute(etat, (Object[]) args);
         }
         if (o instanceof Utilisateurs) {
-            String[] arguments = (String[]) args;
+            Object arguments[] = (Object[]) args;
             statusReader.execute(arguments[0], Arrays.copyOfRange(arguments, 1, arguments.length));
         }
     }

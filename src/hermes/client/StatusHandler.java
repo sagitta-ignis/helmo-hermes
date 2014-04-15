@@ -20,6 +20,8 @@ public interface StatusHandler {
     void msg(String user, String message);
     
     void sMsg(String user, String message);
+    
+    void sUsers(Utilisateurs users);
 
     void join(String user);
 

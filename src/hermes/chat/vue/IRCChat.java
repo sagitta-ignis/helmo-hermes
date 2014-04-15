@@ -7,6 +7,7 @@ package hermes.chat.vue;
 
 import hermes.chat.AbstractChat;
 import hermes.chat.controleur.Chatter;
+import hermes.client.Utilisateurs;
 import javax.swing.DefaultListModel;
 
 /**
@@ -29,6 +30,13 @@ public class IRCChat extends AbstractChat {
     
     public void initUtilisateurs(Object users[]) {
         for (Object user : users) {
+            utilisateurs.addElement(user);
+        }
+    }
+
+    @Override
+    public void sUsers(Utilisateurs users) {
+        for (Object user : users.toArray()) {
             utilisateurs.addElement(user);
         }
     }

@@ -14,19 +14,19 @@ import java.util.Map;
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public class CommandMapper {
+public class CommandMapper<T> {
 
-    private final Map<String, CommandArgument> commandes;
+    private final Map<T, CommandArgument> commandes;
 
     public CommandMapper() {
         this.commandes = new HashMap<>();
     }
     
-    public void ajouter(String key, CommandArgument command) {
+    public void ajouter(T key, CommandArgument command) {
         commandes.put(key, command);
     }
     
-    public void execute(String key, Object[] args) {
+    public void execute(T key, Object[] args) {
         CommandArgument command = commandes.get(key);
         if(command != null) {
             command.setArgs(args);
