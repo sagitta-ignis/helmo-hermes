@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 
-package hermes.client.controleur;
+package hermes.chat.controleur;
 
-import hermes.client.vue.Login;
+import hermes.chat.vue.Login;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;

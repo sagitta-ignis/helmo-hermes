@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hermes.client.vue;
+package hermes.client;
 
 /**
  *
@@ -20,6 +20,8 @@ public interface StatusHandler {
     void msg(String user, String message);
     
     void sMsg(String user, String message);
+    
+    void sUsers(Utilisateurs users);
 
     void join(String user);
 

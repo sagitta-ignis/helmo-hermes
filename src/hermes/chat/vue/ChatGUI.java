@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hermes.client.vue;
+package hermes.chat.vue;
 
-import hermes.client.controleur.Chatter;
+import hermes.chat.Chat;
+import hermes.chat.controleur.Chatter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -21,7 +22,8 @@ import javax.swing.text.DefaultCaret;
 public final class ChatGUI extends javax.swing.JFrame implements Chat {
 
     private final Chatter chat;
-
+    private boolean typing;
+    
     /**
      * Creates new form Chat
      *
@@ -33,6 +35,9 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
         utilisateurs.setModel(users);
         chat = chatter;
         setChatListener();
+        
+        // colorise les cellules de la liste
+        utilisateurs.setCellRenderer(new ListCellRendererUser());
 
         //centre la frame
         setLocationRelativeTo(getRootPane());
@@ -50,18 +55,34 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
         this.utilisateur.setText(utilisateur);
     }
 
+    public boolean isTyping() {
+        return typing;
+    }
+
+    public void setTyping(boolean typing) {
+        this.typing = typing;
+    }
+
     private void setChatListener() {
         message.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent ke) {
                 if (ke.getKeyChar() == '\n') {
                     envoyer.doClick();
+                } else {
+                    String text = message.getText();
+                    if(!isTyping() && !text.isEmpty()) {
+                        chat.setTyping(true);
+                    } else if (isTyping() && text.isEmpty()) {
+                        chat.setTyping(false);
+                    }
                 }
             }
         });
         envoyer.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
+                chat.setTyping(false);
                 chat.entrer(utilisateur.getText(), message.getText());
                 message.setText("");
             }

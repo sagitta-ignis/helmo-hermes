@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hermes.client.vue;
+package hermes.chat.vue;
 
-import hermes.client.controleur.Chatter;
+import hermes.chat.AbstractChat;
+import hermes.chat.controleur.Chatter;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
@@ -27,10 +28,10 @@ public class Overlay extends AbstractChat {
 
     private JFrame frame;
     private JTextField fieldEnvoyer;
-    private Chatter chat;
+    private final Chatter chat;
     private int pX;
     private int pY;
-    private ArrayList<JLabel> labels;
+    private final ArrayList<JLabel> labels;
     private final int CHARPARLIGNE = 60;
 
     public Overlay(Chatter chatter) {

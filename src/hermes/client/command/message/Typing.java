@@ -1,7 +1,7 @@
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
- * and ouvrir the template in the editor.
+ * and open the template in the editor.
  */
 package hermes.client.command.message;
 
@@ -14,24 +14,22 @@ import java.util.logging.Logger;
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public class Quit extends Message {
+public class Typing extends Message {
 
-    public Quit(Client client) {
+    public Typing(Client client) {
         super(client);
     }
 
     @Override
     public void execute() {
-        if (verifierArguments(1)) {
-            protocole.prepare(ProtocoleSwinen.QUIT);
+        if (verifierArguments(0)) {
+            protocole.prepare(ProtocoleSwinen.TYPING);
             String request;
             try {
                 request = protocole.make();
                 if (request != null && protocole.check(request)) {
                     System.out.print(request);
                     emetteur.envoyer(request);
-                    connection.disconnect();
-                    client.setEtat(Client.LoggedOut);
                 }
             } catch (Exception ex) {
                 Logger.getLogger(Quit.class.getName()).log(Level.SEVERE, null, ex);
@@ -39,7 +37,7 @@ public class Quit extends Message {
             }
         }
     }
-
+    
     @Override
     public void response(String response) {}
 }

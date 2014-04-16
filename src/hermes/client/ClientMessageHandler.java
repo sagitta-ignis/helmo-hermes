@@ -7,8 +7,9 @@ package hermes.client;
 
 import pattern.command.CommandArgument;
 import hermes.client.command.message.*;
-import hermes.client.controleur.Chatter;
+import hermes.protocole.ProtocoleSwinen;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -17,32 +18,47 @@ import java.util.regex.Pattern;
  */
 public class ClientMessageHandler {
 
-    private final Chatter chatter;
+    private final Client client;
     private final Map<String, CommandArgument> requetes;
 
-    public ClientMessageHandler(Chatter chatter) {
-        this.chatter = chatter;
+    public ClientMessageHandler(Client client) {
+        this.client = client;
         requetes = new HashMap<>();
         initCommands();
     }
 
     private void initCommands() {
-        requetes.put("/quit", new Quit(chatter.getClient()));
-        requetes.put("/hello", new Hello(chatter.getClient()));
-        requetes.put("/msg", new Msg(chatter.getClient()));
+        String user = ProtocoleSwinen.user.getPattern();
+        String pass = ProtocoleSwinen.pass.getPattern();
+        requetes.put("/hello "+user+" "+pass, new Hello(client));
+        requetes.put("/quit", new Quit(client));
+        requetes.put("/users", new Users(client));
+        requetes.put("/typing", new Typing(client));
     }
 
     public boolean traiter(String requete) {
+        Matcher matcher = Pattern.compile("").matcher(requete);
         for (Map.Entry<String, CommandArgument> entry : requetes.entrySet()) {
             String pattern = entry.getKey();
-            if (Pattern.compile(pattern).matcher(requete).matches()) {
+            matcher.usePattern(Pattern.compile(pattern));
+            if (matcher.matches()) {
                 CommandArgument command = entry.getValue();
-                command.setArgs((Object[]) requete.split(" "));
+                command.setArgs(getArguments(requete));
                 command.execute();
                 return true;
             }
         }
         return false;
+    }
+    
+    private Object[] getArguments(String requete) {
+        Object arguments[] = (Object[]) requete.split(" ");
+        if(arguments.length == 0) {
+            arguments = new Object[0];
+        } else {
+            arguments = Arrays.copyOfRange(arguments, 1, arguments.length);
+        }
+        return arguments;
     }
 
 }

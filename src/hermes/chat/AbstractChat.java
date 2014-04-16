@@ -3,16 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hermes.client.vue;
+package hermes.chat;
 
 import hermes.client.Client;
+import hermes.client.StatusHandler;
 import hermes.client.Utilisateurs;
 import pattern.command.CommandArgument;
 import hermes.client.command.CommandMapper;
 import java.util.Arrays;
 import java.util.Observable;
 import java.util.Observer;
-import javax.swing.DefaultListModel;
 
 /**
  *
@@ -20,17 +20,25 @@ import javax.swing.DefaultListModel;
  */
 public abstract class AbstractChat implements Observer, StatusHandler, Chat {
 
+    private boolean typing;
     private final CommandMapper statusReader;
-    private final DefaultListModel utilisateurs;
 
-    public DefaultListModel getUtilisateurs() {
-        return utilisateurs;
+    public boolean isTyping() {
+        return typing;
     }
 
+    public void setTyping(boolean typing) {
+        this.typing = typing;
+    }
+    
     public AbstractChat() {
+        typing = false;
         statusReader = new CommandMapper();
-        utilisateurs = new DefaultListModel();
         initEtats();
+    }
+    
+    public void ajouterStatus(Object key, CommandArgument command) {
+        statusReader.ajouter(key, command);
     }
 
     private void initEtats() {
@@ -44,6 +52,12 @@ public abstract class AbstractChat implements Observer, StatusHandler, Chat {
             @Override
             public void execute() {
                 unknownUser();
+            }
+        });
+        statusReader.ajouter(String.valueOf(Client.MSGToSelf), new CommandArgument() {
+            @Override
+            public void execute() {
+                msgToSelf();
             }
         });
         statusReader.ajouter(String.valueOf(Client.LoggedIn), new CommandArgument() {
@@ -65,7 +79,7 @@ public abstract class AbstractChat implements Observer, StatusHandler, Chat {
             public void execute() {
                 String user = (String) args[0];
                 String msg = (String) args[1];
-                sAll(user,msg);
+                sAll(user, msg);
             }
         });
         statusReader.ajouter(String.valueOf(Client.MSG), new CommandArgument() {
@@ -73,7 +87,7 @@ public abstract class AbstractChat implements Observer, StatusHandler, Chat {
             public void execute() {
                 String user = (String) args[0];
                 String msg = (String) args[1];
-                msg(user,msg);
+                msg(user, msg);
             }
         });
         statusReader.ajouter(String.valueOf(Client.SMSG), new CommandArgument() {
@@ -81,7 +95,14 @@ public abstract class AbstractChat implements Observer, StatusHandler, Chat {
             public void execute() {
                 String user = (String) args[0];
                 String msg = (String) args[1];
-                sMsg(user,msg);
+                sMsg(user, msg);
+            }
+        });
+        statusReader.ajouter(Utilisateurs.SUsers, new CommandArgument() {
+            @Override
+            public void execute() {
+                Utilisateurs users = (Utilisateurs) args[0];
+                sUsers(users);
             }
         });
         statusReader.ajouter(Utilisateurs.Join, new CommandArgument() {
@@ -99,27 +120,30 @@ public abstract class AbstractChat implements Observer, StatusHandler, Chat {
             }
         });
     }
-    
+
     public void unknownRequest() {
         afficher("-- unknown request received");
     }
-    
+
     public void unknownUser() {
         afficher("-- utilisateur inconnu");
     }
-    
+
+    public void msgToSelf() {
+        afficher("-- impossible d'envoyer un message à soi-même (avez-vous besoin d'un psychologue ?)");
+    }
+
     @Override
     public void loggedIn() {
         afficher("-- user logged in");
     }
-    
+
     @Override
     public void response(String digit, String message) {
-        if(!digit.equals("0")) {
-            afficher("-- "+message);
+        if (!digit.equals("0")) {
+            afficher("-- " + message);
         } else {
-            System.out.println("-- "+message);
-            System.err.println("");
+            System.out.println("-- " + message);
         }
     }
 
@@ -132,21 +156,24 @@ public abstract class AbstractChat implements Observer, StatusHandler, Chat {
     public void msg(String user, String message) {
         afficher("[pm to] " + user + " : " + message);
     }
-    
+
     @Override
     public void sMsg(String user, String message) {
         afficher("[pm from] " + user + " : " + message);
     }
 
     @Override
+    public void sUsers(Utilisateurs users) {
+        afficher("-- connectés : "+users.toString());
+    }
+
+    @Override
     public void join(String user) {
-        utilisateurs.addElement(user);
         afficher("-- " + user + " a rejoint le serveur");
     }
 
     @Override
     public void leave(String user) {
-        utilisateurs.removeElement(user);
         afficher("-- " + user + " a quitté le serveur");
     }
 
@@ -157,7 +184,7 @@ public abstract class AbstractChat implements Observer, StatusHandler, Chat {
             statusReader.execute(etat, (Object[]) args);
         }
         if (o instanceof Utilisateurs) {
-            String[] arguments = (String[]) args;
+            Object arguments[] = (Object[]) args;
             statusReader.execute(arguments[0], Arrays.copyOfRange(arguments, 1, arguments.length));
         }
     }

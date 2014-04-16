@@ -35,8 +35,8 @@ public class Msg extends Message {
             String request;
             try {
                 request = protocole.make(
-                        new AbstractMap.SimpleEntry<>(ProtocoleSwinen.receiver, receiver),
-                        new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, message)
+                        new AbstractMap.SimpleEntry<>(ProtocoleSwinen.receiver, (Object) receiver),
+                        new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, (Object) message)
                 );
             } catch (Exception ex) {
                 // Logger.getLogger(Hello.class.getName()).log(Level.SEVERE, null, ex);
@@ -44,6 +44,7 @@ public class Msg extends Message {
             }
             if (request != null && protocole.check(request)) {
                 waitResponse();
+                System.out.print(request);
                 emetteur.envoyer(request);
             } else {
                 client.setEtat(Client.BadMessageMaked);
@@ -61,6 +62,9 @@ public class Msg extends Message {
                         break;
                     case "1":
                         client.setEtat(Client.UnknownUser);
+                        break;
+                    case "3":
+                        client.setEtat(Client.MSGToSelf);
                         break;
                     case "9":
                         client.setEtat(Client.BadProtocoleSended);

@@ -29,24 +29,23 @@ public class ServerRequestHandler {
     }
 
     private void initCommands() {
+        requeteDeServeur.put(ProtocoleSwinen.JOIN, new Join(client));
+        requeteDeServeur.put(ProtocoleSwinen.LEAVE, new Leave(client));
         requeteDeServeur.put(ProtocoleSwinen.RESPONSE, new Response(client));
         requeteDeServeur.put(ProtocoleSwinen.SALL, new SAll(client));
         requeteDeServeur.put(ProtocoleSwinen.SMSG, new SMsg(client));
-        requeteDeServeur.put(ProtocoleSwinen.JOIN, new Join(client));
-        requeteDeServeur.put(ProtocoleSwinen.LEAVE, new Leave(client));
+        requeteDeServeur.put(ProtocoleSwinen.STYPING, new STyping(client));
+        requeteDeServeur.put(ProtocoleSwinen.SUSERS, new SUsers(client));
     }
 
-    public boolean parser(String text) {
-        Protocole protocole = client.getProtocole();
-        for (Map.Entry<MessageProtocole, Requete> entry : requeteDeServeur.entrySet()) {
-            MessageProtocole messageProtocole = entry.getKey();
-            protocole.prepare(messageProtocole);
-            if (protocole.check(text)) {
-                Requete requete = entry.getValue();
-                requete.setArgs(text);
-                requete.execute();
-                return true;
-            }
+    public boolean parser(String request) {
+        System.out.print(request);
+        MessageProtocole messageProtocole = client.getProtocole().search(request);
+        if (messageProtocole != null) {
+            Requete requete = requeteDeServeur.get(messageProtocole);
+            requete.setArgs(request);
+            requete.execute();
+            return true;
         }
         return false;
     }

@@ -3,18 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and ouvrir the template in the editor.
  */
-package hermes.client.controleur;
+package hermes.chat.controleur;
 
 import hermes.client.Client;
-import hermes.client.ClientMessageHandler;
 import hermes.client.Utilisateurs;
 import hermes.client.exception.NotConnectedException;
 import hermes.client.exception.UnopenableExecption;
 import hermes.client.exception.UnreachableServerExeception;
-import hermes.client.vue.IRCChat;
-import hermes.client.vue.Overlay;
+import hermes.chat.vue.IRCChat;
+import hermes.chat.vue.Overlay;
+import hermes.client.command.message.All;
+import hermes.client.command.message.Msg;
+import hermes.client.command.message.Typing;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import pattern.command.CommandArgument;
 
 /**
  *
@@ -24,18 +27,23 @@ public class Chatter {
 
     private final Utilisateurs users;
     private final Client client;
-    private final ClientMessageHandler requestHandler;
+    
+    private final MessageLogger logger;
+    
     private final IRCChat fenetre;
     private final Overlay overlay;
 
     public Chatter() {
+        logger = new MessageLogger();
+        
         fenetre = new IRCChat(this);
         overlay = new Overlay(this);
+        
         users = new Utilisateurs();
         users.addObserver(fenetre);
         client = new Client(users);
         client.addObserver(fenetre);
-        requestHandler = new ClientMessageHandler(this);
+        client.addObserver(logger);
     }
 
     public Client getClient() {
@@ -81,18 +89,41 @@ public class Chatter {
         if (text == null) {
             return;
         }
-        if (!requestHandler.traiter(text)) {
+        if (!client.getMessageHandler().traiter(text)) {
             if (user == null || user.isEmpty()) {
-                client.envoyer(text);
+                envoyer(text);
             } else {
-                client.envoyer(user, text);
+                envoyer(user, text);
             }
         }
+    }
+    
+    private void envoyer(String text) {
+        CommandArgument message;
+        message = new All(client);
+        message.setArgs(text);
+        message.execute();
+    }
+
+    private void envoyer(String user, String text) {
+        CommandArgument message;
+        message = new Msg(client);
+        message.setArgs(user, text);
+        message.execute();
+    }
+    
+    public void setTyping(boolean b) {
+        fenetre.setTyping(b);
+        CommandArgument message;
+        message = new Typing(client);
+        message.setArgs();
+        message.execute();
     }
 
     public void fermer() {
         desactiverOverlay();
         try {
+            logger.close();
             client.fermer();
         } catch (Exception ex) {
             String message = "le client n'a pas pu être fermé correctement";
