@@ -22,8 +22,8 @@ public class Typing extends Message {
 
     @Override
     public void execute() {
-        if (verifierArguments(1)) {
-            protocole.prepare(ProtocoleSwinen.USERS);
+        if (verifierArguments(0)) {
+            protocole.prepare(ProtocoleSwinen.TYPING);
             String request;
             try {
                 request = protocole.make();

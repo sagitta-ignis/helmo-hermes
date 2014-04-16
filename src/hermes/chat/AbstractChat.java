@@ -20,11 +20,25 @@ import java.util.Observer;
  */
 public abstract class AbstractChat implements Observer, StatusHandler, Chat {
 
+    private boolean typing;
     private final CommandMapper statusReader;
 
+    public boolean isTyping() {
+        return typing;
+    }
+
+    public void setTyping(boolean typing) {
+        this.typing = typing;
+    }
+    
     public AbstractChat() {
+        typing = false;
         statusReader = new CommandMapper();
         initEtats();
+    }
+    
+    public void ajouterStatus(Object key, CommandArgument command) {
+        statusReader.ajouter(key, command);
     }
 
     private void initEtats() {

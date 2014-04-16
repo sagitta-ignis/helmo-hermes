@@ -43,12 +43,22 @@ public class ClientMessageHandler {
             matcher.usePattern(Pattern.compile(pattern));
             if (matcher.matches()) {
                 CommandArgument command = entry.getValue();
-                command.setArgs((Object[]) requete.split(" "));
+                command.setArgs(getArguments(requete));
                 command.execute();
                 return true;
             }
         }
         return false;
+    }
+    
+    private Object[] getArguments(String requete) {
+        Object arguments[] = (Object[]) requete.split(" ");
+        if(arguments.length == 0) {
+            arguments = new Object[0];
+        } else {
+            arguments = Arrays.copyOfRange(arguments, 1, arguments.length);
+        }
+        return arguments;
     }
 
 }

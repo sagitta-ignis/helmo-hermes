@@ -5,11 +5,6 @@ package hermes.client;
  * To change this template file, choose Tools | Templates
  * and ouvrir the template in the editor.
  */
-import hermes.client.command.message.All;
-import hermes.client.command.message.Msg;
-import hermes.client.command.message.Hello;
-import hermes.client.command.message.Message;
-import pattern.command.CommandArgument;
 import hermes.client.exception.NotConnectedException;
 import hermes.client.exception.UnreachableServerExeception;
 import hermes.client.exception.UnopenableExecption;

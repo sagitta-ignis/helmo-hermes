@@ -14,6 +14,7 @@ import hermes.chat.vue.IRCChat;
 import hermes.chat.vue.Overlay;
 import hermes.client.command.message.All;
 import hermes.client.command.message.Msg;
+import hermes.client.command.message.Typing;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pattern.command.CommandArgument;
@@ -108,6 +109,14 @@ public class Chatter {
         CommandArgument message;
         message = new Msg(client);
         message.setArgs(user, text);
+        message.execute();
+    }
+    
+    public void setTyping(boolean b) {
+        fenetre.setTyping(b);
+        CommandArgument message;
+        message = new Typing(client);
+        message.setArgs();
         message.execute();
     }
 

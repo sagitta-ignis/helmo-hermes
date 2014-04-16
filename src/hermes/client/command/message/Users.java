@@ -22,7 +22,7 @@ public class Users extends Message {
 
     @Override
     public void execute() {
-        if (verifierArguments(1)) {
+        if (verifierArguments(0)) {
             protocole.prepare(ProtocoleSwinen.USERS);
             String request;
             try {

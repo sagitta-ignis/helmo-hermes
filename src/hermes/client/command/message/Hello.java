@@ -21,9 +21,9 @@ public class Hello extends Message {
 
     @Override
     public void execute() {
-        if (verifierArguments(3)) {
-            String user = (String) args[1];
-            String pass = (String) args[2];
+        if (verifierArguments(2)) {
+            String user = (String) args[0];
+            String pass = (String) args[1];
             hello(user, pass);
         }
     }
