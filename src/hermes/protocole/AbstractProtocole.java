@@ -35,10 +35,10 @@ public class AbstractProtocole implements Protocole {
     }
 
     @Override
-    public String make(Entry<ABNF,String>... args) throws Exception{
+    public String make(Entry<ABNF,Object>... args) throws Exception{
             if(prepared == null) return null;
             prepared.effacer();
-            for (Entry<ABNF, String> entry : args) {
+            for (Entry<ABNF, Object> entry : args) {
                 if(!prepared.set(entry.getKey(), entry.getValue())) {
                     return null;
                 }
@@ -56,6 +56,12 @@ public class AbstractProtocole implements Protocole {
     public String get(ABNF variable) {
         if(prepared == null) return null;
         return prepared.get(variable);
+    }
+    
+    @Override
+    public List<String> getAll(ABNF variable) {
+        if(prepared == null) return null;
+        return prepared.getAll(variable);
     }
 
     @Override

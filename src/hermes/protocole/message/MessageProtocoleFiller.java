@@ -149,9 +149,6 @@ public class MessageProtocoleFiller extends ABNFSyntaxicalParser {
         String value;
         switch (etat) {
             case repetition:
-                if (message.toString().length() != 0) {
-                    message.append(" ");
-                }
                 message.append(keyword);
                 keywords.offer(keyword);
                 break;
