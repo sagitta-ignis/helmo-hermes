@@ -7,8 +7,8 @@
 package hermes.chat.controleur;
 
 import hermes.chat.AbstractChat;
-import hermeslogger.Logger;
-import hermeslogger.LoggerImplements;
+import hermes.logger.Logger;
+import hermes.logger.LoggerImplements;
 import java.io.IOException;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
