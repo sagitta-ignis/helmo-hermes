@@ -5,7 +5,7 @@ package server;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import hermeslogger.LoggerImplements;
+import hermes.logger.LoggerImplements;
 import hermes.xml.Xml;
 import hermes.xml.XmlImpl;
 import server.com.ClientManager;
@@ -31,7 +31,7 @@ public class ServerControleur {
     private final Scanner input;
     private final Writer output;
     private final List<ClientManager> clients;
-    private final hermeslogger.Logger log;
+    private final hermes.logger.Logger log;
     private ListUser users;
     private Configuration config;
     private final SentResponse responseNS;
