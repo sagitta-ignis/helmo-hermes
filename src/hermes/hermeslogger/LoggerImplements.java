@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package hermes.logger;
+package hermes.hermeslogger;
 
-import hermes.logger.models.Configuration;
-import hermes.logger.models.ListMessages;
-import hermes.logger.models.ParcourirFichiers;
-import hermes.logger.models.Verification;
+import hermes.hermeslogger.models.Configuration;
+import hermes.hermeslogger.models.ListMessages;
+import hermes.hermeslogger.models.ParcourirFichiers;
+import hermes.hermeslogger.models.Verification;
 import hermes.xml.Xml;
 import hermes.xml.XmlImpl;
 import java.io.File;
@@ -24,7 +24,7 @@ import javax.xml.bind.JAXBException;
  *
  * @author David
  */
-public class LoggerImplements implements Logger {
+public class LoggerImplements implements HermesLogger {
 
     private final ListMessages listeMessages;
     private final Xml xml;
@@ -43,6 +43,10 @@ public class LoggerImplements implements Logger {
 
     @Override
     public void ajouterMessage(String message) throws IOException, JAXBException {
+        if(message.length() < 1 || message == null){
+            System.err.println("[LOGGER] Problème message vide ou null");
+            return;
+        }
         listeMessages.ajouterMessage(message);
         messagesAttentes++;
         verificationNbMessages();

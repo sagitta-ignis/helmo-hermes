@@ -36,7 +36,8 @@ public class ProtocoleSwinen extends AbstractProtocole {
     public static MessageProtocole REGISTER;
     public static MessageProtocole TYPING;
     public static MessageProtocole STYPING;
-
+    public static MessageProtocole SERVERSHUTDOWN;
+    
     static {
         initVariables();
         initMessages();
@@ -88,6 +89,7 @@ public class ProtocoleSwinen extends AbstractProtocole {
         REGISTER = new MessageProtocole("register = \"REGISTER\" space user space pass crlf", user, pass);
         TYPING = new MessageProtocole("typing = \"TYPING\" crlf");
         STYPING = new MessageProtocole("styping = \"STYPING\" space user crlf",user);
+        SERVERSHUTDOWN = new MessageProtocole("servershutdown = \"SERVERSHUTDOWN\" crlf");
     }
 
     public ProtocoleSwinen() {
@@ -105,5 +107,6 @@ public class ProtocoleSwinen extends AbstractProtocole {
         add(REGISTER);
         add(TYPING);
         add(STYPING);
+        add(SERVERSHUTDOWN);
     }
 }

@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package hermes.logger.models;
+package hermes.hermeslogger.models;
 
 import java.io.File;
 import java.util.ArrayList;

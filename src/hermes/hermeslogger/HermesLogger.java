@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package hermes.logger;
+package hermes.hermeslogger;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import javax.xml.bind.JAXBException;
  *
  * @author David
  */
-public interface Logger {
+public interface HermesLogger {
     
     void ajouterMessage(String message)  throws IOException, JAXBException;
     
