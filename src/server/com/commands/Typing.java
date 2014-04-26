@@ -7,6 +7,7 @@ package server.com.commands;
 
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
+import hermes.protocole.message.MessageProtocole;
 import java.util.AbstractMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,16 +34,20 @@ public class Typing extends CommandArgument {
 
     @Override
     public void execute() {
+        MessageProtocole message = (MessageProtocole) args[0];
+        String activite = message.get(ProtocoleSwinen.digit);
 
         protocole.prepare(ProtocoleSwinen.STYPING);
         String messageProtocole = "";
-      
+
         try {
-            messageProtocole = protocole.make();
+            messageProtocole = protocole.make(
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user, (Object) clientInfo.getUsername()),
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.digit, (Object) activite)
+            );
         } catch (Exception ex) {
-            Logger.getLogger(Typing.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
         }
-  
 
         server.transmettre(messageProtocole);
     }
