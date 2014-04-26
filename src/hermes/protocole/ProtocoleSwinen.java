@@ -87,8 +87,8 @@ public class ProtocoleSwinen extends AbstractProtocole {
         JOIN = new MessageProtocole("join = \"JOIN\" space user crlf", user);
         LEAVE = new MessageProtocole("leave = \"LEAVE\" space user crlf", user);
         REGISTER = new MessageProtocole("register = \"REGISTER\" space user space pass crlf", user, pass);
-        TYPING = new MessageProtocole("typing = \"TYPING\" crlf");
-        STYPING = new MessageProtocole("styping = \"STYPING\" space user crlf",user);
+        TYPING = new MessageProtocole("typing = \"TYPING\" space digit crlf", digit);
+        STYPING = new MessageProtocole("styping = \"STYPING\" space user space digit crlf", user, digit);
         SERVERSHUTDOWN = new MessageProtocole("servershutdown = \"SERVERSHUTDOWN\" crlf");
     }
 
