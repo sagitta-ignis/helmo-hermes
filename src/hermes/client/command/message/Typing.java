@@ -7,6 +7,7 @@ package hermes.client.command.message;
 
 import hermes.client.Client;
 import hermes.protocole.ProtocoleSwinen;
+import java.util.AbstractMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,11 +23,14 @@ public class Typing extends Message {
 
     @Override
     public void execute() {
-        if (verifierArguments(0)) {
+        if (verifierArguments(1)) {
+            boolean b = (boolean) args[0];
             protocole.prepare(ProtocoleSwinen.TYPING);
             String request;
             try {
-                request = protocole.make();
+                request = protocole.make(
+                        new AbstractMap.SimpleEntry<>(ProtocoleSwinen.digit, (Object) (b?"1":"0"))
+                );
                 if (request != null && protocole.check(request)) {
                     System.out.print(request);
                     emetteur.envoyer(request);

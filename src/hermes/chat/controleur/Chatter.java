@@ -116,7 +116,7 @@ public class Chatter {
         fenetre.setTyping(b);
         CommandArgument message;
         message = new Typing(client);
-        message.setArgs();
+        message.setArgs(b);
         message.execute();
     }
 

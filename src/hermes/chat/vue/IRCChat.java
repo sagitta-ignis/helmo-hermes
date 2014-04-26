@@ -32,7 +32,8 @@ public class IRCChat extends AbstractChat {
             @Override
             public void execute() {
                 String user = (String) args[0];
-                sTyping(user);
+                String digit = (String) args[1];
+                sTyping(user, digit.equals("1"));
             }
         });
     }
@@ -78,10 +79,10 @@ public class IRCChat extends AbstractChat {
         }
     }
     
-    public void sTyping(String user) {
+    public void sTyping(String user, boolean typing) {
         int index = chercherUtilisateur(user);
         CellUser cell = utilisateurs.remove(index);
-        cell.toggle();
+        cell.toggle(typing);
         utilisateurs.add(index, cell);
     }
 
