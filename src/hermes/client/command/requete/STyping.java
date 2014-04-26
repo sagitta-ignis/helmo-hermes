@@ -25,7 +25,8 @@ public class STyping extends Requete {
             protocole.prepare(ProtocoleSwinen.STYPING);
             if (protocole.check(text)) {
                 String user = protocole.get(ProtocoleSwinen.user);
-                client.setEtat(Client.STYPING, user);
+                String digit = protocole.get(ProtocoleSwinen.digit);
+                client.setEtat(Client.STYPING, user, digit);
             } else {
                 client.setEtat(Client.BadProtocoleReceived);
             }

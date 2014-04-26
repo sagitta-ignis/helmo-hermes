@@ -7,8 +7,8 @@
 package hermes.chat.controleur;
 
 import hermes.chat.AbstractChat;
-import hermes.logger.Logger;
-import hermes.logger.LoggerImplements;
+import hermes.hermeslogger.HermesLogger;
+import hermes.hermeslogger.LoggerImplements;
 import java.io.IOException;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
@@ -19,7 +19,7 @@ import javax.xml.bind.JAXBException;
  */
 public class MessageLogger extends AbstractChat {
 
-    private final Logger logger;
+    private final HermesLogger logger;
 
     public MessageLogger() {
         logger = new LoggerImplements("General");
