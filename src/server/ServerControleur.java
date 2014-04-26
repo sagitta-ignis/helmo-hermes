@@ -5,7 +5,11 @@ package server;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import hermeslogger.LoggerImplements;
+
+
+
+import hermes.hermeslogger.HermesLogger;
+import hermes.hermeslogger.LoggerImplements;
 import hermes.xml.Xml;
 import hermes.xml.XmlImpl;
 import server.com.ClientManager;
@@ -13,7 +17,6 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
@@ -28,10 +31,10 @@ import server.configuration.ListUser;
 public class ServerControleur {
 
     private ServerSocket server;
-    private final Scanner input;
+
     private final Writer output;
     private final List<ClientManager> clients;
-    private final hermeslogger.Logger log;
+    private HermesLogger log;
     private ListUser users;
     private Configuration config;
     private final SentResponse responseNS;
@@ -41,24 +44,27 @@ public class ServerControleur {
         clients = new ArrayList<>();
         users = new ListUser();
         responseNS = new SentResponse();
-        this.input = new Scanner(System.in);
         this.output = new PrintWriter(System.out);
         log = new LoggerImplements("General");
 
         lectureFichiers();
         connection();
+
+        new ThreadInput(this).start();
     }
 
     public void lancerServeur() {
-        try {
-            while (true) {
+        while (true) {
+            try {
                 Socket clientSocket = server.accept();
                 ClientManager client = new ClientManager(this, clientSocket, users);
                 clients.add(client);
+            } catch (SocketException ex) {
+                break;
+            } catch (IOException ex) {
+                Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
+                afficher(responseNS.getError(105));
             }
-        } catch (IOException ex) {
-            Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
-            afficher(responseNS.getError(105));
         }
     }
 
@@ -71,6 +77,13 @@ public class ServerControleur {
     }
 
     public void afficher(String message) {
+        if (message == null) {
+            return;
+        }
+        if(log == null){
+            System.err.println("[LOGGER] Référence null - ServerControleur");
+            return;
+        }
         try {
             log.ajouterMessage(message);
 
@@ -90,16 +103,24 @@ public class ServerControleur {
         return clients.remove(client);
     }
 
-    public void fermer() throws IOException {
-        for (ClientManager client : clients) {
-            client.close();
-        }
+    public void fermer() {
+        
         try {
             log.close();
+            log = null;
+            for (int i = 0; i < clients.size(); i++) {
+                clients.get(i).close();
+            }
+            clients.clear();
+            server.close();
+            System.exit(0);
         } catch (JAXBException ex) {
             Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
         }
-        server.close();
     }
 
     public List<ClientManager> getConnected() {

@@ -36,6 +36,7 @@ public class SortieClient extends Thread {
     }
 
     public void close() {
+        this.interrupt();
         outToClient.close();
     }
 
@@ -45,15 +46,15 @@ public class SortieClient extends Thread {
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         while (true) {
             if (fileMessages.size() != 0) {
                 envoyer(fileMessages.poll());
             } else {
                 try {
-                    sleep(Configuration.threadSleepMillisec);
+                    wait(Configuration.threadSleepMillisec);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(SortieClient.class.getName()).log(Level.SEVERE, null, ex);
+                    break;
                 }
             }
         }

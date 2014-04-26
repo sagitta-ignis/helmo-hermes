@@ -36,13 +36,13 @@ public class Typing extends CommandArgument {
 
         protocole.prepare(ProtocoleSwinen.STYPING);
         String messageProtocole = "";
+      
         try {
-            messageProtocole = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user,(Object)clientInfo.getUsername())
-            );
+            messageProtocole = protocole.make();
         } catch (Exception ex) {
-            Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Typing.class.getName()).log(Level.SEVERE, null, ex);
         }
+  
 
         server.transmettre(messageProtocole);
     }

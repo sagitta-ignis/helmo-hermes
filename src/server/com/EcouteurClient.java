@@ -15,7 +15,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.ServerControleur;
 import server.com.commands.Quit;
-import server.com.response.Response;
 import server.com.response.SentResponse;
 
 /**
@@ -26,7 +25,7 @@ public class EcouteurClient extends Thread {
 
     private final Client clientInfo;
     private final ClientManager manager;
-    private final BufferedReader inFromClient;
+    private BufferedReader inFromClient;
     private final ServerControleur server;
     private final SentResponse responseNS;
 
@@ -62,17 +61,22 @@ public class EcouteurClient extends Thread {
     }
 
     private void connectionLost() {
-        //Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
-        Quit quit = new Quit(manager, server);
-        quit.execute();    
+        if (clientInfo.isOpened()) {
+            Quit quit = new Quit(manager, server);
+            quit.execute();
+        }
+
     }
 
     public void close() {
         try {
             inFromClient.close();
+            this.interrupt();
         } catch (IOException ex) {
             Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);
             server.afficher(responseNS.getError(103));
+        } finally {
+            inFromClient = null;
         }
     }
 

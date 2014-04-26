@@ -3,13 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/com/response/SentAll.java</file>
-            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/com/commands/Hello.java</file>
-            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/com/etat/Waiting.java</file>
-            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/com/response/Response.java</file>
+            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/Starter.java</file>
+            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/com/EcouteurClient.java</file>
+            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/com/SortieClient.java</file>
+            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/ThreadInput.java</file>
             <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/ServerControleur.java</file>
-            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/com/commands/Msg.java</file>
-            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/com/response/SentResponse.java</file>
+            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/com/ClientManager.java</file>
         </group>
     </open-files>
 </project-private>

@@ -17,6 +17,7 @@ import server.com.etat.EtatAbstract;
 import server.com.etat.Waiting;
 import server.com.response.SentAll;
 import server.com.response.SentResponse;
+import server.com.response.SentShutDown;
 import server.configuration.ListUser;
 
 /**
@@ -82,16 +83,18 @@ public class ClientManager {
         sortie.envoyer(message);
     }
 
-    public void close() {
+    public void close() {             
         try {
-            server.retirer(this);
+            new SentShutDown(this).sent();
             clientInfo.setOpened(false);
+            socket.close();            
             ecouteur.close();
             sortie.close();
-            socket.close();
         } catch (IOException ex) {
             Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);            
             server.afficher(response.getError(101));
+        } finally {
+            server.retirer(this);
         }
     }
 
