@@ -22,10 +22,12 @@ import server.configuration.Configuration;
  */
 public class SortieClient extends Thread {
 
+    private final int sleepMilliSec;
     private final PrintWriter outToClient;
     private Queue<String> fileMessages ;
 
-    public SortieClient(Socket sck) throws IOException {
+    public SortieClient(Socket sck, int sleep) throws IOException {
+        sleepMilliSec = sleep;
         OutputStreamWriter osw = new OutputStreamWriter(sck.getOutputStream(), Charset.forName("UTF-8"));
         outToClient = new PrintWriter(osw, true);
         fileMessages = new LinkedList<String>();
@@ -52,7 +54,7 @@ public class SortieClient extends Thread {
                 envoyer(fileMessages.poll());
             } else {
                 try {
-                    wait(Configuration.threadSleepMillisec);
+                    wait(sleepMilliSec);
                 } catch (InterruptedException ex) {
                     break;
                 }

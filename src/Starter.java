@@ -19,7 +19,7 @@ public class Starter {
 
         ServerControleur s = new ServerControleur();
 
-        System.out.println("-- serveur a démarré");
+        System.out.println(">> Serveur a démarré");
         s.lancerServeur();
 
     }

@@ -21,11 +21,11 @@ import server.com.etat.Waiting;
 public class SentShutDown {
 
     private final Protocole protocole;
-    private final ClientManager client;
+    private final ServerControleur server;
 
-    public SentShutDown(ClientManager client) {
+    public SentShutDown(ServerControleur server) {
         this.protocole = new ProtocoleSwinen();
-        this.client = client;
+        this.server = server;
     }
 
     public void sent() {
@@ -33,13 +33,11 @@ public class SentShutDown {
         protocole.prepare(ProtocoleSwinen.SERVERSHUTDOWN);
         String messageProtocole = "";
         try {
-            messageProtocole = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user,(Object)client.getClient().getUsername())
-            );
+            messageProtocole = protocole.make();
         } catch (Exception ex) {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        client.envoitImmediat(messageProtocole);
+        server.transmettre(messageProtocole);
     }
 }

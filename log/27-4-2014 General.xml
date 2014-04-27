@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Conversation>
+    <message>JOIN alice
+</message>
+    <message>SUSERS alice
+</message>
+    <message>SALL alice qf
+</message>
+    <message>SALL alice ozekgsqfds
+</message>
+    <message>JOIN alice
+</message>
+    <message>SUSERS alice
+</message>
+    <message>JOIN bobby
+</message>
+    <message>SUSERS alice bobby
+</message>
+    <message>SALL alice dzadazfsd
+</message>
+    <message>SALL bobby fdsf
+</message>
+    <message>SMSG bobby zia
+</message>
+</Conversation>

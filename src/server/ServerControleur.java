@@ -5,10 +5,6 @@ package server;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
-
-
 import hermes.hermeslogger.HermesLogger;
 import hermes.hermeslogger.LoggerImplements;
 import hermes.xml.Xml;
@@ -22,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import server.com.response.SentResponse;
+import server.com.response.SentShutDown;
 import server.configuration.Configuration;
 import server.configuration.ListUser;
 
@@ -58,7 +55,7 @@ public class ServerControleur {
         while (true) {
             try {
                 Socket clientSocket = server.accept();
-                ClientManager client = new ClientManager(this, clientSocket, users);
+                ClientManager client = new ClientManager(this, clientSocket, users,config);
                 clients.add(client);
             } catch (SocketException ex) {
                 break;
@@ -81,7 +78,7 @@ public class ServerControleur {
         if (message == null) {
             return;
         }
-        if(log == null){
+        if (log == null) {
             System.err.println("[LOGGER] Référence null - ServerControleur");
             return;
         }
@@ -104,16 +101,28 @@ public class ServerControleur {
         return clients.remove(client);
     }
 
-    public void fermer() {
-        
+    public synchronized void fermer() {
+
         try {
+            System.err.println(">> Fermeture du serveur");
             log.close();
             log = null;
+            new SentShutDown(this).sent();
+
+            int secondesAvantFermeture = 5;
+
+            while (secondesAvantFermeture != 0) {
+                System.err.println(">> Fermeture du serveur dans " + secondesAvantFermeture-- + " secs");                
+                wait(1000);
+            }
+
             for (int i = 0; i < clients.size(); i++) {
                 clients.get(i).close();
             }
             clients.clear();
             server.close();
+            
+            System.err.println(">> Le serveur est éteint");
             System.exit(0);
         } catch (JAXBException ex) {
             Logger.getLogger(ServerControleur.class.getName()).log(Level.SEVERE, null, ex);

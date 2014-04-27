@@ -17,7 +17,7 @@ import server.com.etat.EtatAbstract;
 import server.com.etat.Waiting;
 import server.com.response.SentAll;
 import server.com.response.SentResponse;
-import server.com.response.SentShutDown;
+import server.configuration.Configuration;
 import server.configuration.ListUser;
 
 /**
@@ -29,7 +29,8 @@ public class ClientManager {
     private static int increment = 1;
 
     private final ServerControleur server;
-
+    private final Configuration config;
+    
     private final EcouteurClient ecouteur;
     private final SortieClient sortie;
     private final Client clientInfo;
@@ -41,8 +42,9 @@ public class ClientManager {
 
     private Map<Integer, EtatAbstract> etat;
    
-    public ClientManager(ServerControleur srv, Socket sck, ListUser listeUtilisateurs) throws IOException {
+    public ClientManager(ServerControleur srv, Socket sck, ListUser listeUtilisateurs, Configuration config) throws IOException {
         this.listeUtilisateurs = listeUtilisateurs;
+        this.config = config;
         clientInfo = new Client(increment++);
         
         server = srv;
@@ -52,7 +54,7 @@ public class ClientManager {
         sentAll = new SentAll(server);
      
         ecouteur = new EcouteurClient(clientInfo, sck, this, server);
-        sortie = new SortieClient(sck);
+        sortie = new SortieClient(sck, config.getThreadSleepSeconds() * 1000);
         initCommands();
 
         ecouteur.start();
@@ -85,7 +87,6 @@ public class ClientManager {
 
     public void close() {             
         try {
-            new SentShutDown(this).sent();
             clientInfo.setOpened(false);
             socket.close();            
             ecouteur.close();
