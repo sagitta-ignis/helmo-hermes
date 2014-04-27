@@ -45,7 +45,7 @@ public class Msg extends Message {
             if (request != null && protocole.check(request)) {
                 waitResponse();
                 System.out.print(request);
-                emetteur.envoyer(request);
+                client.getEmetteur().envoyer(request);
             } else {
                 client.setEtat(Client.BadMessageMaked);
                 //client.afficher("-- le message n'a pas pu être transmis");

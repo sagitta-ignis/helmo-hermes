@@ -13,6 +13,7 @@ import java.util.Map;
 /**
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
+ * @param <T>
  */
 public class CommandMapper<T> {
 

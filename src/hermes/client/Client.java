@@ -24,7 +24,8 @@ public class Client extends Observable {
     public final static int Initial = 0;
 
     public final static int Connected = 1;
-    public final static int ConnexionLost = -1;
+    public final static int ConnexionLost = -10;
+    public final static int ConnexionBroken = -11;
 
     public final static int LoggedIn = 2;
     public final static int UnknownUser = -20;
@@ -45,7 +46,8 @@ public class Client extends Observable {
     public final static int SMSG = 52;
     public final static int JOIN = 53;
     public final static int LEAVE = 54;
-    public final static int STYPING = 55;
+    public final static int STYPING = 55;    
+    public final static int ServerShutDown = 56;
     public final static int UnknownRequestReceived = -50;
     public final static int ReceptionFailed = -51;
 
@@ -59,16 +61,15 @@ public class Client extends Observable {
     private final Protocole protocole;
     private final ClientConnectionHandler connectionHandler;
     private final ClientMessageHandler messageHandler;
-    private final Emetteur emetteur;
-    private final Ecouteur ecouteur;
+    
+    private Emetteur emetteur;
+    private Ecouteur ecouteur;
 
     public Client(Utilisateurs users) {
         etat = Initial;
         this.users = users;
         protocole = new ProtocoleSwinen();
         connectionHandler = new ClientConnectionHandler();
-        emetteur = new Emetteur();
-        ecouteur = new Ecouteur(this);
         messageHandler = new ClientMessageHandler(this);
     }
 
@@ -121,6 +122,8 @@ public class Client extends Observable {
             throw new NotConnectedException();
         }
         try {
+            emetteur = new Emetteur();
+            ecouteur = new Ecouteur(this);
             ecouteur.lier(connectionHandler.getSocket());
             emetteur.lier(connectionHandler.getSocket());
         } catch (IOException ex) {
@@ -149,13 +152,14 @@ public class Client extends Observable {
     public void fermer() throws Exception {
         try {
             messageHandler.traiter("/quit");
-            connectionHandler.disconnect();
+            connectionHandler.shutdown();
             emetteur.fermer();
             ecouteur.fermer();
+            connectionHandler.disconnect();
         } catch (IOException ex) {
             String message = "[error] fermeture du socket client a échoué";
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, message, ex);
-            throw new Exception(message);
+            throw new Exception(message, ex);
         }
     }
 

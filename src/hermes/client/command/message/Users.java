@@ -29,7 +29,7 @@ public class Users extends Message {
                 request = protocole.make();
                 if (request != null && protocole.check(request)) {
                     System.out.print(request);
-                    emetteur.envoyer(request);
+                    client.getEmetteur().envoyer(request);
                 }
             } catch (Exception ex) {
                 Logger.getLogger(Quit.class.getName()).log(Level.SEVERE, null, ex);

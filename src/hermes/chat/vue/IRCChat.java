@@ -7,6 +7,7 @@ package hermes.chat.vue;
 
 import hermes.chat.AbstractChat;
 import hermes.chat.controleur.Chatter;
+import hermes.chat.controleur.Overlayer;
 import hermes.client.Client;
 import hermes.client.Utilisateurs;
 import javax.swing.DefaultListModel;
@@ -21,9 +22,9 @@ public class IRCChat extends AbstractChat {
     private final ChatGUI chat;
     private final DefaultListModel<CellUser> utilisateurs;
 
-    public IRCChat(Chatter chatter) {
+    public IRCChat(Chatter chatter, Overlayer overlayer) {
         utilisateurs = new DefaultListModel<>();
-        chat = new ChatGUI(chatter, utilisateurs);
+        chat = new ChatGUI(chatter, overlayer, utilisateurs);
         initStatus();
     }
 
@@ -118,5 +119,9 @@ public class IRCChat extends AbstractChat {
 
     public void setVisible(boolean visible) {
         chat.setVisible(visible);
+    }
+    
+    public boolean isVisible() {
+        return chat.isVisible();
     }
 }

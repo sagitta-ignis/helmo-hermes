@@ -7,7 +7,6 @@ package hermes.client;
 
 import hermes.client.command.requete.*;
 import hermes.protocole.message.MessageProtocole;
-import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,10 +35,10 @@ public class ServerRequestHandler {
         requeteDeServeur.put(ProtocoleSwinen.SMSG, new SMsg(client));
         requeteDeServeur.put(ProtocoleSwinen.STYPING, new STyping(client));
         requeteDeServeur.put(ProtocoleSwinen.SUSERS, new SUsers(client));
+        requeteDeServeur.put(ProtocoleSwinen.SERVERSHUTDOWN, new ServerShutDown(client));
     }
 
     public boolean parser(String request) {
-        System.out.print(request);
         MessageProtocole messageProtocole = client.getProtocole().search(request);
         if (messageProtocole != null) {
             Requete requete = requeteDeServeur.get(messageProtocole);

@@ -161,6 +161,9 @@ public class Login extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         logger.add(lbPort, gridBagConstraints);
 
+        informations.setForeground(new java.awt.Color(255, 0, 0));
+        informations.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        informations.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         informations.setPreferredSize(new java.awt.Dimension(200, 30));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

@@ -1,6 +1,5 @@
 /build/
 /dist/
-/nbproject/
+/nbproject/private/
 /test/
 /log/
-build.xml

@@ -29,6 +29,7 @@ public class Ecouteur extends Thread {
         client = clt;
         messageQueue = new MessageQueueHandler();
         serverRequest = new ServerRequestHandler(client);
+        setName("Ecouteur");
     }
 
     public void lier(Socket socket) throws IOException {
@@ -47,40 +48,51 @@ public class Ecouteur extends Thread {
     @Override
     public void run() {
         while (client.getConnectionHandler().canRun()) {
-            String message = lire();
-            if(message == null) continue;
-            if (message.startsWith("[error]")) {
+            if(!recevoir()) {
                 break;
-            }
-            if (!traiter(message)) {
-                client.setEtat(Client.UnknownRequestReceived, message);
             }
         }
     }
 
-    public synchronized String lire() {
+    public boolean recevoir() {
+        String message = lire();
+        if (message.startsWith("[error]")) {
+            System.err.println(message);
+            return false;
+        }
+        System.out.println(message);
+        if (!veriferAttente(message)) {
+            if (!traiter(message)) {
+                client.setEtat(Client.UnknownRequestReceived, message);
+            }
+        }
+        return true;
+    }
+
+    public String lire() {
         String message;
         try {
             do {
                 message = inFromServer.readLine();
-                if(veriferAttente(message)) {
-                    return null;
-                }
             } while (message.length() < 1);
         } catch (SocketException ex) {
-            //Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            client.setEtat(Client.ConnexionLost);
             message = "[error] connexion perdue avec le serveur";
+            // Logger.getLogger(Client.class.getName()).log(Level.SEVERE, message, ex);
+            client.setEtat(Client.ConnexionLost);
+            
         } catch (IOException ex) {
-            //Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            client.setEtat(Client.ReceptionFailed);
             message = "[error] reception depuis serveur a échoué";
+            //Logger.getLogger(Client.class.getName()).log(Level.SEVERE, message, ex);
+            client.setEtat(Client.ReceptionFailed);
+        } catch (NullPointerException ex) { 
+            message = "[error] connexion coupée avec le serveur"; 
+            //Logger.getLogger(Client.class.getName()).log(Level.SEVERE, message, ex);
+            client.setEtat(Client.ConnexionBroken);
         }
         return message;
     }
 
     private boolean veriferAttente(String message) {
-        if(message.length() < 1) return false;
         return messageQueue.traiter(message);
     }
 
@@ -92,7 +104,7 @@ public class Ecouteur extends Thread {
     }
 
     public void fermer() throws IOException {
-        this.interrupt();
+        interrupt();
         try {
             if (inFromServer != null) {
                 inFromServer.close();
@@ -101,8 +113,6 @@ public class Ecouteur extends Thread {
             String message = "[error] socket depuis serveur mal fermé";
             Logger.getLogger(Client.class.getName()).log(Level.SEVERE, message, ex);
             throw new IOException(message);
-        } finally {
-            inFromServer = null;
         }
     }
 }

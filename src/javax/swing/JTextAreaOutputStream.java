@@ -8,8 +8,6 @@ package javax.swing;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
 
 /**
  *

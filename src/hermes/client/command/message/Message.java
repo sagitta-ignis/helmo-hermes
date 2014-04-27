@@ -7,8 +7,6 @@ package hermes.client.command.message;
 
 import hermes.client.Client;
 import hermes.client.ClientConnectionHandler;
-import hermes.client.Ecouteur;
-import hermes.client.Emetteur;
 import pattern.command.CommandArgument;
 import hermes.protocole.Protocole;
 
@@ -20,20 +18,16 @@ public abstract class Message extends CommandArgument {
 
     protected final Client client;
     protected final Protocole protocole;
-    protected final Emetteur emetteur;
-    protected final Ecouteur ecouteur;
     protected final ClientConnectionHandler connection;
 
     public Message(Client client) {
         this.client = client;
         protocole = client.getProtocole();
-        emetteur = client.getEmetteur();
-        ecouteur = client.getEcouteur();
         connection = client.getConnectionHandler();
     }
     
     protected void waitResponse() {
-        ecouteur.getMessageQueue().ajouter(this);
+        client.getEcouteur().getMessageQueue().ajouter(this);
     }
     
     public abstract void response(String response);

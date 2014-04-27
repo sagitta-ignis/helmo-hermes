@@ -94,6 +94,7 @@ public class Program {
             @Override
             public void run() {
                 Authentifier logger = new Authentifier();
+                logger.ouvrir();
             }
         });
     }

@@ -35,7 +35,6 @@ public class Overlay extends AbstractChat {
     private final int CHARPARLIGNE = 60;
 
     public Overlay(Chatter chatter) {
-
         frame = new JFrame("Overlay");
         labels = new ArrayList<>();
         chat = chatter;
@@ -119,7 +118,7 @@ public class Overlay extends AbstractChat {
     }
 
     private void envoyer() {
-        chat.entrer("all",fieldEnvoyer.getText());
+        chat.entrer(null,fieldEnvoyer.getText());
         fieldEnvoyer.setText("");
     }
 

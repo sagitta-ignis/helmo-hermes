@@ -10,7 +10,6 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.swing.JTextField;
 
 /**
  *

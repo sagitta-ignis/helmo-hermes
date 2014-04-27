@@ -45,8 +45,8 @@ public class Hello extends Message {
         if (request != null) {
             waitResponse();
             System.out.print(request);
-            emetteur.envoyer(request);
-            ecouteur.lire();
+            client.getEmetteur().envoyer(request);
+            client.getEcouteur().recevoir();
             return true;
         }
         return false;

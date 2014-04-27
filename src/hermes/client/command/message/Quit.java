@@ -29,8 +29,7 @@ public class Quit extends Message {
                 request = protocole.make();
                 if (request != null && protocole.check(request)) {
                     System.out.print(request);
-                    emetteur.envoyer(request);
-                    connection.disconnect();
+                    client.getEmetteur().envoyer(request);
                     client.setEtat(Client.LoggedOut);
                 }
             } catch (Exception ex) {

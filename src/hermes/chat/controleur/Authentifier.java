@@ -6,6 +6,7 @@
 
 package hermes.chat.controleur;
 
+import hermes.chat.StatusAdapter;
 import hermes.chat.vue.Login;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,15 +18,19 @@ import pattern.command.Command;
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public class Authentifier implements ActionListener {
-    private final Login login;
+public class Authentifier extends StatusAdapter implements ActionListener {
+    private Login login;
     private final Chatter chat;
     
     private Map<String, Command> commands;
     
     public Authentifier() {
-        chat = new Chatter();
+        chat = new Chatter(this);
+        chat.getClient().addObserver(this);
         initCommands();
+    }
+    
+    public void ouvrir() {
         login = new Login(this);
         login.setVisible(true);
     }
@@ -43,8 +48,6 @@ public class Authentifier implements ActionListener {
                     if (chat.login(username, password)) {
                         login.dispose();
                         chat.open();
-                    } else {
-                        login.print("Incorrect username or password");
                     }
                 } else {
                     login.print("Unreachable server");
@@ -54,12 +57,20 @@ public class Authentifier implements ActionListener {
     }
 
     @Override
+    public void unknownUser() {
+        login.print("Incorrect username or password");
+    }
+
+    @Override
+    public void alreadyLoggedIn() {
+        login.print("User already logged in");
+    }
+
+    @Override
     public void actionPerformed(ActionEvent ae) {
         Command commande = commands.get(ae.getActionCommand());
         if(commande != null) {
             commande.execute();
         }
     }
-    
-    
 }

@@ -5,13 +5,13 @@
  */
 package hermes.chat.controleur;
 
+import hermes.chat.StatusAdapter;
 import hermes.client.Client;
 import hermes.client.Utilisateurs;
 import hermes.client.exception.NotConnectedException;
 import hermes.client.exception.UnopenableExecption;
 import hermes.client.exception.UnreachableServerExeception;
 import hermes.chat.vue.IRCChat;
-import hermes.chat.vue.Overlay;
 import hermes.client.command.message.All;
 import hermes.client.command.message.Msg;
 import hermes.client.command.message.Typing;
@@ -23,27 +23,30 @@ import pattern.command.CommandArgument;
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public class Chatter {
+public class Chatter extends StatusAdapter {
 
     private final Utilisateurs users;
     private final Client client;
     
-    private final MessageLogger logger;
+    private final Authentifier authentifier;
+    private final Overlayer overlayer;
+    private final MessageLogger journal;
     
     private final IRCChat fenetre;
-    private final Overlay overlay;
 
-    public Chatter() {
-        logger = new MessageLogger();
+    public Chatter(Authentifier a) {
+        authentifier = a;
+        overlayer = new Overlayer(this);
+        journal = new MessageLogger();
         
-        fenetre = new IRCChat(this);
-        overlay = new Overlay(this);
+        fenetre = new IRCChat(this, overlayer);
         
         users = new Utilisateurs();
         users.addObserver(fenetre);
         client = new Client(users);
+        client.addObserver(this);
         client.addObserver(fenetre);
-        client.addObserver(logger);
+        client.addObserver(journal);
     }
 
     public Client getClient() {
@@ -59,7 +62,7 @@ public class Chatter {
             client.connect(ip, port);
             return true;
         } catch (UnreachableServerExeception ex) {
-            Logger.getLogger(Chatter.class.getName()).log(Level.SEVERE, null, ex);
+            // Logger.getLogger(Chatter.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
     }
@@ -121,23 +124,49 @@ public class Chatter {
     }
 
     public void fermer() {
-        desactiverOverlay();
+        overlayer.fermer();
         try {
-            logger.close();
+            journal.close();
             client.fermer();
         } catch (Exception ex) {
             String message = "le client n'a pas pu être fermé correctement";
-            Logger.getLogger(Chatter.class.getName()).log(Level.SEVERE, message, ex);
+            //Logger.getLogger(Chatter.class.getName()).log(Level.SEVERE, message, ex);
             fenetre.avertir("Erreur", message);
         }
+    }
+    
+    public void quitter() {
+        fermer();
         System.exit(0);
     }
-
-    public void afficherOverlay(int dimension) {
-        overlay.initialiser(dimension);
+    
+    private void retour() {
+        retour(null, null);
+    }
+    
+    private void retour(String titre, String message) {
+        if(fenetre.isVisible()) {
+            if(titre != null && message != null) {
+                fenetre.avertir(titre, message);
+            }
+            fenetre.setVisible(false);
+            authentifier.ouvrir();
+        }
     }
 
-    public void desactiverOverlay() {
-        overlay.setVisible(false);
+    @Override
+    public void connexionBroken() {
+        retour("Connexion", "La connexion a été coupée");
+    }
+
+    @Override
+    public void connexionLost() {
+        retour("Connexion", "La connexion a été perdue");
+    }
+
+    @Override
+    public void serverShutDown() {
+        fermer();
+        retour("Server", "Le serveur est en train de se fermer");
     }
 }

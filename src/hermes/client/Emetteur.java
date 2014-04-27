@@ -39,7 +39,6 @@ public class Emetteur {
     public void fermer() {
         if (outToServer != null) {
             outToServer.close();
-            outToServer = null;
         }
     }
 }

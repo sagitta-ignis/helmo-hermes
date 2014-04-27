@@ -6,9 +6,6 @@
 
 package hermes.chat.vue;
 
-import java.awt.Color;
-import javax.swing.ListCellRendererLabel;
-
 /**
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>

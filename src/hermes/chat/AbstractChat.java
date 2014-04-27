@@ -5,23 +5,15 @@
  */
 package hermes.chat;
 
-import hermes.client.Client;
-import hermes.client.StatusHandler;
 import hermes.client.Utilisateurs;
-import pattern.command.CommandArgument;
-import hermes.client.command.CommandMapper;
-import java.util.Arrays;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public abstract class AbstractChat implements Observer, StatusHandler, Chat {
+public abstract class AbstractChat extends StatusAdapter implements Chat {
 
     private boolean typing;
-    private final CommandMapper statusReader;
 
     public boolean isTyping() {
         return typing;
@@ -33,102 +25,19 @@ public abstract class AbstractChat implements Observer, StatusHandler, Chat {
     
     public AbstractChat() {
         typing = false;
-        statusReader = new CommandMapper();
-        initEtats();
-    }
-    
-    public void ajouterStatus(Object key, CommandArgument command) {
-        statusReader.ajouter(key, command);
     }
 
-    private void initEtats() {
-        statusReader.ajouter(String.valueOf(Client.UnknownRequestReceived), new CommandArgument() {
-            @Override
-            public void execute() {
-                unknownRequest();
-            }
-        });
-        statusReader.ajouter(String.valueOf(Client.UnknownUser), new CommandArgument() {
-            @Override
-            public void execute() {
-                unknownUser();
-            }
-        });
-        statusReader.ajouter(String.valueOf(Client.MSGToSelf), new CommandArgument() {
-            @Override
-            public void execute() {
-                msgToSelf();
-            }
-        });
-        statusReader.ajouter(String.valueOf(Client.LoggedIn), new CommandArgument() {
-            @Override
-            public void execute() {
-                loggedIn();
-            }
-        });
-        statusReader.ajouter(String.valueOf(Client.RESPONSE), new CommandArgument() {
-            @Override
-            public void execute() {
-                String digit = (String) args[0];
-                String message = (String) args[1];
-                response(digit, message);
-            }
-        });
-        statusReader.ajouter(String.valueOf(Client.SALL), new CommandArgument() {
-            @Override
-            public void execute() {
-                String user = (String) args[0];
-                String msg = (String) args[1];
-                sAll(user, msg);
-            }
-        });
-        statusReader.ajouter(String.valueOf(Client.MSG), new CommandArgument() {
-            @Override
-            public void execute() {
-                String user = (String) args[0];
-                String msg = (String) args[1];
-                msg(user, msg);
-            }
-        });
-        statusReader.ajouter(String.valueOf(Client.SMSG), new CommandArgument() {
-            @Override
-            public void execute() {
-                String user = (String) args[0];
-                String msg = (String) args[1];
-                sMsg(user, msg);
-            }
-        });
-        statusReader.ajouter(Utilisateurs.SUsers, new CommandArgument() {
-            @Override
-            public void execute() {
-                Utilisateurs users = (Utilisateurs) args[0];
-                sUsers(users);
-            }
-        });
-        statusReader.ajouter(Utilisateurs.Join, new CommandArgument() {
-            @Override
-            public void execute() {
-                String user = (String) args[0];
-                join(user);
-            }
-        });
-        statusReader.ajouter(Utilisateurs.Leave, new CommandArgument() {
-            @Override
-            public void execute() {
-                String user = (String) args[0];
-                leave(user);
-            }
-        });
-    }
-
+    @Override
     public void unknownRequest() {
         afficher("-- unknown request received");
     }
 
+    @Override
     public void unknownUser() {
         afficher("-- utilisateur inconnu");
     }
 
+    @Override
     public void msgToSelf() {
         afficher("-- impossible d'envoyer un message à soi-même (avez-vous besoin d'un psychologue ?)");
     }
@@ -175,17 +84,5 @@ public abstract class AbstractChat implements Observer, StatusHandler, Chat {
     @Override
     public void leave(String user) {
         afficher("-- " + user + " a quitté le serveur");
-    }
-
-    @Override
-    public synchronized void update(Observable o, Object args) {
-        if (o instanceof Client) {
-            String etat = String.valueOf(((Client) o).getEtat());
-            statusReader.execute(etat, (Object[]) args);
-        }
-        if (o instanceof Utilisateurs) {
-            Object arguments[] = (Object[]) args;
-            statusReader.execute(arguments[0], Arrays.copyOfRange(arguments, 1, arguments.length));
-        }
     }
 }

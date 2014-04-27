@@ -32,6 +32,11 @@ public class ClientConnectionHandler {
     public Socket getSocket() {
         return socket;
     }
+    
+    public void shutdown() throws IOException {
+        socket.shutdownInput();
+        socket.shutdownOutput();
+    }
 
     public boolean disconnect() throws IOException {
         logged = false;
