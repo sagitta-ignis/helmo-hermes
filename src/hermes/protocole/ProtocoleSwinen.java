@@ -21,7 +21,8 @@ public class ProtocoleSwinen extends AbstractProtocole {
     public static ABNF sender;
     public static ABNF receiver;
     public static ABNF digit;
-
+    public static ABNF channel;
+    
     public static MessageProtocole HELLO;
     public static MessageProtocole MSG;
     public static MessageProtocole SMSG;
@@ -37,6 +38,8 @@ public class ProtocoleSwinen extends AbstractProtocole {
     public static MessageProtocole TYPING;
     public static MessageProtocole STYPING;
     public static MessageProtocole SERVERSHUTDOWN;
+    public static MessageProtocole WHEREAMI;
+    public static MessageProtocole HERE;
     
     static {
         initVariables();
@@ -63,6 +66,7 @@ public class ProtocoleSwinen extends AbstractProtocole {
         sender = ABNF.compilerEtAjouter("sender = user");
         message = ABNF.compilerEtAjouter("message = 1*500character");
         digit = Lexique.digit;
+        channel =  ABNF.compilerEtAjouter("channel = 4*8(letter)");
     }
 
     /**
@@ -90,6 +94,8 @@ public class ProtocoleSwinen extends AbstractProtocole {
         TYPING = new MessageProtocole("typing = \"TYPING\" space digit crlf", digit);
         STYPING = new MessageProtocole("styping = \"STYPING\" space user space digit crlf", user, digit);
         SERVERSHUTDOWN = new MessageProtocole("servershutdown = \"SERVERSHUTDOWN\" crlf");
+        WHEREAMI = new MessageProtocole("whereami = \"WHEREAMI\" crlf");
+        HERE = new MessageProtocole("here = \"HERE\" space channel crlf",channel);
     }
 
     public ProtocoleSwinen() {
@@ -108,5 +114,7 @@ public class ProtocoleSwinen extends AbstractProtocole {
         add(TYPING);
         add(STYPING);
         add(SERVERSHUTDOWN);
+        add(WHEREAMI);
+        add(HERE);
     }
 }
