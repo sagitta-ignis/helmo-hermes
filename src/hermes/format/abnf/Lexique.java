@@ -35,6 +35,10 @@ public class Lexique {
      */
     public final static ABNF digit = new ABNF("digit", "digit = %x30-39", "[0-9]");
     /**
+     * bool = "true"/"false" ; un booléen.
+     */
+    public final static ABNF bool = new ABNF("bool", "bool = \"true\"/\"false\"", "true|false");
+    /**
      * letter = %x41-5A / %x61-7A ; lettre majuscule A-Z ou minuscule a-z.
      */
     public final static ABNF letter = new ABNF("letter", "letter = %x41-5A|%x61-7A", "[a-zA-Z]");
@@ -60,6 +64,7 @@ public class Lexique {
         ajouter(crlf);
         ajouter(space);
         ajouter(digit);
+        ajouter(bool);
         ajouter(letter);
         ajouter(character);
         ajouter(passchar);
