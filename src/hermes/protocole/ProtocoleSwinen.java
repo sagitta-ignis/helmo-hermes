@@ -45,6 +45,13 @@ public class ProtocoleSwinen extends AbstractProtocole {
     public static MessageProtocole SCHANNELS; 
     public static MessageProtocole INFOCHANNEL; 
     public static MessageProtocole SINFOCHANNEL; 
+    public static MessageProtocole USERSCHANNEL;
+    public static MessageProtocole SUSERSCHANNEL;
+    public static MessageProtocole JOINCHANNEL;
+    public static MessageProtocole LEAVECHANNEL;
+    public static MessageProtocole CHANNELADDED;
+    public static MessageProtocole CHANNELREMOVED;
+    
     
     public static MessageProtocole MSG;
     public static MessageProtocole SMSG;
@@ -138,6 +145,15 @@ public class ProtocoleSwinen extends AbstractProtocole {
         
         INFOCHANNEL = new MessageProtocole("channels = \"INFOCHANNEL\" space channel crlf", channel);
         SINFOCHANNEL = new MessageProtocole("channels = \"SINFOCHANNEL\" space \"protege=\" digit space \"utilisateurs=\" entier crlf", digit, entier);
+    
+        USERSCHANNEL = new MessageProtocole("userschannel = \"USERSCHANNEL\" space channel crlf", channel);
+        SUSERSCHANNEL = new MessageProtocole("suserschannel = \"SUSERSCHANNEL\" *(space user) crlf", user);
+        
+        JOINCHANNEL = new MessageProtocole("joinchannel = \"JOINCHANNEL\" space channel space user crlf",channel, user);
+        LEAVECHANNEL = new MessageProtocole("leavechannel = \"LEAVECHANNEL\" space channel space user crlf",channel, user);
+    
+        CHANNELADDED = new MessageProtocole("channeladded = \"CHANNELADDED\" space channel crlf",channel);
+        CHANNELREMOVED = new MessageProtocole("channelremoved = \"CHANNELREMOVED\" space channel crlf",channel);
     }
     
     /**
