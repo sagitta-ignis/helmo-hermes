@@ -51,7 +51,8 @@ public class ProtocoleSwinen extends AbstractProtocole {
     public static MessageProtocole LEAVECHANNEL;
     public static MessageProtocole CHANNELADDED;
     public static MessageProtocole CHANNELREMOVED;
-    
+    public static MessageProtocole DISCUSS;
+    public static MessageProtocole SDISCUSS;
     
     public static MessageProtocole MSG;
     public static MessageProtocole SMSG;
@@ -167,6 +168,9 @@ public class ProtocoleSwinen extends AbstractProtocole {
         SMSG = new MessageProtocole("smsg = \"SMSG\" space sender space message crlf", sender, message);
         ALL = new MessageProtocole("all = \"ALL\" space message crlf", message);
         SALL = new MessageProtocole("sall = \"SALL\" space sender space message crlf", sender, message);
+        
+        DISCUSS = new MessageProtocole("discuss = \"DISCUSS\" space channel space message crlf",channel, message);
+        SDISCUSS = new MessageProtocole("sdiscuss = \"SDISCUSS\" space channel space user space message crlf",channel,user, message);
     }
     
     /**
@@ -197,10 +201,27 @@ public class ProtocoleSwinen extends AbstractProtocole {
         add(SMSG);
         add(ALL);
         add(SALL);
+       
+        add(DISCUSS);
+        add(SDISCUSS);
 
         add(TYPING);
         add(STYPING);
 
+        add(CREATECHANNEL);
+        add(DELETECHANNEL);
+        add(ENTER);
+        add(EXIT);
+        add(CHANNELS);
+        add(SCHANNELS);
+        add(INFOCHANNEL);
+        add(SINFOCHANNEL);
+        add(USERSCHANNEL);
+        add(SUSERSCHANNEL);
+        add(JOINCHANNEL);
+        add(LEAVECHANNEL);
+        add(CHANNELADDED);
+        add(CHANNELREMOVED);
         add(WHEREAMI);
         add(HERE);
 
