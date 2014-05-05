@@ -2,7 +2,7 @@
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import server.ServerControleur;
+import server.controlleur.ServeurControlleur;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -17,7 +17,7 @@ public class Starter {
 
     public static void main(String[] args) {
 
-        ServerControleur s = new ServerControleur();
+        ServeurControlleur s = new ServeurControlleur();
 
         System.out.println(">> Serveur a démarré");
         s.lancerServeur();

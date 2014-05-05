@@ -24,6 +24,9 @@ public class Configuration {
     private String userFileName;
     @XmlElement(name = "sendingthread-sleepseconds", required = true)
     private int threadSleepSeconds;
+    
+    @XmlElement(name = "defaultChannel", required = true)
+    private String defaultChannel;
     public static int threadSleepMillisec;
 
     public void setPort(int port) {
@@ -50,4 +53,20 @@ public class Configuration {
     public int getThreadSleepSeconds() {
         return threadSleepSeconds;
     }
+
+    /**
+     * @return the defaultChannel
+     */
+    public String getDefaultChannel() {
+        return defaultChannel;
+    }
+
+    /**
+     * @param defaultChannel the defaultChannel to set
+     */
+    public void setDefaultChannel(String defaultChannel) {
+        this.defaultChannel = defaultChannel;
+    }
+    
+    
 }
