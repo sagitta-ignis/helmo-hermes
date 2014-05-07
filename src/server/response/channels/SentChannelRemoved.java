@@ -10,7 +10,7 @@ import hermes.protocole.ProtocoleSwinen;
 import java.util.AbstractMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import server.controlleur.ChannelControlleur;
+import server.controlleurs.ChannelControlleur;
 import server.etat.Waiting;
 
 /**

@@ -11,7 +11,7 @@ import java.util.AbstractMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pattern.command.CommandArgument;
-import server.controlleur.ChannelControlleur;
+import server.controlleurs.ChannelControlleur;
 import server.client.ClientManager;
 import server.etat.Waiting;
 
@@ -32,11 +32,9 @@ public class Quit extends CommandArgument {
     }
 
     @Override
-    public void execute() {
-        
+    public void execute() {        
         sent();
         client.close();
-
     }
 
     private void sent() {
@@ -50,10 +48,9 @@ public class Quit extends CommandArgument {
         } catch (Exception ex) {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        channelManager.afficher(messageProtocole);
+        
+        client.afficherToutLesChannels(messageProtocole);       
         channelManager.transmettre(messageProtocole);
-
     }
 
 }

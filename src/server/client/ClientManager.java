@@ -11,12 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import server.controlleur.ChannelControlleur;
-import server.controlleur.ServeurControlleur;
+import server.channels.Channel;
+import server.controlleurs.ChannelControlleur;
+import server.controlleurs.ServeurControlleur;
 import server.etat.Connecte;
 import server.etat.EtatAbstract;
 import server.etat.Waiting;
-import server.response.SentAll;
 import server.response.SentResponse;
 import server.configuration.Configuration;
 import server.configuration.ListUser;
@@ -29,29 +29,31 @@ public class ClientManager {
 
     private static int increment = 1;
 
+    private final Map<String,Channel> channels;    
     private final ChannelControlleur channelManager;
     private final Configuration config;
-    
+
     private final ThreadEcouteur ecouteur;
     private final ThreadSortie sortie;
-    private final Client clientInfo;        
+    private final Client clientInfo;
     private final Socket socket;
     private final ListUser listeUtilisateurs;
 
     private final SentResponse response;
 
     private Map<Integer, EtatAbstract> etat;
-   
+
     public ClientManager(ChannelControlleur channel, Socket sck, ListUser listeUtilisateurs, Configuration config) throws IOException {
         this.listeUtilisateurs = listeUtilisateurs;
         this.config = config;
+        channels = new HashMap<>();
         clientInfo = new Client(increment++);
-        
+
         channelManager = channel;
         socket = sck;
-        
+
         response = new SentResponse(this);
-     
+
         ecouteur = new ThreadEcouteur(clientInfo, sck, this, channelManager);
         sortie = new ThreadSortie(sck, config.getThreadSleepSeconds() * 1000);
         initCommands();
@@ -63,17 +65,27 @@ public class ClientManager {
     private void initCommands() {
         etat = new HashMap<>();
 
-        etat.put(0,new Waiting(this, clientInfo, listeUtilisateurs, response, channelManager));
-        etat.put(3,new Connecte(clientInfo, channelManager, response, this,config));
+        etat.put(0, new Waiting(this, clientInfo, listeUtilisateurs, response, channelManager));
+        etat.put(3, new Connecte(clientInfo, channelManager, response, this, config));
     }
 
     public Client getClient() {
         return clientInfo;
     }
 
-    public void traiter(String message) {        
+    public void traiter(String message) {
         EtatAbstract etatReaction = etat.get(clientInfo.getEtat());
         etatReaction.verifier(message);
+    }
+    
+    public Map<String,Channel> getChannels(){
+        return channels;
+    }
+    
+    public void afficherToutLesChannels(String message){
+        for (String mapKey : channels.keySet()) {
+           channels.get(mapKey).afficher(message);
+        }
     }
 
     public void envoyer(String message) {
@@ -84,14 +96,16 @@ public class ClientManager {
         sortie.envoyer(message);
     }
 
-    public void close() {             
+    public void close() {
         try {
-            clientInfo.setOpened(false);
-            socket.close();            
-            ecouteur.close();
-            sortie.close();
+            if (clientInfo.isOpened()) {
+                clientInfo.setOpened(false);
+                socket.close();
+                ecouteur.close();
+                sortie.close();
+            }
         } catch (IOException ex) {
-            Logger.getLogger(ServeurControlleur.class.getName()).log(Level.SEVERE, null, ex);            
+            Logger.getLogger(ServeurControlleur.class.getName()).log(Level.SEVERE, null, ex);
             channelManager.afficher(response.getError(101));
         }
     }

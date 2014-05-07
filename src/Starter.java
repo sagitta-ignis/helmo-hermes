@@ -2,7 +2,7 @@
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import server.controlleur.ServeurControlleur;
+import server.controlleurs.ServeurControlleur;
 
 /*
  * To change this license header, choose License Headers in Project Properties.

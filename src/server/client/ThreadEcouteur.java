@@ -13,8 +13,8 @@ import java.net.SocketException;
 import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import server.controlleur.ChannelControlleur;
-import server.controlleur.ServeurControlleur;
+import server.controlleurs.ChannelControlleur;
+import server.controlleurs.ServeurControlleur;
 import server.commands.Quit;
 import server.response.SentResponse;
 
@@ -71,7 +71,9 @@ public class ThreadEcouteur extends Thread {
 
     public void close() {
         try {
-            inFromClient.close();
+            if (inFromClient != null) {
+                inFromClient.close();
+            }
             this.interrupt();
         } catch (IOException ex) {
             Logger.getLogger(ServeurControlleur.class.getName()).log(Level.SEVERE, null, ex);

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package server.controlleur;
+package server.controlleurs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,9 +65,11 @@ public class ChannelControlleur {
         channelList.get(channel).transmettre(message);
     }
 
+    
     public void afficher(String message) {
         server.afficher(message);
     }
+    
 
     public ClientManager clientConnected(String pseudo) {
         for (ClientManager client : clients) {
@@ -96,15 +98,11 @@ public class ChannelControlleur {
 
     public void close() {
         for (ClientManager unClient : clients) {
-            unClient.close();
-            clients.remove(unClient);
+            unClient.close();            
         }
+        clients.removeAll(clients);
     }
-
-    public void closeClient(ClientManager client){
-               
-    }
-    
+ 
     public void closeLogger() {
         for (String mapKey : channelList.keySet()) {
             channelList.get(mapKey).closeLogger();

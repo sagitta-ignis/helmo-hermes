@@ -12,7 +12,7 @@ import java.util.AbstractMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pattern.command.CommandArgument;
-import server.controlleur.ChannelControlleur;
+import server.controlleurs.ChannelControlleur;
 import server.client.Client;
 import server.client.ClientManager;
 import server.etat.Waiting;

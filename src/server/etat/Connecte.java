@@ -6,7 +6,7 @@
 package server.etat;
 
 import hermes.protocole.ProtocoleSwinen;
-import server.controlleur.ChannelControlleur;
+import server.controlleurs.ChannelControlleur;
 import server.client.Client;
 import server.client.ClientManager;
 import server.commands.All;
@@ -22,7 +22,6 @@ import server.commands.channels.Enter;
 import server.commands.channels.Exit;
 import server.commands.channels.InfoChannel;
 import server.commands.channels.WhereAmI;
-import server.response.SentAll;
 import server.response.SentResponse;
 import server.configuration.Configuration;
 
@@ -49,10 +48,10 @@ public class Connecte extends EtatAbstract {
 
     @Override
     public void initialiserCommandes() {
-        commandsProtocole.put(ProtocoleSwinen.ALL, new All(channelManager,client));
+        commandsProtocole.put(ProtocoleSwinen.ALL, new All(channelManager,manager));
         commandsProtocole.put(ProtocoleSwinen.MSG, new Msg(client, channelManager, response));
         commandsProtocole.put(ProtocoleSwinen.QUIT, new Quit(manager, channelManager));
-        commandsProtocole.put(ProtocoleSwinen.USERS, new Users(channelManager));
+        commandsProtocole.put(ProtocoleSwinen.USERS, new Users(manager, channelManager));
         commandsProtocole.put(ProtocoleSwinen.TYPING, new Typing(channelManager, client));
         initialiserCommandesChannels();
     }

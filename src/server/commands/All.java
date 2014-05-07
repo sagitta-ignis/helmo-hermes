@@ -8,8 +8,8 @@ package server.commands;
 import hermes.protocole.message.MessageProtocole;
 import hermes.protocole.ProtocoleSwinen;
 import pattern.command.CommandArgument;
-import server.client.Client;
-import server.controlleur.ChannelControlleur;
+import server.client.ClientManager;
+import server.controlleurs.ChannelControlleur;
 import server.response.SentAll;
 
 /**
@@ -19,10 +19,10 @@ import server.response.SentAll;
 public class All extends CommandArgument {
 
     private final SentAll sentAll;
-    private final Client client;
+    private final ClientManager client;
 
-    public All(ChannelControlleur channelManager, Client client) {
-        this.sentAll = new SentAll(channelManager);
+    public All(ChannelControlleur channelManager, ClientManager client) {
+        this.sentAll = new SentAll(client,channelManager);
         this.client = client;
     }
 
@@ -30,7 +30,7 @@ public class All extends CommandArgument {
     public void execute() {
         MessageProtocole message = (MessageProtocole) args[0];
         String messageUtilisateur = message.get(ProtocoleSwinen.message);
-        sentAll.sent(client.getUsername(), messageUtilisateur);
+        sentAll.sent(client.getClient().getUsername(), messageUtilisateur);
     }
 
 }

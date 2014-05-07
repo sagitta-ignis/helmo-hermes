@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pattern.command.CommandArgument;
-import server.controlleur.ChannelControlleur;
+import server.controlleurs.ChannelControlleur;
 import server.client.ClientManager;
 import server.etat.Waiting;
 
@@ -24,10 +24,12 @@ import server.etat.Waiting;
 public class Users extends CommandArgument {
 
     private final Protocole protocole;
+    private final ClientManager client;
     private final ChannelControlleur channelManager;
 
-    public Users(ChannelControlleur channelManager) {
+    public Users(ClientManager client,ChannelControlleur channelManager) {
         protocole = new ProtocoleSwinen();
+        this.client = client;
         this.channelManager = channelManager;
     }
 
@@ -45,9 +47,8 @@ public class Users extends CommandArgument {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        channelManager.afficher(messageProtocole);
-        channelManager.transmettre(messageProtocole);
-
+        client.afficherToutLesChannels(messageProtocole);
+        client.envoyer(messageProtocole);
     }
 
     private List<String> creationListeConnecte() {

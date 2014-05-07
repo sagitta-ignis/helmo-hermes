@@ -8,7 +8,7 @@ package server.commands.channels;
 import hermes.protocole.ProtocoleSwinen;
 import hermes.protocole.message.MessageProtocole;
 import pattern.command.CommandArgument;
-import server.controlleur.ChannelControlleur;
+import server.controlleurs.ChannelControlleur;
 import server.channels.Channel;
 import server.client.ClientManager;
 import server.response.SentResponse;

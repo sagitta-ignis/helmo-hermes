@@ -9,7 +9,7 @@ import hermes.protocole.message.MessageProtocole;
 import hermes.protocole.ProtocoleSwinen;
 import java.util.List;
 import pattern.command.CommandArgument;
-import server.controlleur.ChannelControlleur;
+import server.controlleurs.ChannelControlleur;
 import server.client.Client;
 import server.client.ClientManager;
 import server.response.SentJoin;

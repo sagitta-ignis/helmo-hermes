@@ -1,4 +1,4 @@
-package server.controlleur;
+package server.controlleurs;
 
 /*
  * To change this license header, choose License Headers in Project Properties.

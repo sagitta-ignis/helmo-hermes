@@ -10,7 +10,8 @@ import hermes.protocole.ProtocoleSwinen;
 import java.util.AbstractMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import server.controlleur.ChannelControlleur;
+import server.client.ClientManager;
+import server.controlleurs.ChannelControlleur;
 import server.etat.Waiting;
 
 /**
@@ -21,9 +22,11 @@ public class SentAll {
 
     private final Protocole protocole;
     private final ChannelControlleur channelManager;
+    private final ClientManager client;
 
-    public SentAll(ChannelControlleur channelManager) {
+    public SentAll(ClientManager client, ChannelControlleur channelManager) {
         protocole = new ProtocoleSwinen();
+        this.client = client;
         this.channelManager = channelManager;
     }
 
@@ -40,7 +43,7 @@ public class SentAll {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        channelManager.afficher(messageProtocole);
+        client.afficherToutLesChannels(message);
         channelManager.transmettre(messageProtocole);
 
     }

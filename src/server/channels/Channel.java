@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
-import server.controlleur.ServeurControlleur;
+import server.controlleurs.ServeurControlleur;
 import server.client.ClientManager;
 
 /**
@@ -24,61 +24,71 @@ public class Channel {
 
     private final ServeurControlleur server;
     private HermesLogger log;
-  
+
     private final List<ClientManager> clientsChannel;
+    private final String nom;
     private String motDePasse;
     private String administrateur;
     private boolean temporaire;
-    
-    public Channel(String nom,ServeurControlleur server) {
+
+    public Channel(String nom, ServeurControlleur server) {
         motDePasse = null;
         temporaire = true;
         this.server = server;
+        this.nom = nom;
         log = new LoggerImplements(nom);
         clientsChannel = new ArrayList<>();
     }
 
     public void ajouterUtilisateurChannel(ClientManager client) {
         clientsChannel.add(client);
+        client.getChannels().put(nom, this);
     }
 
     public void retirerUtilisateurChannel(ClientManager client) {
         clientsChannel.remove(client);
+        client.getChannels().remove(nom);
     }
-    
-    public int getClientSize(){
+
+    public int getClientSize() {
         return clientsChannel.size();
     }
 
-    public void transmettre(String message){
-        for(ClientManager client: clientsChannel){
+    public void transmettre(String message) {
+        for (ClientManager client : clientsChannel) {
             client.envoyer(message);
         }
     }
-    
-    public void afficher(String message) throws IOException, JAXBException {
-        if (log != null) {
-            log.ajouterMessage(message);
+
+    public void afficher(String message) {
+        try {
+            if (log != null) {
+                log.ajouterMessage(message);
+            }
+            server.afficher(message);
+        } catch (IOException ex) {
+            Logger.getLogger(Channel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JAXBException ex) {
+            Logger.getLogger(Channel.class.getName()).log(Level.SEVERE, null, ex);
         }
-        server.afficher(message);
     }
 
-    public void setMotDePasse(String mdp){
+    public void setMotDePasse(String mdp) {
         motDePasse = mdp;
     }
-    
-    public String getMotDePasse(){
+
+    public String getMotDePasse() {
         return motDePasse;
     }
-    
-    public void setAdministrateur(String admin){
+
+    public void setAdministrateur(String admin) {
         administrateur = admin;
     }
-    
-    public String getAdministrateur(){
+
+    public String getAdministrateur() {
         return administrateur;
     }
-    
+
     public void closeLogger() {
         try {
             log.close();

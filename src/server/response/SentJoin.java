@@ -10,7 +10,7 @@ import hermes.protocole.ProtocoleSwinen;
 import java.util.AbstractMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import server.controlleur.ChannelControlleur;
+import server.controlleurs.ChannelControlleur;
 import server.client.ClientManager;
 import server.etat.Waiting;
 
@@ -42,7 +42,7 @@ public class SentJoin {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        channelManager.afficher(messageProtocole);
+        client.afficherToutLesChannels(messageProtocole);
         channelManager.transmettre(messageProtocole);
     }
 }

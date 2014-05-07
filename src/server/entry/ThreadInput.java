@@ -8,7 +8,7 @@ package server.entry;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import server.controlleur.ServeurControlleur;
+import server.controlleurs.ServeurControlleur;
 
 /**
  *
