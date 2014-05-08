@@ -43,7 +43,7 @@ public class LoggerImplements implements HermesLogger {
 
     @Override
     public void ajouterMessage(String message) throws IOException, JAXBException {
-        if(message.length() < 1 || message == null){
+        if(message == null || message.length() < 1){
             System.err.println("[LOGGER] Problème message vide ou null");
             return;
         }
