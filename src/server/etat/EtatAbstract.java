@@ -45,8 +45,7 @@ public abstract class EtatAbstract {
     public void check(String message) {
         mp = pt.search(message);
 
-        if (mp
-                == null) {
+        if (mp == null) {
             response.sent(9);
             System.err.println("Protocol inconnu: " + message);
         } else {

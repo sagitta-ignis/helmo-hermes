@@ -56,11 +56,12 @@ public class InfoChannel extends CommandArgument {
             motDePasse = "1";
         }
         
-        protocole.prepare(ProtocoleSwinen.STYPING);
+        protocole.prepare(ProtocoleSwinen.SINFOCHANNEL);
         String messageProtocole = "";
 
         try {
-            messageProtocole = protocole.make(
+            messageProtocole = protocole.make(                    
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.channel, (Object) nomChannel),
                     new AbstractMap.SimpleEntry<>(ProtocoleSwinen.digit, (Object) motDePasse),
                     new AbstractMap.SimpleEntry<>(ProtocoleSwinen.entier, (Object) channel.getClientSize())
             );
