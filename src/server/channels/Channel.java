@@ -53,6 +53,10 @@ public class Channel {
     public int getClientSize() {
         return clientsChannel.size();
     }
+    
+    public List<ClientManager> getclientsChannel(){
+        return clientsChannel;
+    }
 
     public void transmettre(String message) {
         for (ClientManager client : clientsChannel) {
