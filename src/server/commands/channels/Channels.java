@@ -37,7 +37,7 @@ public class Channels extends CommandArgument {
 
         List<String> channelList = manager.getChannelList();
 
-        protocole.prepare(ProtocoleSwinen.CHANNELS);
+        protocole.prepare(ProtocoleSwinen.SCHANNELS);
         String messageProtocole = "";
 
         try {

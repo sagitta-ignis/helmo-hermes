@@ -65,11 +65,9 @@ public class ChannelControlleur {
         channelList.get(channel).transmettre(message);
     }
 
-    
     public void afficher(String message) {
         server.afficher(message);
     }
-    
 
     public ClientManager clientConnected(String pseudo) {
         for (ClientManager client : clients) {
@@ -91,18 +89,28 @@ public class ChannelControlleur {
     public void retirerUtilisateurChannel(String nom, ClientManager client) {
         Channel channel = channelList.get(nom);
         channel.retirerUtilisateurChannel(client);
-        if(channel.getClientSize() == 0 &&  channel.isTemporaire()){
+        if (channel.getClientSize() == 0 && channel.isTemporaire()) {
             supprimerChannel(nom);
         }
     }
 
     public void close() {
         for (ClientManager unClient : clients) {
-            unClient.close();            
+            unClient.close();
         }
         clients.removeAll(clients);
     }
- 
+
+    public void closeClient(String user) {
+        for (int i = 0; i < clients.size(); i++) {
+            if (clients.get(i).getClient().getUsername().equals(user)) {
+                clients.get(i).close();
+                clients.remove(i);
+                return;
+            }
+        }
+    }
+
     public void closeLogger() {
         for (String mapKey : channelList.keySet()) {
             channelList.get(mapKey).closeLogger();

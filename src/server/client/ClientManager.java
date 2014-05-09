@@ -20,6 +20,7 @@ import server.etat.Waiting;
 import server.response.SentResponse;
 import server.configuration.Configuration;
 import server.configuration.ListUser;
+import server.response.channels.SentLeaveChannel;
 
 /**
  *
@@ -29,7 +30,7 @@ public class ClientManager {
 
     private static int increment = 1;
 
-    private final Map<String,Channel> channels;    
+    private final Map<String, Channel> channels;
     private final ChannelControlleur channelManager;
     private final Configuration config;
 
@@ -77,14 +78,14 @@ public class ClientManager {
         EtatAbstract etatReaction = etat.get(clientInfo.getEtat());
         etatReaction.verifier(message);
     }
-    
-    public Map<String,Channel> getChannels(){
+
+    public Map<String, Channel> getChannels() {
         return channels;
     }
-    
-    public void afficherToutLesChannels(String message){
+
+    public void afficherToutLesChannels(String message) {
         for (String mapKey : channels.keySet()) {
-           channels.get(mapKey).afficher(message);
+            channels.get(mapKey).afficher(message);
         }
     }
 
@@ -100,6 +101,7 @@ public class ClientManager {
         try {
             if (clientInfo.isOpened()) {
                 clientInfo.setOpened(false);
+                sayGoodByeToConnectedChannels();
                 socket.close();
                 ecouteur.close();
                 sortie.close();
@@ -107,6 +109,15 @@ public class ClientManager {
         } catch (IOException ex) {
             Logger.getLogger(ServeurControlleur.class.getName()).log(Level.SEVERE, null, ex);
             channelManager.afficher(response.getError(101));
+        }
+    }
+
+    private void sayGoodByeToConnectedChannels() {
+        SentLeaveChannel leaveChannel = new SentLeaveChannel(channelManager);
+
+        for (String mapKey : channels.keySet()) {
+            leaveChannel.sent(mapKey, clientInfo.getUsername());
+            channels.get(mapKey).retirerUtilisateurChannel(this);
         }
     }
 
