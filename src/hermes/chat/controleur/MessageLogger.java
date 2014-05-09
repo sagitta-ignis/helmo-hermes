@@ -26,7 +26,7 @@ public class MessageLogger extends AbstractChat {
     }
     
     @Override
-    public void afficher(String texte) {
+    public void afficher(String channel, String user, String texte) {
         try {
             logger.ajouterMessage(texte);
         } catch (IOException | JAXBException ex) {
@@ -40,4 +40,10 @@ public class MessageLogger extends AbstractChat {
     public void close() throws IOException, JAXBException {
         logger.close();
     }
+
+    @Override
+    public void entrer(String channel, boolean publique) {}
+
+    @Override
+    public void sortir(String channel) {}
 }

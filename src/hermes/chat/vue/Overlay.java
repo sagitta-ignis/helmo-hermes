@@ -118,12 +118,12 @@ public class Overlay extends AbstractChat {
     }
 
     private void envoyer() {
-        chat.entrer(null,fieldEnvoyer.getText());
+        //chat.entrer(null,fieldEnvoyer.getText());
         fieldEnvoyer.setText("");
     }
 
     @Override
-    public void afficher(String text) {
+    public void afficher(String channel, String user, String text) {
         ArrayList<String> myLittlePoney = decomposer(text);
         String oldLady[] = new String[labels.size()];
         int compter = 0;
@@ -168,4 +168,10 @@ public class Overlay extends AbstractChat {
         Collections.reverse(tempo);
         return tempo;
     }
+
+    @Override
+    public void entrer(String channel, boolean publique) {}
+
+    @Override
+    public void sortir(String channel) {}
 }

@@ -27,8 +27,8 @@ public class Overlayer {
         overlay.setVisible(false);
     }
     
-    public void afficher(String text) {
-        overlay.afficher(text);
+    public void afficher(String channel, String user, String text) {
+        overlay.afficher(channel, user, text);
     }
     
     public void fermer() {

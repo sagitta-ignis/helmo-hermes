@@ -5,52 +5,45 @@
  */
 package hermes.chat;
 
-import hermes.client.Utilisateurs;
+import hermes.client.utilisateurs.Utilisateurs;
+import hermes.status.*;
 
 /**
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public abstract class AbstractChat extends StatusAdapter implements Chat {
-
-    private boolean typing;
-
-    public boolean isTyping() {
-        return typing;
-    }
-
-    public void setTyping(boolean typing) {
-        this.typing = typing;
-    }
+public class AbstractChat extends ClientStatusAdapter 
+    implements Chat, UtilisateursStatusHandler {
     
     public AbstractChat() {
-        typing = false;
+
     }
+   
 
     @Override
     public void unknownRequest() {
-        afficher("-- unknown request received");
+        afficher(CURRENT, SERVER, "-- unknown request received");
     }
 
     @Override
     public void unknownUser() {
-        afficher("-- utilisateur inconnu");
+        afficher(CURRENT, SERVER, "-- utilisateur inconnu");
     }
 
     @Override
     public void msgToSelf() {
-        afficher("-- impossible d'envoyer un message à soi-même (avez-vous besoin d'un psychologue ?)");
+        afficher(CURRENT, SERVER, "-- impossible d'envoyer un message à soi-même (avez-vous besoin d'un psychologue ?)");
     }
 
     @Override
     public void loggedIn() {
-        afficher("-- user logged in");
+        afficher(CURRENT, SERVER, "-- user logged in");
     }
 
     @Override
     public void response(String digit, String message) {
         if (!digit.equals("0")) {
-            afficher("-- " + message);
+            afficher(CURRENT, SERVER, "-- " + message);
         } else {
             System.out.println("-- " + message);
         }
@@ -58,31 +51,60 @@ public abstract class AbstractChat extends StatusAdapter implements Chat {
 
     @Override
     public void sAll(String user, String message) {
-        afficher(user + " : " + message);
+        afficher(ALL, user, message);
     }
 
     @Override
     public void msg(String user, String message) {
-        afficher("[pm to] " + user + " : " + message);
+        afficher(user, ME, message);
     }
 
     @Override
     public void sMsg(String user, String message) {
-        afficher("[pm from] " + user + " : " + message);
+        afficher(user, user, message);
+    }
+    
+    @Override
+    public void sDiscuss(String channel, String user, String message) {
+        afficher(channel, user, message);
     }
 
     @Override
     public void sUsers(Utilisateurs users) {
-        afficher("-- connectés : "+users.toString());
+        afficher(SERVER, SERVER,"-- connectés : "+users.toString());
     }
 
     @Override
     public void join(String user) {
-        afficher("-- " + user + " a rejoint le serveur");
+        afficher(SERVER, SERVER, "-- " + user + " a rejoint le serveur");
     }
 
     @Override
     public void leave(String user) {
-        afficher("-- " + user + " a quitté le serveur");
+        afficher(SERVER, SERVER, "-- " + user + " a quitté le serveur");
     }
+
+    @Override
+    public void afficher(String channel, String user, String texte) {}
+
+    @Override
+    public void avertir(String titre, String message) {}
+
+    @Override
+    public void alreadyLoggedIn() {}
+
+    @Override
+    public void connexionBroken() {}
+
+    @Override
+    public void connexionLost() {}
+
+    @Override
+    public void serverShutDown() {}
+
+    @Override
+    public void entrer(String channel, boolean publique) {}
+
+    @Override
+    public void sortir(String channel) {}
 }

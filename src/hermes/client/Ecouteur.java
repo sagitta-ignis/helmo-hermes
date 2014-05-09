@@ -18,18 +18,14 @@ import java.util.logging.Logger;
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public class Ecouteur extends Thread {
+public class Ecouteur {
 
     Client client;
-    MessageQueueHandler messageQueue;
-    ServerRequestHandler serverRequest;
+    
     BufferedReader inFromServer;
 
     public Ecouteur(Client clt) {
         client = clt;
-        messageQueue = new MessageQueueHandler();
-        serverRequest = new ServerRequestHandler(client);
-        setName("Ecouteur");
     }
 
     public void lier(Socket socket) throws IOException {
@@ -39,34 +35,6 @@ public class Ecouteur extends Thread {
                         Charset.forName("UTF-8")
                 )
         );
-    }
-
-    public MessageQueueHandler getMessageQueue() {
-        return messageQueue;
-    }
-
-    @Override
-    public void run() {
-        while (client.getConnectionHandler().canRun()) {
-            if(!recevoir()) {
-                break;
-            }
-        }
-    }
-
-    public boolean recevoir() {
-        String message = lire();
-        if (message.startsWith("[error]")) {
-            System.err.println(message);
-            return false;
-        }
-        System.out.println(message);
-        if (!veriferAttente(message)) {
-            if (!traiter(message)) {
-                client.setEtat(Client.UnknownRequestReceived, message);
-            }
-        }
-        return true;
     }
 
     public String lire() {
@@ -92,19 +60,7 @@ public class Ecouteur extends Thread {
         return message;
     }
 
-    private boolean veriferAttente(String message) {
-        return messageQueue.traiter(message);
-    }
-
-    private boolean traiter(String message) {
-        if (message != null) {
-            return serverRequest.parser(message + "\r\n");
-        }
-        return false;
-    }
-
     public void fermer() throws IOException {
-        interrupt();
         try {
             if (inFromServer != null) {
                 inFromServer.close();

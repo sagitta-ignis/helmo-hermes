@@ -6,7 +6,7 @@
 
 package hermes.chat.controleur;
 
-import hermes.chat.StatusAdapter;
+import hermes.status.ClientStatusAdapter;
 import hermes.chat.vue.Login;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,7 +18,7 @@ import pattern.command.Command;
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public class Authentifier extends StatusAdapter implements ActionListener {
+public class Authentifier extends ClientStatusAdapter implements ActionListener {
     private Login login;
     private final Chatter chat;
     

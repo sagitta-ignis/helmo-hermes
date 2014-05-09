@@ -11,6 +11,15 @@ package hermes.chat;
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
 public interface Chat {
-    void afficher(String texte);
+    
+    public static final String ALL = "all";
+    public static final String CURRENT = "current";
+    public static final String SERVER = "server";
+    public static final String ME = "me";
+    
+    void entrer(String channel, boolean publique);
+    void sortir(String channel);
+    
+    void afficher(String channel, String user, String texte);
     void avertir(String titre, String message);
 }
