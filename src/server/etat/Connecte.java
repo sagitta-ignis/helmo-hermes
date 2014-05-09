@@ -21,6 +21,7 @@ import server.commands.channels.Discuss;
 import server.commands.channels.Enter;
 import server.commands.channels.Exit;
 import server.commands.channels.InfoChannel;
+import server.commands.channels.UsersChannel;
 import server.commands.channels.WhereAmI;
 import server.response.SentResponse;
 import server.configuration.Configuration;
@@ -60,6 +61,7 @@ public class Connecte extends EtatAbstract {
         commandsProtocole.put(ProtocoleSwinen.CHANNELS, new Channels(channelManager, manager));
         commandsProtocole.put(ProtocoleSwinen.CREATECHANNEL, new CreateChannel(channelManager, manager));
         commandsProtocole.put(ProtocoleSwinen.DELETECHANNEL, new DeleteChannel(channelManager, manager));
+        commandsProtocole.put(ProtocoleSwinen.USERSCHANNEL, new UsersChannel(channelManager, manager));
         commandsProtocole.put(ProtocoleSwinen.DISCUSS, new Discuss(channelManager, manager));
         commandsProtocole.put(ProtocoleSwinen.ENTER, new Enter(channelManager, manager));
         commandsProtocole.put(ProtocoleSwinen.EXIT, new Exit(channelManager, manager));
