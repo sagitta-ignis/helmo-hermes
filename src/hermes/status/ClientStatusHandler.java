@@ -22,6 +22,8 @@ public interface ClientStatusHandler {
     void msgToSelf();
 
     void loggedIn();
+    
+    void loggedOut();
 
     void connexionBroken();
 

@@ -3,6 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package hermes.chat.vue.listeners;
 
 import hermes.chat.controleur.Chatter;
@@ -13,29 +14,23 @@ import java.awt.event.ActionListener;
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public class Entrer implements ActionListener {
+public class Sortir implements ActionListener {
 
     private final Chatter chat;
     private String name;
-    private boolean publique;
 
-    public Entrer(Chatter chat) {
+    public Sortir(Chatter chat) {
         this.chat = chat;
         name = null;
-        publique = true;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setPublique(boolean publique) {
-        this.publique = publique;
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
-        chat.entrer(name, publique);
+        chat.sortir(name);
     }
 
 }

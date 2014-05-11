@@ -16,7 +16,7 @@ import hermes.client.utilisateurs.Utilisateurs;
 public class UtilisateursModel extends Utilisateurs {
 
     @Override
-    protected Utilisateur getInstance(String utilisateur) {
+    protected Utilisateur instanciate(String utilisateur) {
         return new UtilisateurNode(utilisateur); //To change body of generated methods, choose Tools | Templates.
     }
     

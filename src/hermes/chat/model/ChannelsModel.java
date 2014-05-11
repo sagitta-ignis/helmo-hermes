@@ -20,7 +20,7 @@ public class ChannelsModel extends Channels {
     private final DefaultTreeModel model;
 
     public ChannelsModel() {
-        root = new DefaultMutableTreeNode();
+        root = new DefaultMutableTreeNode("Server");
         model = new DefaultTreeModel(root);
     }
 
@@ -29,12 +29,7 @@ public class ChannelsModel extends Channels {
     }
 
     @Override
-    public void setRoot(Channel root) {
-        super.setRoot(root);
-    }
-
-    @Override
-    protected Channel getInstance(String channel) {
+    protected Channel instanciate(String channel) {
         return new ChannelNode(channel);
     }
 

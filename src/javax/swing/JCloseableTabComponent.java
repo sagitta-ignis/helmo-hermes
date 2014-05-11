@@ -35,8 +35,12 @@ public class JCloseableTabComponent extends JPanel {
         label.setText(name);
     }
 
-    public void setFermer(ActionListener listener) {
+    public void addActionListener(ActionListener listener) {
         button.addActionListener(listener);
+    }
+    
+    public void remmoveActionListener(ActionListener listener) {
+        button.removeActionListener(listener);
     }
 
 }

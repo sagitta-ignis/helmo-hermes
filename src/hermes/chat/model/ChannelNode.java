@@ -26,7 +26,7 @@ public class ChannelNode extends Channel {
     public DefaultMutableTreeNode getNode() {
         return node;
     }
-
+    
     @Override
     public UtilisateurNode rejoindre(String utilisateur) {
         UtilisateurNode u = (UtilisateurNode) super.rejoindre(utilisateur);
@@ -37,7 +37,9 @@ public class ChannelNode extends Channel {
     @Override
     public UtilisateurNode quitter(String utilisateur) {
         UtilisateurNode u = (UtilisateurNode) super.quitter(utilisateur);
-        node.remove(u.getNode());
+        if(u != null) {
+            node.remove(u.getNode());
+        }
         return u;
     }
     

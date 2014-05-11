@@ -117,7 +117,7 @@ public class Client extends Observable {
         if (password == null || password.isEmpty()) {
             password = "password";
         }
-        messageHandler.traiter("/hello "+nom+" "+password);
+        messageHandler.execute("/hello", nom, password);
         return connectionHandler.isLogged();
     }
 

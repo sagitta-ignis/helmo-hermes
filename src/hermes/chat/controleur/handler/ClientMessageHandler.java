@@ -5,12 +5,11 @@
  */
 package hermes.chat.controleur.handler;
 
+import hermes.command.message.base.*;
+import hermes.command.message.channel.*;
 import hermes.chat.controleur.Chatter;
-import hermes.command.message.*;
-import hermes.protocole.ProtocoleSwinen;
+import hermes.command.message.channel.WhereIAm;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import pattern.command.CommandArgument;
 
 /**
@@ -21,46 +20,72 @@ public class ClientMessageHandler {
 
     private final Chatter chat;
     private final Map<String, CommandArgument> requetes;
+    private final Map<String, CommandArgument> requetesPubliques;
 
     public ClientMessageHandler(Chatter chat) {
         this.chat = chat;
         requetes = new HashMap<>();
+        requetesPubliques = new HashMap<>();
         initCommands();
     }
 
     private void initCommands() {
-        String user = ProtocoleSwinen.user.getPattern();
-        String pass = ProtocoleSwinen.pass.getPattern();
-        requetes.put("/hello "+user+" "+pass, new Hello(chat));
-        requetes.put("/quit", new Quit(chat));
-        requetes.put("/users", new Users(chat));
-        requetes.put("/channels", new Channels(chat));
-        requetes.put("/typing", new Typing(chat));
+        requetes.put("hello", new Hello(chat));
+        requetesPubliques.put("quit", new Quit(chat));
+        requetes.put("users", new Users(chat));
+        requetes.put("channels", new Channels(chat));
+        requetes.put("whereiam", new WhereIAm(chat));
+        requetesPubliques.put("msg", new Msg(chat));
+        requetesPubliques.put("discuss", new Discuss(chat));
+        requetes.put("typing", new Typing(chat));
     }
 
-    public boolean traiter(String requete) {
-        Matcher matcher = Pattern.compile("").matcher(requete);
-        for (Map.Entry<String, CommandArgument> entry : requetes.entrySet()) {
-            String pattern = entry.getKey();
-            matcher.usePattern(Pattern.compile(pattern));
-            if (matcher.matches()) {
-                CommandArgument command = entry.getValue();
-                command.setArgs(getArguments(requete));
-                command.execute();
-                return true;
-            }
-        }
-        return false;
+    public boolean traiter(String sequence) {
+        Object[] arguments = getArguments(sequence);
+        String requete = checkAndClean((String) arguments[0]);
+        if(requete == null) return false;
+        Object[] args = Arrays.copyOfRange(arguments, 1, arguments.length);
+        CommandArgument command = find(requete);
+        return execute(command, args);
     }
     
+    public boolean execute(String sequence, Object... args) {
+        String requete = checkAndClean(sequence);
+        if(requete == null) return false;
+        CommandArgument command = get(requete);
+        return execute(command, args);
+    }
+    
+    private String checkAndClean(String requete) {
+        if (!requete.startsWith("/")) {return null;}
+        return requete.replace("/", "");
+    }
+    
+    private boolean execute(CommandArgument command, Object... args) {
+        if(command == null) {return false;}
+        command.setArgs(args);
+        command.execute();
+        return true;
+    }
+
     private Object[] getArguments(String requete) {
         Object arguments[] = (Object[]) requete.split(" ");
-        if(arguments.length == 0) {
+        if (arguments.length == 0) {
             arguments = new Object[0];
-        } else {
-            arguments = Arrays.copyOfRange(arguments, 1, arguments.length);
         }
         return arguments;
+    }
+    
+    public CommandArgument find(String requete) {
+        return requetesPubliques.get(requete);
+    }
+
+    public CommandArgument get(String requete) {
+        CommandArgument c = requetes.get(requete);
+        if(c == null) {
+            c = requetesPubliques.get(requete);
+        }
+        return c;
     }
 
 }

@@ -10,7 +10,7 @@ import hermes.chat.controleur.Chatter;
 import hermes.chat.controleur.handler.MessageQueueHandler;
 import hermes.chat.controleur.handler.ServerRequestHandler;
 import hermes.client.Client;
-import hermes.command.message.Message;
+import hermes.command.message.base.Message;
 
 /**
  *
@@ -36,22 +36,21 @@ public class Ecouter  extends Thread {
     public void run() {
         Client client = chat.getClient();
         while (client.getConnectionHandler().canRun()) {
-            if(!recevoir()) {
+            String message = client.getEcouteur().lire();
+            if(!recevoir(message)) {
                 break;
             }
         }
     }
 
-    public boolean recevoir() {
-        Client client = chat.getClient();
-        String message = client.getEcouteur().lire();
+    public boolean recevoir(String message) {
         if (message != null && message.startsWith("[error]")) {
             System.err.println(message);
             return false;
         }
-        System.out.println(message);
         if (!messageQueue.traiter(message)) {
             if (!serverRequest.parser(message + "\r\n")) {
+                Client client = chat.getClient();
                 client.setEtat(Client.UnknownRequestReceived, message);
             }
         }

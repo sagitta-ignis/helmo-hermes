@@ -8,8 +8,12 @@ package hermes.chat.vue.listeners;
 import hermes.chat.controleur.Chatter;
 import hermes.chat.model.ChannelNode;
 import hermes.chat.model.UtilisateurNode;
+import hermes.chat.vue.menu.MenuChannel;
+import hermes.chat.vue.menu.MenuUtilisateur;
+import hermes.chat.vue.menu.Menus;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
@@ -25,34 +29,25 @@ public class ClicDroitTree extends MouseAdapter {
     private final Chatter chat;
     private final JTree tree;
     private final JPopupMenu menu;
+    private final Menus menus;
 
     public ClicDroitTree(Chatter chat, JTree tree) {
         this.chat = chat;
         this.tree = tree;
-        this.menu = new JPopupMenu();
+        menu = new JPopupMenu();
+        menus = new Menus(chat);
+        menus.ajouter(UtilisateurNode.class, new MenuUtilisateur(chat));
+        menus.ajouter(ChannelNode.class, new MenuChannel(chat));
     }
-    private void selectMenu(JPopupMenu menu, Object lastSelectionPathComponent) {
+    private void remlpirMenu(Object lastSelectionPathComponent) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) lastSelectionPathComponent;
         Object data = node.getUserObject();
-        if(data instanceof UtilisateurNode) {
-            userMenu(menu, (UtilisateurNode)data);
-        } else if  (data instanceof ChannelNode) {
-            channelMenu(menu, (ChannelNode)data);
+        Class type = data.getClass();
+        List<JMenuItem> items = menus.get(type).filtrerItemsPour(data);
+        menu.removeAll();
+        for (JMenuItem item : items) {
+            menu.add(item);
         }
-    }
-    
-    private void userMenu(JPopupMenu menu, UtilisateurNode user) {
-        menu.removeAll();
-        JMenuItem message = new JMenuItem("message privé");
-        message.addActionListener(new Entrer(chat, user.getName(), false));
-        menu.add(message);
-    }
-    
-    private void channelMenu(JPopupMenu menu, ChannelNode channel) {
-        menu.removeAll();
-        JMenuItem entrer = new JMenuItem("entrer");
-        entrer.addActionListener(new Entrer(chat, channel.getNom(), true));
-        menu.add(entrer);
     }
 
     @Override
@@ -60,8 +55,8 @@ public class ClicDroitTree extends MouseAdapter {
         if (SwingUtilities.isRightMouseButton(e)) {
             int row = tree.getClosestRowForLocation(e.getX(), e.getY());
             tree.setSelectionRow(row);
-            Object o = tree.getLastSelectedPathComponent();
-            selectMenu(menu, o);
+            Object pourComponent = tree.getLastSelectedPathComponent();
+            remlpirMenu(pourComponent);
             menu.show(e.getComponent(), e.getX(), e.getY());
         }
     }

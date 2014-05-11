@@ -6,7 +6,7 @@
 
 package hermes.chat.controleur.handler;
 
-import hermes.command.message.Message;
+import hermes.command.message.base.Message;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 

@@ -43,6 +43,7 @@ public class Ecouteur {
             do {
                 message = inFromServer.readLine();
             } while (message.length() < 1);
+            System.out.println(message);
         } catch (SocketException ex) {
             message = "[error] connexion perdue avec le serveur";
             // Logger.getLogger(Client.class.getName()).log(Level.SEVERE, message, ex);

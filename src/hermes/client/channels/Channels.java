@@ -24,7 +24,7 @@ public class Channels extends Observable {
     public final static String SUsersChannel = "suserschannel";
     public final static String Join = "joinchannel";
     public final static String Leave = "leavechannel";
-    
+
     private Channel root;
     private final Map<String, Channel> channels;
 
@@ -39,66 +39,78 @@ public class Channels extends Observable {
     public void setRoot(Channel root) {
         this.root = root;
         setChanged();
-        notifyObservers(Root);
+        notifyObservers(new Object[]{Root, root});
     }
 
     public Channel[] getChannels() {
         return (Channel[]) channels.values().toArray();
     }
-    
+
     public boolean remplir(Collection<? extends String> channels) {
-       for (String channel : channels) {
+        for (String channel : channels) {
             ajouter(channel);
         }
         setChanged();
         notifyObservers(new Object[]{SChannels, this});
         return true;
     }
-    
-    protected Channel getInstance(String channel) {
+
+    protected Channel instanciate(String channel) {
         return new Channel(channel);
     }
 
     public Channel ajouter(String channel) {
-        Channel c = getInstance(channel);
+        Channel c = instanciate(channel);
         channels.put(channel, c);
         setChanged();
-        notifyObservers(new String[]{Create, channel});
+        notifyObservers(new Object[]{Create, channel});
         return c;
     }
 
     public Channel retirer(String channel) {
         Channel c = channels.remove(channel);
-        if(c != null) {
+        if (c != null) {
             setChanged();
-            notifyObservers(new String[]{Delete, channel});
+            notifyObservers(new Object[]{Delete, channel});
         }
         return c;
     }
-    
+
     public void remplir(String channel, List<String> users) {
-        get(channel).remplir(users);
-        setChanged();
-        notifyObservers(new Object[]{SUsersChannel, channel, get(channel).getArrayUtilisateurs()});
+        Channel c = get(channel);
+        if (c != null) {
+            c.remplir(users);
+            setChanged();
+            notifyObservers(new Object[]{SUsersChannel, channel, get(channel).getArrayUtilisateurs()});
+        }
     }
 
     public void rejoindre(String channel, String user) {
-        get(channel).rejoindre(user);
-        setChanged();
-        notifyObservers(new Object[]{Join, channel, user});
+        Channel c = get(channel);
+        if (c != null) {
+            c.rejoindre(user);
+            setChanged();
+            notifyObservers(new Object[]{Join, channel, user});
+        }
     }
 
     public void quitter(String channel, String user) {
-        get(channel).quitter(user);
-        setChanged();
-        notifyObservers(new Object[]{Leave, channel, user});
-    }
-    
-    public void setPublique(String channel, boolean publique) {
-        get(channel).setPublique(publique);
+        Channel c = get(channel);
+        if (c != null) {
+            c.quitter(user);
+            setChanged();
+            notifyObservers(new Object[]{Leave, channel, user});
+        }
     }
 
-    private Channel get(String channel) {
+    public void setPublique(String channel, boolean publique) {
+        Channel c = get(channel);
+        if (c != null) {
+            c.setPublique(publique);
+        }
+    }
+
+    public Channel get(String channel) {
         return channels.get(channel);
     }
 }

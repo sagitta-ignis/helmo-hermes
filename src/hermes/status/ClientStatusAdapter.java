@@ -14,8 +14,6 @@ import pattern.command.CommandArgument;
  */
 public class ClientStatusAdapter extends StatusHandler implements ClientStatusHandler {
 
-
-
     public ClientStatusAdapter() {
         initEtats();
     }
@@ -43,6 +41,12 @@ public class ClientStatusAdapter extends StatusHandler implements ClientStatusHa
             @Override
             public void execute() {
                 loggedIn();
+            }
+        });
+        ajouterStatus(String.valueOf(Client.LoggedOut), new CommandArgument() {
+            @Override
+            public void execute() {
+                loggedOut();
             }
         });
         ajouterStatus(String.valueOf(Client.AlreadyLoggedIn), new CommandArgument() {
@@ -129,6 +133,11 @@ public class ClientStatusAdapter extends StatusHandler implements ClientStatusHa
 
     @Override
     public void loggedIn() {
+
+    }
+    
+    @Override
+    public void loggedOut() {
 
     }
     

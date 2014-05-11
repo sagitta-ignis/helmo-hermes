@@ -34,7 +34,7 @@ public class Utilisateurs extends Observable {
         return true;
     }
     
-    protected Utilisateur getInstance(String utilisateur) {
+    protected Utilisateur instanciate(String utilisateur) {
         return new Utilisateur(utilisateur);
     }
 
@@ -42,7 +42,7 @@ public class Utilisateurs extends Observable {
         if (users.containsKey(utilisateur)) {
             return false;
         }
-        users.put(utilisateur, getInstance(utilisateur));
+        users.put(utilisateur, instanciate(utilisateur));
         setChanged();
         notifyObservers(new String[]{Join, utilisateur});
         return true;
@@ -62,8 +62,9 @@ public class Utilisateurs extends Observable {
         return users.get(utilisateur);
     }
 
-    public Object[] toArray() {
-        return users.values().toArray();
+    public Utilisateur[] toArray() {
+        Utilisateur[] array = new Utilisateur[users.size()];
+        return users.values().toArray(array);
     }
 
     @Override

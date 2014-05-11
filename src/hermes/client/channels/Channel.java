@@ -60,7 +60,9 @@ public class Channel {
     }
 
     public void remplir(List<String> utilisateurs) {
-        getUtilisateurs().remplir(utilisateurs);
+        for (String utilisateur : utilisateurs) {
+            rejoindre(utilisateur);
+        }
     }
 
     public Utilisateur rejoindre(String utilisateur) {
@@ -75,7 +77,7 @@ public class Channel {
     }
 
     public Utilisateur[] getArrayUtilisateurs() {
-        return (Utilisateur[]) utilisateurs.toArray();
+        return utilisateurs.toArray();
     }
 
     protected String toLabel() {

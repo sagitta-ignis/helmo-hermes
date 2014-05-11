@@ -14,9 +14,6 @@ import hermes.client.channels.Channels;
 import hermes.client.exception.NotConnectedException;
 import hermes.client.exception.UnreachableServerExeception;
 import hermes.client.utilisateurs.Utilisateurs;
-import hermes.command.message.Discuss;
-import hermes.command.message.Msg;
-import hermes.command.message.Typing;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
 import hermes.status.ClientStatusAdapter;
@@ -37,7 +34,7 @@ public class Chatter extends ClientStatusAdapter {
     private final Utilisateurs utilisateurs;
     private final Channels channels;
 
-    private final Ecouter ecouteur;
+    private Ecouter ecouteur;
 
     private final Authentifier authentifier;
     private final Overlayer overlayer;
@@ -118,8 +115,10 @@ public class Chatter extends ClientStatusAdapter {
 
     public void open() {
         if (client.canRun()) {
-            messageHandler.traiter("/users");
-            messageHandler.traiter("/channels");
+            messageHandler.execute("/users");
+            messageHandler.execute("/channels");
+            messageHandler.execute("/whereiam");
+            ecouteur = new Ecouter(this);
             ecouteur.start();
             fenetre.setVisible(true);
         } else {
@@ -142,14 +141,14 @@ public class Chatter extends ClientStatusAdapter {
 
     private void publique(String channel, String text) {
         CommandArgument message;
-        message = new Discuss(this);
+        message = messageHandler.get("discuss");
         message.setArgs(channel, text);
         message.execute();
     }
 
     private void prive(String user, String text) {
         CommandArgument message;
-        message = new Msg(this);
+        message = messageHandler.get("msg");
         message.setArgs(user, text);
         message.execute();
     }
@@ -157,13 +156,12 @@ public class Chatter extends ClientStatusAdapter {
     public void setTyping(boolean b) {
         fenetre.setTyping(b);
         CommandArgument message;
-        message = new Typing(this);
+        message =  messageHandler.get("typing");
         message.setArgs(b);
         message.execute();
     }
 
     public void fermer() {
-        messageHandler.traiter("/quit");
         overlayer.fermer();
         try {
             journal.close();
@@ -176,7 +174,7 @@ public class Chatter extends ClientStatusAdapter {
     }
 
     public void quitter() {
-        fermer();
+        messageHandler.traiter("/quit");
         System.exit(0);
     }
 
@@ -208,6 +206,12 @@ public class Chatter extends ClientStatusAdapter {
     public void serverShutDown() {
         fermer();
         retour("Server", "Le serveur est en train de se fermer");
+    }
+
+    @Override
+    public void loggedOut() {
+        fermer();
+        retour();
     }
 
     public void entrer(String channel, boolean publique) {

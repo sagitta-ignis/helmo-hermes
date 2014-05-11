@@ -73,19 +73,20 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
 
     @Override
     public void entrer(String channel, boolean publique) {
+        Conversation c;
         if (!conversations.containsKey(channel)) {
-            Conversation c = new Conversation(channel, publique);
-            ajouterOnglet(c);
+            c = new Conversation(channel, publique);
             conversations.put(channel, c);
         }
+        c = conversations.get(channel);
+        ajouterOnglet(c);
     }
 
     @Override
     public void sortir(String channel) {
         if (conversations.containsKey(channel)) {
-            Conversation c = conversations.remove(channel);
+            Conversation c = conversations.get(channel);
             retirerOnglet(c);
-            conversations.remove(channel);
         }
     }
 
@@ -93,26 +94,39 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
         onglets.addTab(c.getName(), c);
         int index = onglets.indexOfTab(c.getName());
         JCloseableTabComponent tab = new JCloseableTabComponent(onglets, c.getName());
-        tab.setFermer(new Fermer(chat, tab));
+        tab.addActionListener(new Fermer(chat, tab));
         onglets.setTabComponentAt(index, tab);
+        c.setVisible(true);
     }
 
     private void retirerOnglet(Conversation c) {
         int index = onglets.indexOfTab(c.getName());
-        onglets.removeTabAt(index);
+        if(index != -1) {
+            onglets.removeTabAt(index);
+            c.setVisible(false);
+        }
     }
 
     public Conversation getConversation(String nom) {
         if (!nom.equals(CURRENT)) {
             return conversations.get(nom);
         }
-        return (Conversation) onglets.getSelectedComponent();
+        Conversation c = (Conversation) onglets.getSelectedComponent();
+        return c;
     }
 
     @Override
     public void afficher(String channel, String user, String text) {
-        Conversation c = getConversation(channel);
+        Conversation c;
+        c = getConversation(channel);
+        if(c == null && channel.equals(user)) {
+            entrer(channel, false);
+            c = getConversation(channel);
+        }
         if (c != null) {
+            if(!c.isVisible()) {
+                ajouterOnglet(c);
+            }
             c.afficher(user, text);
             overlay.afficher(channel, user, text);
         }
