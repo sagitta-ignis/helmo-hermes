@@ -17,9 +17,10 @@ public interface Chat {
     public static final String SERVER = "server";
     public static final String ME = "me";
     
-    void entrer(String channel, boolean publique);
+    void entrer(String channel);
     void sortir(String channel);
     
     void afficher(String channel, String user, String texte);
     void avertir(String titre, String message);
+    String demander(String titre, String message);
 }

@@ -7,6 +7,7 @@ package hermes.command.requete.notification;
 
 import hermes.chat.controleur.Chatter;
 import hermes.client.Client;
+import hermes.client.ClientStatus;
 import hermes.command.requete.base.Requete;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
@@ -34,7 +35,7 @@ public class SUsers extends Requete {
                 users.remove("SUSERS");
                 chat.getUtilisateurs().remplir(users);
             } else {
-                client.setEtat(Client.BadProtocoleReceived);
+                client.setEtat(ClientStatus.BadProtocoleReceived);
             }
         }
     }

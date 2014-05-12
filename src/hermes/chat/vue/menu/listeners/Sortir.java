@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package hermes.chat.vue.listeners;
+package hermes.chat.vue.menu.listeners;
 
 import hermes.chat.controleur.Chatter;
 import java.awt.event.ActionEvent;

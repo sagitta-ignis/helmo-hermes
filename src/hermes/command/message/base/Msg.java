@@ -7,6 +7,7 @@ package hermes.command.message.base;
 
 import hermes.chat.controleur.Chatter;
 import hermes.client.Client;
+import hermes.client.ClientStatus;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
 import java.util.AbstractMap;
@@ -49,7 +50,7 @@ public class Msg extends Message {
             waitResponse();
             client.getEmetteur().envoyer(request);
         } else {
-            client.setEtat(Client.BadMessageMaked);
+            client.setEtat(ClientStatus.BadMessageMaked);
         }
     }
 
@@ -62,20 +63,20 @@ public class Msg extends Message {
             if (protocole.check(response + "\r\n")) {
                 switch (protocole.get(ProtocoleSwinen.digit)) {
                     case "0":
-                        client.setEtat(Client.MSG, receiver, message);
+                        client.setEtat(ClientStatus.MSG, receiver, message);
                         break;
                     case "1":
-                        client.setEtat(Client.UnknownUser);
+                        client.setEtat(ClientStatus.UnknownUser);
                         break;
                     case "3":
-                        client.setEtat(Client.MSGToSelf);
+                        client.setEtat(ClientStatus.MSGToSelf);
                         break;
                     case "9":
-                        client.setEtat(Client.BadProtocoleSended);
+                        client.setEtat(ClientStatus.BadProtocoleSended);
                         break;
                 }
             } else {
-                client.setEtat(Client.BadProtocoleReceived);
+                client.setEtat(ClientStatus.BadProtocoleReceived);
             }
         }
     }

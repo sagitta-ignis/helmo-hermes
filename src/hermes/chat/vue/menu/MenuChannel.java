@@ -7,8 +7,8 @@
 package hermes.chat.vue.menu;
 
 import hermes.chat.controleur.Chatter;
-import hermes.chat.vue.listeners.Entrer;
-import hermes.chat.vue.listeners.Sortir;
+import hermes.chat.vue.menu.listeners.Entrer;
+import hermes.chat.vue.menu.listeners.Sortir;
 import hermes.client.channels.Channel;
 import java.util.List;
 import javax.swing.JMenuItem;
@@ -42,7 +42,6 @@ public class MenuChannel extends Menu<Channel>{
     
     private void configurer(Channel model) {
         entrer.setName(model.getNom());
-        entrer.setPublique(true);
         sortir.setName(model.getNom());
     }
 }

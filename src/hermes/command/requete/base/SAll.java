@@ -7,6 +7,7 @@ package hermes.command.requete.base;
 
 import hermes.chat.controleur.Chatter;
 import hermes.client.Client;
+import hermes.client.ClientStatus;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
 
@@ -30,9 +31,9 @@ public class SAll extends Requete {
             if (protocole.check(text)) {
                 String sender = protocole.get(ProtocoleSwinen.sender);
                 String message = protocole.get(ProtocoleSwinen.message);
-                client.setEtat(Client.SALL, sender, message);
+                client.setEtat(ClientStatus.SALL, sender, message);
             } else {
-                client.setEtat(Client.BadProtocoleReceived);
+                client.setEtat(ClientStatus.BadProtocoleReceived);
             }
         }
     }

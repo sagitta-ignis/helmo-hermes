@@ -6,6 +6,7 @@ package hermes.command.message.channel;
 
 import hermes.chat.controleur.Chatter;
 import hermes.client.Client;
+import hermes.client.ClientStatus;
 import hermes.command.message.base.Message;
 import hermes.command.message.base.Quit;
 import hermes.protocole.Protocole;
@@ -39,7 +40,7 @@ public class Channels extends Message {
                 }
             } catch (Exception ex) {
                 Logger.getLogger(Quit.class.getName()).log(Level.SEVERE, null, ex);
-                client.setEtat(Client.BadProtocoleSended);
+                client.setEtat(ClientStatus.BadProtocoleSended);
             }
         }
     }

@@ -7,6 +7,7 @@ package hermes.command.message.channel;
 
 import hermes.chat.controleur.Chatter;
 import hermes.client.Client;
+import hermes.client.ClientStatus;
 import hermes.command.message.base.Message;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
@@ -46,7 +47,7 @@ public class UsersChannel extends Message {
             String response = client.getEcouteur().lire();
             chat.getEcouteur().recevoir(response);
         } else {
-            client.setEtat(Client.BadMessageMaked);
+            client.setEtat(ClientStatus.BadMessageMaked);
         }
     }
 

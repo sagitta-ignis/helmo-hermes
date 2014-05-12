@@ -42,7 +42,7 @@ public class MessageLogger extends AbstractChat {
     }
 
     @Override
-    public void entrer(String channel, boolean publique) {}
+    public void entrer(String channel) {}
 
     @Override
     public void sortir(String channel) {}

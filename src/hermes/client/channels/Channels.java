@@ -5,7 +5,9 @@
  */
 package hermes.client.channels;
 
+import hermes.client.utilisateurs.Utilisateurs;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
@@ -15,20 +17,14 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public class Channels extends Observable {
-
-    public final static String Root = "root";
-    public final static String SChannels = "schannel";
-    public final static String Create = "create";
-    public final static String Delete = "delete";
-    public final static String SUsersChannel = "suserschannel";
-    public final static String Join = "joinchannel";
-    public final static String Leave = "leavechannel";
+public class Channels extends Observable implements Iterable<Channel> {
 
     private Channel root;
+    private final Utilisateurs utilisateurs;
     private final Map<String, Channel> channels;
 
-    public Channels() {
+    public Channels(Utilisateurs u) {
+        utilisateurs = u;
         channels = new ConcurrentHashMap<>();
     }
 
@@ -39,7 +35,7 @@ public class Channels extends Observable {
     public void setRoot(Channel root) {
         this.root = root;
         setChanged();
-        notifyObservers(new Object[]{Root, root});
+        notifyObservers(new Object[]{ChannelsStatus.Root, root});
     }
 
     public Channel[] getChannels() {
@@ -51,7 +47,7 @@ public class Channels extends Observable {
             ajouter(channel);
         }
         setChanged();
-        notifyObservers(new Object[]{SChannels, this});
+        notifyObservers(new Object[]{ChannelsStatus.SChannels, this});
         return true;
     }
 
@@ -63,7 +59,7 @@ public class Channels extends Observable {
         Channel c = instanciate(channel);
         channels.put(channel, c);
         setChanged();
-        notifyObservers(new Object[]{Create, channel});
+        notifyObservers(new Object[]{ChannelsStatus.Create, channel});
         return c;
     }
 
@@ -71,7 +67,7 @@ public class Channels extends Observable {
         Channel c = channels.remove(channel);
         if (c != null) {
             setChanged();
-            notifyObservers(new Object[]{Delete, channel});
+            notifyObservers(new Object[]{ChannelsStatus.Delete, channel});
         }
         return c;
     }
@@ -81,36 +77,44 @@ public class Channels extends Observable {
         if (c != null) {
             c.remplir(users);
             setChanged();
-            notifyObservers(new Object[]{SUsersChannel, channel, get(channel).getArrayUtilisateurs()});
+            notifyObservers(new Object[]{ChannelsStatus.SUsersChannel, channel, get(channel).getArrayUtilisateurs()});
         }
     }
 
     public void rejoindre(String channel, String user) {
         Channel c = get(channel);
         if (c != null) {
+            if(!utilisateurs.existe(user)) return;
             c.rejoindre(user);
             setChanged();
-            notifyObservers(new Object[]{Join, channel, user});
+            notifyObservers(new Object[]{ChannelsStatus.Join, channel, user});
         }
     }
 
     public void quitter(String channel, String user) {
         Channel c = get(channel);
         if (c != null) {
+            if(!utilisateurs.existe(user)) return;
             c.quitter(user);
             setChanged();
-            notifyObservers(new Object[]{Leave, channel, user});
+            notifyObservers(new Object[]{ChannelsStatus.Leave, channel, user});
         }
     }
-
-    public void setPublique(String channel, boolean publique) {
+    
+    public void setProtege(String channel, boolean protege) {
         Channel c = get(channel);
         if (c != null) {
-            c.setPublique(publique);
+            c.setProtege(protege);
         }
     }
-
+    
     public Channel get(String channel) {
         return channels.get(channel);
     }
+
+    @Override
+    public Iterator<Channel> iterator() {
+        return channels.values().iterator();
+    }
+    
 }

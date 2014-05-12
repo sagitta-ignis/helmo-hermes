@@ -5,8 +5,10 @@
  */
 package hermes.chat.vue.listeners;
 
+import hermes.chat.Chat;
 import hermes.chat.controleur.Chatter;
 import hermes.chat.vue.ChatGUI;
+import hermes.chat.vue.Conversation;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.JTextField;
@@ -32,6 +34,8 @@ public class Ecrire extends KeyAdapter {
         } else {
             JTextField message = (JTextField) ke.getSource();
             String text = message.getText();
+            Conversation c = fenetre.getConversation(Chat.CURRENT);
+            if(c == null) return;
             if (!fenetre.isTyping() && !text.isEmpty()) {
                 chat.setTyping(true);
             } else if (fenetre.isTyping() && text.isEmpty()) {

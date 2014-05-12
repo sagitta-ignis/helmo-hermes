@@ -10,6 +10,7 @@ import hermes.chat.controleur.Chatter;
 import hermes.chat.controleur.handler.MessageQueueHandler;
 import hermes.chat.controleur.handler.ServerRequestHandler;
 import hermes.client.Client;
+import hermes.client.ClientStatus;
 import hermes.command.message.base.Message;
 
 /**
@@ -51,7 +52,7 @@ public class Ecouter  extends Thread {
         if (!messageQueue.traiter(message)) {
             if (!serverRequest.parser(message + "\r\n")) {
                 Client client = chat.getClient();
-                client.setEtat(Client.UnknownRequestReceived, message);
+                client.setEtat(ClientStatus.UnknownRequestReceived, message);
             }
         }
         return true;

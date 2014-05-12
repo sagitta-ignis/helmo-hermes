@@ -5,7 +5,7 @@
  */
 package hermes.status;
 
-import hermes.client.Client;
+import hermes.client.ClientStatus;
 import pattern.command.CommandArgument;
 
 /**
@@ -19,61 +19,61 @@ public class ClientStatusAdapter extends StatusHandler implements ClientStatusHa
     }
 
     private void initEtats() {
-        ajouterStatus(String.valueOf(Client.UnknownRequestReceived), new CommandArgument() {
+        ajouterStatus(String.valueOf(ClientStatus.UnknownRequestReceived), new CommandArgument() {
             @Override
             public void execute() {
                 unknownRequest();
             }
         });
-        ajouterStatus(String.valueOf(Client.UnknownUser), new CommandArgument() {
+        ajouterStatus(String.valueOf(ClientStatus.UnknownUser), new CommandArgument() {
             @Override
             public void execute() {
                 unknownUser();
             }
         });
-        ajouterStatus(String.valueOf(Client.MSGToSelf), new CommandArgument() {
+        ajouterStatus(String.valueOf(ClientStatus.MSGToSelf), new CommandArgument() {
             @Override
             public void execute() {
                 msgToSelf();
             }
         });
-        ajouterStatus(String.valueOf(Client.LoggedIn), new CommandArgument() {
+        ajouterStatus(String.valueOf(ClientStatus.LoggedIn), new CommandArgument() {
             @Override
             public void execute() {
                 loggedIn();
             }
         });
-        ajouterStatus(String.valueOf(Client.LoggedOut), new CommandArgument() {
+        ajouterStatus(String.valueOf(ClientStatus.LoggedOut), new CommandArgument() {
             @Override
             public void execute() {
                 loggedOut();
             }
         });
-        ajouterStatus(String.valueOf(Client.AlreadyLoggedIn), new CommandArgument() {
+        ajouterStatus(String.valueOf(ClientStatus.AlreadyLoggedIn), new CommandArgument() {
             @Override
             public void execute() {
                 alreadyLoggedIn();
             }
         });
-        ajouterStatus(String.valueOf(Client.ConnexionBroken), new CommandArgument() {
+        ajouterStatus(String.valueOf(ClientStatus.ConnexionBroken), new CommandArgument() {
             @Override
             public void execute() {
                 connexionBroken();
             }
         });
-        ajouterStatus(String.valueOf(Client.ConnexionLost), new CommandArgument() {
+        ajouterStatus(String.valueOf(ClientStatus.ConnexionLost), new CommandArgument() {
             @Override
             public void execute() {
                 connexionLost();
             }
         });
-        ajouterStatus(String.valueOf(Client.ServerShutDown), new CommandArgument() {
+        ajouterStatus(String.valueOf(ClientStatus.ServerShutDown), new CommandArgument() {
             @Override
             public void execute() {
                 serverShutDown();
             }
         });
-        ajouterStatus(String.valueOf(Client.RESPONSE), new CommandArgument() {
+        ajouterStatus(String.valueOf(ClientStatus.RESPONSE), new CommandArgument() {
             @Override
             public void execute() {
                 String digit = (String) args[0];
@@ -81,7 +81,7 @@ public class ClientStatusAdapter extends StatusHandler implements ClientStatusHa
                 response(digit, message);
             }
         });
-        ajouterStatus(String.valueOf(Client.SALL), new CommandArgument() {
+        ajouterStatus(String.valueOf(ClientStatus.SALL), new CommandArgument() {
             @Override
             public void execute() {
                 String user = (String) args[0];
@@ -89,7 +89,7 @@ public class ClientStatusAdapter extends StatusHandler implements ClientStatusHa
                 sAll(user, msg);
             }
         });
-        ajouterStatus(String.valueOf(Client.MSG), new CommandArgument() {
+        ajouterStatus(String.valueOf(ClientStatus.MSG), new CommandArgument() {
             @Override
             public void execute() {
                 String user = (String) args[0];
@@ -97,7 +97,7 @@ public class ClientStatusAdapter extends StatusHandler implements ClientStatusHa
                 msg(user, msg);
             }
         });
-        ajouterStatus(String.valueOf(Client.SMSG), new CommandArgument() {
+        ajouterStatus(String.valueOf(ClientStatus.SMSG), new CommandArgument() {
             @Override
             public void execute() {
                 String user = (String) args[0];
@@ -105,7 +105,7 @@ public class ClientStatusAdapter extends StatusHandler implements ClientStatusHa
                 sMsg(user, msg);
             }
         });
-        ajouterStatus(String.valueOf(Client.SDISCUSS), new CommandArgument() {
+        ajouterStatus(String.valueOf(ClientStatus.SDISCUSS), new CommandArgument() {
             @Override
             public void execute() {
                 String channel = (String) args[0];

@@ -17,11 +17,13 @@ public class Conversation extends JScrollPane {
 
     private final JTextArea conversation;
     private boolean publique;
+    private boolean showed;
 
     public Conversation(String nom, boolean publique) {
         setName(nom);
         conversation = new JTextArea();
         this.publique = publique;
+        showed = false;
         setViewportView(conversation);
         //Scroll automatiquement en bas du textarea
         DefaultCaret caret = (DefaultCaret) conversation.getCaret();
@@ -52,5 +54,13 @@ public class Conversation extends JScrollPane {
 
     public boolean isPrivate() {
         return !publique;
+    }
+
+    public boolean isShowed() {
+        return showed;
+    }
+
+    public void setShowed(boolean showed) {
+        this.showed = showed;
     }
 }

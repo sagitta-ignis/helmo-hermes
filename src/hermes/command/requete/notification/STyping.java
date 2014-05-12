@@ -7,6 +7,7 @@ package hermes.command.requete.notification;
 
 import hermes.chat.controleur.Chatter;
 import hermes.client.Client;
+import hermes.client.ClientStatus;
 import hermes.command.requete.base.Requete;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
@@ -31,9 +32,9 @@ public class STyping extends Requete {
             if (protocole.check(text)) {
                 String user = protocole.get(ProtocoleSwinen.user);
                 String digit = protocole.get(ProtocoleSwinen.digit);
-                client.setEtat(Client.STYPING, user, digit);
+                client.setEtat(ClientStatus.STYPING, user, digit);
             } else {
-                client.setEtat(Client.BadProtocoleReceived);
+                client.setEtat(ClientStatus.BadProtocoleReceived);
             }
         }
     }

@@ -6,6 +6,7 @@ package hermes.command.requete.channel;
 
 import hermes.chat.controleur.Chatter;
 import hermes.client.Client;
+import hermes.client.ClientStatus;
 import hermes.command.requete.base.Requete;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
@@ -32,7 +33,7 @@ public class LeaveChannel extends Requete {
                 String user = protocole.get(ProtocoleSwinen.user);
                 chat.getChannels().quitter(channel, user);
             } else {
-                client.setEtat(Client.BadProtocoleReceived);
+                client.setEtat(ClientStatus.BadProtocoleReceived);
             }
         }
     }

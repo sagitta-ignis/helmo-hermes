@@ -12,11 +12,8 @@ import java.util.concurrent.*;
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public class Utilisateurs extends Observable {
+public class Utilisateurs extends Observable implements Iterable<Utilisateur> {
 
-    public final static String SUsers = "susers";
-    public final static String Join = "join";
-    public final static String Leave = "leave";
     private final Map<String, Utilisateur> users;
 
     public Utilisateurs() {
@@ -30,11 +27,11 @@ public class Utilisateurs extends Observable {
             }
         }
         setChanged();
-        notifyObservers(new Object[]{SUsers, this});
+        notifyObservers(new Object[]{UtilisateursStatus.SUsers, this});
         return true;
     }
     
-    protected Utilisateur instanciate(String utilisateur) {
+    public Utilisateur instanciate(String utilisateur) {
         return new Utilisateur(utilisateur);
     }
 
@@ -44,7 +41,7 @@ public class Utilisateurs extends Observable {
         }
         users.put(utilisateur, instanciate(utilisateur));
         setChanged();
-        notifyObservers(new String[]{Join, utilisateur});
+        notifyObservers(new String[]{UtilisateursStatus.Join, utilisateur});
         return true;
     }
 
@@ -54,7 +51,7 @@ public class Utilisateurs extends Observable {
         }
         users.remove(utilisateur);
         setChanged();
-        notifyObservers(new String[]{Leave, utilisateur});
+        notifyObservers(new String[]{UtilisateursStatus.Leave, utilisateur});
         return true;
     }
     
@@ -77,5 +74,14 @@ public class Utilisateurs extends Observable {
             builder.append(user);
         }
         return builder.toString();
+    }
+
+    public boolean existe(String user) {
+        return users.containsKey(user);
+    }
+
+    @Override
+    public Iterator<Utilisateur> iterator() {
+        return users.values().iterator();
     }
 }

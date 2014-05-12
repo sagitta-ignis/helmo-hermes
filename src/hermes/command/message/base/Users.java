@@ -7,6 +7,7 @@ package hermes.command.message.base;
 
 import hermes.chat.controleur.Chatter;
 import hermes.client.Client;
+import hermes.client.ClientStatus;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
 import java.util.logging.Level;
@@ -38,7 +39,7 @@ public class Users extends Message {
                 }
             } catch (Exception ex) {
                 Logger.getLogger(Quit.class.getName()).log(Level.SEVERE, null, ex);
-                client.setEtat(Client.BadProtocoleSended);
+                client.setEtat(ClientStatus.BadProtocoleSended);
             }
         }
     }

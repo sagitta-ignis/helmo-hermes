@@ -8,6 +8,10 @@ package hermes.chat.vue;
 import hermes.chat.AbstractChat;
 import hermes.chat.controleur.Chatter;
 import hermes.chat.controleur.Overlayer;
+import hermes.client.channels.Channel;
+import hermes.client.channels.Channels;
+import hermes.client.utilisateurs.Utilisateur;
+import hermes.client.utilisateurs.Utilisateurs;
 import javax.swing.tree.TreeModel;
 
 /**
@@ -18,8 +22,8 @@ public class ChatIRC extends AbstractChat {
 
     private final ChatGUI gui;
 
-    public ChatIRC(Chatter chatter, Overlayer overlayer) {
-        gui = new ChatGUI(chatter, overlayer);
+    public ChatIRC(Chatter chatter) {
+        gui = new ChatGUI(chatter);
     }
 
     public void setTyping(boolean typing) {
@@ -39,6 +43,53 @@ public class ChatIRC extends AbstractChat {
     public void avertir(String titre, String message) {
         gui.avertir(titre, message);
     }
+    
+    @Override
+    public String demander(String titre, String message) {
+        return gui.demander(titre, message);
+    }
+
+    @Override
+    public void sUsers(Utilisateurs users) {
+        for (Utilisateur user : users) {
+            ajouterConversationUtilisateur(user.getName());
+        }
+    }
+    
+    private void ajouterConversationUtilisateur(String user) {
+        gui.addConversation(new Conversation(user, false));
+    }
+
+    @Override
+    public void sChannel(Channels channels) {
+        for (Channel channel : channels) {
+            ajouterConversationChannel(channel.getNom());
+        }
+    }
+
+    @Override
+    public void createChannel(String channel) {
+        ajouterConversationChannel(channel);
+    }
+
+    @Override
+    public void deleteChannel(String channel) {
+        gui.removeConversation(channel);
+    }
+    
+    private void ajouterConversationChannel(String channel) {
+        gui.addConversation(new Conversation(channel, true));
+    }
+
+    @Override
+    public void join(String user) {
+        ajouterConversationUtilisateur(user);
+    }
+
+    @Override
+    public void leave(String user) {
+        gui.removeConversation(user);
+    }
 
     public void setVisible(boolean visible) {
         gui.setVisible(visible);
@@ -53,12 +104,17 @@ public class ChatIRC extends AbstractChat {
     }
 
     @Override
-    public void entrer(String channel, boolean publique) {
-        gui.entrer(channel, publique);
+    public void entrer(String channel) {
+        gui.entrer(channel);
     }
 
     @Override
     public void sortir(String channel) {
         gui.sortir(channel);
     }
+
+    public void setOverlayer(Overlayer overlayer) {
+        gui.setOverlayer(overlayer);
+    }
+
 }

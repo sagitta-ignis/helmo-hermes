@@ -170,7 +170,7 @@ public class Overlay extends AbstractChat {
     }
 
     @Override
-    public void entrer(String channel, boolean publique) {}
+    public void entrer(String channel) {}
 
     @Override
     public void sortir(String channel) {}

@@ -6,6 +6,7 @@ package hermes.command.requete.channel;
 
 import hermes.chat.controleur.Chatter;
 import hermes.client.Client;
+import hermes.client.ClientStatus;
 import hermes.command.requete.base.Requete;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
@@ -31,9 +32,9 @@ public class SDiscuss extends Requete {
                 String channel = protocole.get(ProtocoleSwinen.channel);
                 String user = protocole.get(ProtocoleSwinen.user);
                 String message = protocole.get(ProtocoleSwinen.message);
-                client.setEtat(Client.SDISCUSS, channel, user, message);
+                client.setEtat(ClientStatus.SDISCUSS, channel, user, message);
             } else {
-                client.setEtat(Client.BadProtocoleReceived);
+                client.setEtat(ClientStatus.BadProtocoleReceived);
             }
         }
     }

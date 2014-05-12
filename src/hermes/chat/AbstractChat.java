@@ -5,18 +5,63 @@
  */
 package hermes.chat;
 
+import hermes.client.channels.Channels;
+import hermes.client.channels.ChannelsStatus;
 import hermes.client.utilisateurs.Utilisateurs;
+import hermes.client.utilisateurs.UtilisateursStatus;
 import hermes.status.*;
+import pattern.command.CommandArgument;
 
 /**
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
 public class AbstractChat extends ClientStatusAdapter 
-    implements Chat, UtilisateursStatusHandler {
+    implements Chat, UtilisateursStatusHandler, ChannelsStatusHandler {
     
     public AbstractChat() {
-
+        ajouterStatus(UtilisateursStatus.SUsers, new CommandArgument() {
+            @Override
+            public void execute() {
+                Utilisateurs users = (Utilisateurs) args[0];
+                sUsers(users);
+            }
+        });
+        ajouterStatus(UtilisateursStatus.Join, new CommandArgument() {
+            @Override
+            public void execute() {
+                String user = (String) args[0];
+                join(user);
+            }
+        });
+        ajouterStatus(UtilisateursStatus.Leave, new CommandArgument() {
+            @Override
+            public void execute() {
+                String user = (String) args[0];
+                leave(user);
+            }
+        });
+        ajouterStatus(ChannelsStatus.SChannels, new CommandArgument() {
+            @Override
+            public void execute() {
+                Channels channels = (Channels) args[0];
+                sChannel(channels);
+            }
+        });
+        ajouterStatus(ChannelsStatus.Create, new CommandArgument() {
+            @Override
+            public void execute() {
+                String channel = (String) args[0];
+                createChannel(channel);
+            }
+        });
+        ajouterStatus(ChannelsStatus.Delete, new CommandArgument() {
+            @Override
+            public void execute() {
+                String channel = (String) args[0];
+                deleteChannel(channel);
+            }
+        });
     }
    
 
@@ -103,8 +148,30 @@ public class AbstractChat extends ClientStatusAdapter
     public void serverShutDown() {}
 
     @Override
-    public void entrer(String channel, boolean publique) {}
+    public void entrer(String channel) {}
 
     @Override
     public void sortir(String channel) {}
+
+    @Override
+    public String demander(String titre, String message) {return null;}
+    
+    @Override
+    public void sChannel(Channels channels) {}
+
+    @Override
+    public void createChannel(String channel) {}
+
+    @Override
+    public void deleteChannel(String channel) {}
+
+    @Override
+    public void sUsersChannel(String channel, Utilisateurs users) {}
+
+    @Override
+    public void joinChannel(String channel, String user) {}
+
+    @Override
+    public void leaveChannel(String channel, String user) {}
+    
 }

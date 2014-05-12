@@ -46,14 +46,19 @@ public class Authentifier extends ClientStatusAdapter implements ActionListener 
                 int port = login.getPort();
                 if (chat.connect(ip,port)) {
                     if (chat.login(username, password)) {
-                        login.dispose();
                         chat.open();
+                        login.dispose();
                     }
                 } else {
                     login.print("Unreachable server");
                 }
             }
         });
+    }
+
+    @Override
+    public void loggedIn() {
+        login.print("chargement en cours ...");
     }
 
     @Override

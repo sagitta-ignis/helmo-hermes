@@ -6,6 +6,7 @@ package hermes.command.message.channel;
 
 import hermes.chat.controleur.Chatter;
 import hermes.client.Client;
+import hermes.client.ClientStatus;
 import hermes.command.message.base.Message;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
@@ -41,7 +42,7 @@ public class Discuss extends Message {
             if (request != null && protocole.check(request)) {
                 client.getEmetteur().envoyer(request);
             } else {
-                client.setEtat(Client.BadMessageMaked);
+                client.setEtat(ClientStatus.BadMessageMaked);
             }
         }
     }

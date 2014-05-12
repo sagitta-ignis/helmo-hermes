@@ -8,6 +8,7 @@ package hermes.chat.model;
 
 import hermes.client.channels.Channel;
 import hermes.client.channels.Channels;
+import hermes.client.utilisateurs.Utilisateurs;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
@@ -19,7 +20,8 @@ public class ChannelsModel extends Channels {
     private final DefaultMutableTreeNode root;
     private final DefaultTreeModel model;
 
-    public ChannelsModel() {
+    public ChannelsModel(Utilisateurs u) {
+        super(u);
         root = new DefaultMutableTreeNode("Server");
         model = new DefaultTreeModel(root);
     }

@@ -7,6 +7,7 @@ package hermes.command.message.base;
 
 import hermes.chat.controleur.Chatter;
 import hermes.client.Client;
+import hermes.client.ClientStatus;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
 import java.util.AbstractMap;
@@ -30,7 +31,7 @@ public class Hello extends Message {
         }
     }
 
-    private boolean hello(String user, String pass) {
+    private void hello(String user, String pass) {
         Protocole protocole = chat.getProtocole();
         Client client = chat.getClient();
         protocole.prepare(ProtocoleSwinen.HELLO);
@@ -40,17 +41,14 @@ public class Hello extends Message {
                     new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user, (Object) user),
                     new AbstractMap.SimpleEntry<>(ProtocoleSwinen.pass, (Object) pass));
         } catch (Exception ex) {
-            client.setEtat(Client.BadMessageMaked);
+            client.setEtat(ClientStatus.BadMessageMaked);
             request = null;
         }
         if (request != null) {
-            waitResponse();
             client.getEmetteur().envoyer(request);
             String reponse = client.getEcouteur().lire();
             response(reponse);
-            return true;
         }
-        return false;
     }
 
     @Override
@@ -63,20 +61,20 @@ public class Hello extends Message {
                 switch (protocole.get(ProtocoleSwinen.digit)) {
                     case "0":
                         client.getConnectionHandler().setLogged(true);
-                        client.setEtat(Client.LoggedIn);
+                        client.setEtat(ClientStatus.LoggedIn);
                         break;
                     case "1":
-                        client.setEtat(Client.UnknownUser);
+                        client.setEtat(ClientStatus.UnknownUser);
                         break;
                     case "2":
-                        client.setEtat(Client.AlreadyLoggedIn);
+                        client.setEtat(ClientStatus.AlreadyLoggedIn);
                         break;
                     case "9":
-                        client.setEtat(Client.BadProtocoleSended);
+                        client.setEtat(ClientStatus.BadProtocoleSended);
                         break;
                 }
             } else {
-                client.setEtat(Client.BadProtocoleReceived);
+                client.setEtat(ClientStatus.BadProtocoleReceived);
             }
         }
     }

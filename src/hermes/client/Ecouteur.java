@@ -47,16 +47,16 @@ public class Ecouteur {
         } catch (SocketException ex) {
             message = "[error] connexion perdue avec le serveur";
             // Logger.getLogger(Client.class.getName()).log(Level.SEVERE, message, ex);
-            client.setEtat(Client.ConnexionLost);
+            client.setEtat(ClientStatus.ConnexionLost);
             
         } catch (IOException ex) {
             message = "[error] reception depuis serveur a échoué";
             //Logger.getLogger(Client.class.getName()).log(Level.SEVERE, message, ex);
-            client.setEtat(Client.ReceptionFailed);
+            client.setEtat(ClientStatus.ReceptionFailed);
         } catch (NullPointerException ex) { 
             message = "[error] connexion coupée avec le serveur"; 
             //Logger.getLogger(Client.class.getName()).log(Level.SEVERE, message, ex);
-            client.setEtat(Client.ConnexionBroken);
+            client.setEtat(ClientStatus.ConnexionBroken);
         }
         return message;
     }

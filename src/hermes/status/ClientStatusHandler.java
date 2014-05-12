@@ -5,8 +5,6 @@
  */
 package hermes.status;
 
-import hermes.client.utilisateurs.Utilisateurs;
-
 /**
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>

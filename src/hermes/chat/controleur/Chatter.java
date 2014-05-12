@@ -10,9 +10,11 @@ import hermes.chat.model.ChannelsModel;
 import hermes.chat.thread.Ecouter;
 import hermes.chat.vue.ChatIRC;
 import hermes.client.Client;
+import hermes.client.channels.Channel;
 import hermes.client.channels.Channels;
 import hermes.client.exception.NotConnectedException;
 import hermes.client.exception.UnreachableServerExeception;
+import hermes.client.utilisateurs.Utilisateur;
 import hermes.client.utilisateurs.Utilisateurs;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
@@ -28,46 +30,52 @@ import pattern.command.CommandArgument;
 public class Chatter extends ClientStatusAdapter {
 
     private final ClientMessageHandler messageHandler;
-
     private final Protocole protocole;
     private final Client client;
+    private Utilisateur utilisateur;
     private final Utilisateurs utilisateurs;
     private final Channels channels;
-
     private Ecouter ecouteur;
-
     private final Authentifier authentifier;
     private final Overlayer overlayer;
     private final MessageLogger journal;
-
     private final ChatIRC fenetre;
 
     public Chatter(Authentifier a) {
         protocole = new ProtocoleSwinen();
-        
+
         authentifier = a;
         overlayer = new Overlayer(this);
         messageHandler = new ClientMessageHandler(this);
         journal = new MessageLogger();
-        
-        channels = new ChannelsModel();
-        
-        fenetre = new ChatIRC(this, overlayer);
-        fenetre.setChannels(((ChannelsModel)channels).getModel());
-        
+
+        client = new Client(messageHandler);
+
         utilisateurs = new Utilisateurs();
+        utilisateur = utilisateurs.instanciate("");
+        channels = new ChannelsModel(utilisateurs);
+
+        fenetre = new ChatIRC(this);
+        fenetre.setOverlayer(overlayer);
+        fenetre.setChannels(((ChannelsModel) channels).getModel());
+
         utilisateurs.addObserver(fenetre);
         
-        client = new Client(messageHandler);
+        channels.addObserver(fenetre);
+
         client.addObserver(this);
         client.addObserver(fenetre);
         client.addObserver(journal);
-        
+
         ecouteur = new Ecouter(this);
     }
 
     public Client getClient() {
         return client;
+    }
+
+    public Utilisateur getUtilisateur() {
+        return utilisateur;
     }
 
     public ChatIRC getFenetre() {
@@ -106,6 +114,7 @@ public class Chatter extends ClientStatusAdapter {
 
     public boolean login(String username, String password) {
         try {
+            utilisateur = utilisateurs.instanciate(username);
             return client.login(username, password);
         } catch (NotConnectedException ex) {
             Logger.getLogger(Chatter.class.getName()).log(Level.SEVERE, null, ex);
@@ -156,7 +165,7 @@ public class Chatter extends ClientStatusAdapter {
     public void setTyping(boolean b) {
         fenetre.setTyping(b);
         CommandArgument message;
-        message =  messageHandler.get("typing");
+        message = messageHandler.get("typing");
         message.setArgs(b);
         message.execute();
     }
@@ -214,8 +223,19 @@ public class Chatter extends ClientStatusAdapter {
         retour();
     }
 
-    public void entrer(String channel, boolean publique) {
-        fenetre.entrer(channel, publique);
+    public void entrer(String channel) {
+        Channel c = channels.get(channel);
+        if (c != null) {
+            if (c.isProtege()) {
+                String password = fenetre.demander(
+                        "Channel protégé",
+                        "Veuillez entrer un mot de passe :");
+                if (password == null) {
+                    return;
+                }
+            }
+        }
+        fenetre.entrer(channel);
     }
 
     public void sortir(String channel) {

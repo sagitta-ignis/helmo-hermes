@@ -6,6 +6,7 @@
 
 package hermes.status;
 
+import hermes.client.channels.Channels;
 import hermes.client.utilisateurs.Utilisateurs;
 
 /**
@@ -14,7 +15,13 @@ import hermes.client.utilisateurs.Utilisateurs;
  */
 public interface ChannelsStatusHandler {
     
-    void sUsersChannel(Utilisateurs users);
+    void sChannel(Channels channels);
+    
+    void createChannel(String channel);
+    
+    void deleteChannel(String channel);
+    
+    void sUsersChannel(String channel, Utilisateurs users);
 
     void joinChannel(String channel, String user);
 

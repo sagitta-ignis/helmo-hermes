@@ -6,7 +6,9 @@ package hermes.chat.vue.menu;
 
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JMenuItem;
 
 /**
@@ -14,10 +16,10 @@ import javax.swing.JMenuItem;
  * @author d120041
  */
 public abstract class Menu<T> {
-    private final List<JMenuItem> items;
+    private final Map<String, JMenuItem> items;
 
     public Menu() {
-        items = new ArrayList<>();
+        items = new HashMap<>();
     }
     
     public void ajouterItem(String label, ActionListener... listeners) {
@@ -25,12 +27,16 @@ public abstract class Menu<T> {
         for (ActionListener listener : listeners) {
             item.addActionListener(listener);
         }
-        items.add(item);
+        items.put(label, item);
+    }
+    
+    public JMenuItem get(String label) {
+        return items.get(label);
     }
     
     public abstract List<JMenuItem> filtrerItemsPour(T Model);
 
     public List<JMenuItem> getItems() {
-        return items;
+        return new ArrayList<>(items.values());
     }
 }

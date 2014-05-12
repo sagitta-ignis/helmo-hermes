@@ -5,8 +5,7 @@
 package hermes.chat.vue.menu;
 
 import hermes.chat.controleur.Chatter;
-import hermes.chat.vue.listeners.Entrer;
-import hermes.client.channels.Channel;
+import hermes.chat.vue.menu.listeners.Entrer;
 import hermes.client.utilisateurs.Utilisateur;
 import java.util.List;
 import javax.swing.JMenuItem;
@@ -31,13 +30,16 @@ public class MenuUtilisateur extends Menu<Utilisateur>{
 
     @Override
     public List<JMenuItem> filtrerItemsPour(Utilisateur model) {
+        List<JMenuItem> items = getItems();
+        if(model.getName().equals(chat.getUtilisateur().getName())) {
+            items.remove(get("message privé"));
+        }
         configurer(model);
-        return getItems();
+        return items;
     }
     
     private void configurer(Utilisateur model) {
         entrer.setName(model.getName());
-        entrer.setPublique(false);
     }
     
 }

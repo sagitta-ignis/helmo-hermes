@@ -8,6 +8,7 @@ package hermes.command.message.base;
 
 import hermes.chat.controleur.Chatter;
 import hermes.client.Client;
+import hermes.client.ClientStatus;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
 import java.util.AbstractMap;
@@ -40,7 +41,7 @@ public class All extends Message {
             if (request != null && protocole.check(request)) {
                 client.getEmetteur().envoyer(request);
             } else {
-                client.setEtat(Client.BadMessageMaked);
+                client.setEtat(ClientStatus.BadMessageMaked);
             }
         }
     }

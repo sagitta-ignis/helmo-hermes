@@ -19,7 +19,10 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JCloseableTabComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu.Separator;
 import javax.swing.JTextField;
 import javax.swing.tree.TreeModel;
 
@@ -29,8 +32,15 @@ import javax.swing.tree.TreeModel;
  */
 public final class ChatGUI extends javax.swing.JFrame implements Chat {
 
-    private final Overlayer overlay;
+    private Overlayer overlay;
     private final Chatter chat;
+
+    private final JMenu jmOverlay = new javax.swing.JMenu();
+    private final JMenuItem jmiOverlay1 = new javax.swing.JMenuItem();
+    private final JMenuItem jmiOverlay3 = new javax.swing.JMenuItem();
+    private final JMenuItem jmiOverlay5 = new javax.swing.JMenuItem();
+    private final Separator jSeparator1 = new javax.swing.JPopupMenu.Separator();
+    private final JMenuItem jmiOverlayDesactiver = new javax.swing.JMenuItem();
 
     private final Map<String, Conversation> conversations;
     private boolean typing;
@@ -39,13 +49,11 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
      * Creates new form Chat
      *
      * @param chatter
-     * @param overlayer
      */
-    public ChatGUI(Chatter chatter, Overlayer overlayer) {
+    public ChatGUI(Chatter chatter) {
         initComponents();
 
         chat = chatter;
-        overlay = overlayer;
         conversations = new HashMap<>();
 
         KeyAdapter ecris = new Ecrire(this, chat);
@@ -59,8 +67,68 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
         setLocationRelativeTo(getRootPane());
     }
 
+    void setOverlayer(Overlayer o) {
+        if (overlay == null) {
+            makeOverlayMenu();
+            menu.add(jmOverlay);
+        } else {
+            removeOverlayMenuListeners(overlay);
+        }
+        if (o != null) {
+            addOverlayMenuListeners(o);
+        } else {
+            menu.remove(jmOverlay);
+        }
+        overlay = o;
+    }
+
+    private void makeOverlayMenu() {
+        jmOverlay.setText("Overlay");
+
+        jmiOverlay1.setText("Overlay 1");
+        jmOverlay.add(jmiOverlay1);
+
+        jmiOverlay3.setText("Overlay 3");
+        jmOverlay.add(jmiOverlay3);
+
+        jmiOverlay5.setText("Overlay 5");
+        jmOverlay.add(jmiOverlay5);
+        
+        jmOverlay.add(jSeparator1);
+
+        jmiOverlayDesactiver.setText("Desactiver");
+        jmiOverlayDesactiver.setAccelerator(
+                javax.swing.KeyStroke.getKeyStroke(
+                        java.awt.event.KeyEvent.VK_O,
+                        java.awt.event.InputEvent.SHIFT_MASK
+                        | java.awt.event.InputEvent.CTRL_MASK));
+        jmOverlay.add(jmiOverlayDesactiver);
+    }
+
+    private void addOverlayMenuListeners(ActionListener al) {
+        jmiOverlay1.addActionListener(al);
+        jmiOverlay3.addActionListener(al);
+        jmiOverlay5.addActionListener(al);
+        jmiOverlayDesactiver.addActionListener(al);
+    }
+    
+    private void removeOverlayMenuListeners(ActionListener al) {
+        jmiOverlay1.removeActionListener(al);
+        jmiOverlay3.removeActionListener(al);
+        jmiOverlay5.removeActionListener(al);
+        jmiOverlayDesactiver.removeActionListener(al);
+    }
+
     void setChannels(TreeModel channels) {
         this.channels.setModel(channels);
+    }
+    
+    void addConversation(Conversation c) {
+        conversations.put(c.getName(), c);
+    }
+
+    void removeConversation(String conversation) {
+        conversations.remove(conversation);
     }
 
     public boolean isTyping() {
@@ -72,14 +140,11 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
     }
 
     @Override
-    public void entrer(String channel, boolean publique) {
-        Conversation c;
-        if (!conversations.containsKey(channel)) {
-            c = new Conversation(channel, publique);
-            conversations.put(channel, c);
+    public void entrer(String channel) {
+        if (conversations.containsKey(channel)) {
+            Conversation c = conversations.get(channel);
+            ajouterOnglet(c);
         }
-        c = conversations.get(channel);
-        ajouterOnglet(c);
     }
 
     @Override
@@ -96,14 +161,14 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
         JCloseableTabComponent tab = new JCloseableTabComponent(onglets, c.getName());
         tab.addActionListener(new Fermer(chat, tab));
         onglets.setTabComponentAt(index, tab);
-        c.setVisible(true);
+        c.setShowed(true);
     }
 
     private void retirerOnglet(Conversation c) {
         int index = onglets.indexOfTab(c.getName());
-        if(index != -1) {
+        if (index != -1) {
             onglets.removeTabAt(index);
-            c.setVisible(false);
+            c.setShowed(false);
         }
     }
 
@@ -119,12 +184,8 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
     public void afficher(String channel, String user, String text) {
         Conversation c;
         c = getConversation(channel);
-        if(c == null && channel.equals(user)) {
-            entrer(channel, false);
-            c = getConversation(channel);
-        }
         if (c != null) {
-            if(!c.isVisible()) {
+            if (!c.isShowed()) {
                 ajouterOnglet(c);
             }
             c.afficher(user, text);
@@ -136,6 +197,11 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
     public void avertir(String titre, String message) {
         JOptionPane.showMessageDialog(this, message, titre,
                 JOptionPane.WARNING_MESSAGE);
+    }
+    
+    @Override
+    public String demander(String titre, String message) {
+        return JOptionPane.showInputDialog(this, message, titre, -1);
     }
 
     @Override
@@ -174,12 +240,6 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
         menu = new javax.swing.JMenuBar();
         jmIRC = new javax.swing.JMenu();
         jmiQuitter = new javax.swing.JMenuItem();
-        jmOverlay = new javax.swing.JMenu();
-        jmiOverlay1 = new javax.swing.JMenuItem();
-        jmiOverlay3 = new javax.swing.JMenuItem();
-        jmiOverlay5 = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        jmiOverlayDesactiver = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("IRC Helmo");
@@ -233,43 +293,6 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
 
         menu.add(jmIRC);
 
-        jmOverlay.setText("Overlay");
-
-        jmiOverlay1.setText("Overlay 1");
-        jmiOverlay1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Overlay1(evt);
-            }
-        });
-        jmOverlay.add(jmiOverlay1);
-
-        jmiOverlay3.setText("Overlay 3");
-        jmiOverlay3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Overlay3(evt);
-            }
-        });
-        jmOverlay.add(jmiOverlay3);
-
-        jmiOverlay5.setText("Overlay 5");
-        jmiOverlay5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Overlay5(evt);
-            }
-        });
-        jmOverlay.add(jmiOverlay5);
-        jmOverlay.add(jSeparator1);
-
-        jmiOverlayDesactiver.setText("Desactiver");
-        jmiOverlayDesactiver.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                OverlayDesactiver(evt);
-            }
-        });
-        jmOverlay.add(jmiOverlayDesactiver);
-
-        menu.add(jmOverlay);
-
         setJMenuBar(menu);
 
         pack();
@@ -278,22 +301,6 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
     private void fermer(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_fermer
         chat.quitter();
     }//GEN-LAST:event_fermer
-
-    private void Overlay1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Overlay1
-        overlay.activer(1);
-    }//GEN-LAST:event_Overlay1
-
-    private void Overlay3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Overlay3
-        overlay.activer(3);
-    }//GEN-LAST:event_Overlay3
-
-    private void Overlay5(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Overlay5
-        overlay.activer(5);
-    }//GEN-LAST:event_Overlay5
-
-    private void OverlayDesactiver(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OverlayDesactiver
-        overlay.desactiver();
-    }//GEN-LAST:event_OverlayDesactiver
 
     private void jmiQuitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiQuitterActionPerformed
         chat.quitter();
@@ -304,14 +311,8 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
     private javax.swing.JPanel dialogue;
     private javax.swing.JButton envoyer;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JMenu jmIRC;
-    private javax.swing.JMenu jmOverlay;
-    private javax.swing.JMenuItem jmiOverlay1;
-    private javax.swing.JMenuItem jmiOverlay3;
-    private javax.swing.JMenuItem jmiOverlay5;
-    private javax.swing.JMenuItem jmiOverlayDesactiver;
     private javax.swing.JMenuItem jmiQuitter;
     private javax.swing.JMenuBar menu;
     private javax.swing.JTextField message;

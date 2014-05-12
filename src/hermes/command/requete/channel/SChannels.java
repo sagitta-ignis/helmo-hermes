@@ -6,6 +6,7 @@ package hermes.command.requete.channel;
 
 import hermes.chat.controleur.Chatter;
 import hermes.client.Client;
+import hermes.client.ClientStatus;
 import hermes.client.channels.Channels;
 import hermes.command.message.base.Message;
 import hermes.command.message.channel.InfoChannel;
@@ -37,7 +38,7 @@ public class SChannels extends Requete {
                 channels.remove("SCHANNEL");
                 remplir(channels);
             } else {
-                client.setEtat(Client.BadProtocoleReceived);
+                client.setEtat(ClientStatus.BadProtocoleReceived);
             }
         }
     }
