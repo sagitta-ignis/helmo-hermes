@@ -62,8 +62,7 @@ public class InfoChannel extends CommandArgument {
         try {
             messageProtocole = protocole.make(                    
                     new AbstractMap.SimpleEntry<>(ProtocoleSwinen.channel, (Object) nomChannel),
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.digit, (Object) motDePasse),
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.entier, (Object) channel.getClientSize())
+                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.digit, (Object) motDePasse)
             );
         } catch (Exception ex) {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
