@@ -5,6 +5,7 @@
 package hermes.command.requete.channel;
 
 import hermes.chat.controleur.Chatter;
+import hermes.chat.controleur.handler.ClientMessageHandler;
 import hermes.client.Client;
 import hermes.client.ClientStatus;
 import hermes.command.requete.base.Requete;
@@ -31,10 +32,12 @@ public class ChannelAdded extends Requete {
             if (protocole.check(text)) {
                 String channel = protocole.get(ProtocoleSwinen.channel);
                 chat.getChannels().ajouter(channel);
+                ClientMessageHandler handler = chat.getMessageHandler();
+                handler.execute("/infochannel", channel);
+                handler.execute("/userschannel", channel);
             } else {
                 client.setEtat(ClientStatus.BadProtocoleReceived);
             }
         }
     }
-    
 }
