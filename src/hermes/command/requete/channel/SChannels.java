@@ -5,12 +5,10 @@
 package hermes.command.requete.channel;
 
 import hermes.chat.controleur.Chatter;
+import hermes.chat.controleur.handler.ClientMessageHandler;
 import hermes.client.Client;
 import hermes.client.ClientStatus;
 import hermes.client.channels.Channels;
-import hermes.command.message.base.Message;
-import hermes.command.message.channel.InfoChannel;
-import hermes.command.message.channel.UsersChannel;
 import hermes.command.requete.base.Requete;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
@@ -44,17 +42,12 @@ public class SChannels extends Requete {
     }
     
     private void remplir(List<String> liste) {
+        ClientMessageHandler handler = chat.getMessageHandler();
         Channels channels = chat.getChannels();
         for (String channel : liste) {
             channels.ajouter(channel);
-            Message info = new InfoChannel(chat);
-            /*
-            info.setArgs(channel);
-            info.execute();
-            */
-            Message users = new UsersChannel(chat);
-            users.setArgs(channel);
-            users.execute();
+            handler.execute("/infochannel", channel);
+            handler.execute("/userschannel", channel);
         }
     }
 }

@@ -130,7 +130,8 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
     }
 
     void removeConversation(String conversation) {
-        conversations.remove(conversation);
+        Conversation c = conversations.remove(conversation);
+        retirerOnglet(c);
     }
 
     public boolean isTyping() {

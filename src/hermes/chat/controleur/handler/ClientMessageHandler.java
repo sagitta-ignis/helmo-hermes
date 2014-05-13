@@ -34,6 +34,8 @@ public class ClientMessageHandler {
         requetesPubliques.put("quit", new Quit(chat));
         requetes.put("users", new Users(chat));
         requetes.put("channels", new Channels(chat));
+        requetes.put("userschannel", new UsersChannel(chat));
+        requetes.put("infochannel", new InfoChannel(chat));
         requetes.put("createchannel", new CreateChannel(chat));
         requetes.put("deletechannel", new DeleteChannel(chat));
         requetes.put("whereiam", new WhereIAm(chat));

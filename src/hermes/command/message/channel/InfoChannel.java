@@ -33,7 +33,7 @@ public class InfoChannel extends Message {
     private void infoChannel(String channel) {
         Protocole protocole = chat.getProtocole();
         Client client = chat.getClient();
-        protocole.prepare(ProtocoleSwinen.ALL);
+        protocole.prepare(ProtocoleSwinen.INFOCHANNEL);
         String request;
         try {
             request = protocole.make(
@@ -50,5 +50,7 @@ public class InfoChannel extends Message {
     }
 
     @Override
-    public void response(String response) {}
+    public void response(String response) {
+        chat.getEcouteur().recevoir(response);
+    }
 }
