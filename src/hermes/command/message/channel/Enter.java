@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package hermes.command.message.channel;
@@ -15,37 +14,45 @@ import hermes.protocole.Entry;
 
 /**
  *
- * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
+ * @author d120041
  */
-public class UsersChannel extends Message {
+public class Enter extends Message {
 
-    public UsersChannel(Chatter chat) {
+    public Enter(Chatter chat) {
         super(chat);
     }
 
     @Override
     public void execute() {
-        if (verifierArguments(1)) {
+        if (verifierArguments(1,2)) {
             String channel = (String) args[0];
-            usersChannel(channel);
+            String password = null;
+            if (args.length == 2) {
+                password = (String) args[1];
+            }
+            enter(channel, password);
         }
     }
 
-    private void usersChannel(String channel) {
+    private void enter(String channel, String password) {
         Protocole protocole = chat.getProtocole();
         Client client = chat.getClient();
-        protocole.prepare(ProtocoleSwinen.USERSCHANNEL);
+        protocole.prepare(ProtocoleSwinen.ENTER);
         String request;
         try {
-            request = protocole.make(
-                    new Entry<>(ProtocoleSwinen.channel, (Object) channel));
+            if (password == null) {
+                request = protocole.make(
+                        new Entry<>(ProtocoleSwinen.channel, (Object) channel));
+            } else {
+                request = protocole.make(
+                        new Entry<>(ProtocoleSwinen.channel, (Object) channel),
+                        new Entry<>(ProtocoleSwinen.pass, (Object) password));
+            }
         } catch (Exception ex) {
             return;
         }
         if (request != null && protocole.check(request)) {
             client.getEmetteur().envoyer(request);
-            String response = client.getEcouteur().lire();
-            chat.getEcouteur().recevoir(response);
         } else {
             client.setEtat(ClientStatus.BadMessageMaked);
         }
@@ -54,4 +61,5 @@ public class UsersChannel extends Message {
     @Override
     public void response(String response) {
     }
+
 }

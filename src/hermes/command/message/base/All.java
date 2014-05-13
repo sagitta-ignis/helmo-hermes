@@ -9,9 +9,9 @@ package hermes.command.message.base;
 import hermes.chat.controleur.Chatter;
 import hermes.client.Client;
 import hermes.client.ClientStatus;
+import hermes.protocole.Entry;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import java.util.AbstractMap;
 
 /**
  *
@@ -33,7 +33,7 @@ public class All extends Message {
             String request;
             try {
                 request = protocole.make(
-                        new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, (Object) message)
+                        new Entry<>(ProtocoleSwinen.message, (Object) message)
                 );
             } catch (Exception ex) {
                 return;

@@ -38,6 +38,8 @@ public class ClientMessageHandler {
         requetes.put("infochannel", new InfoChannel(chat));
         requetes.put("createchannel", new CreateChannel(chat));
         requetes.put("deletechannel", new DeleteChannel(chat));
+        requetes.put("enter", new Enter(chat));
+        requetes.put("exit", new Exit(chat));
         requetes.put("whereiam", new WhereIAm(chat));
         requetesPubliques.put("msg", new Msg(chat));
         requetesPubliques.put("discuss", new Discuss(chat));

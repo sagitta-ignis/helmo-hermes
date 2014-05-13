@@ -10,7 +10,7 @@ import hermes.client.ClientStatus;
 import hermes.command.message.base.Message;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import java.util.AbstractMap;
+import hermes.protocole.Entry;
 
 /**
  *
@@ -37,7 +37,7 @@ public class InfoChannel extends Message {
         String request;
         try {
             request = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.channel, (Object) channel));
+                    new Entry<>(ProtocoleSwinen.channel, (Object) channel));
         } catch (Exception ex) {
             return;
         }

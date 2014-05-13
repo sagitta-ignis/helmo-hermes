@@ -238,12 +238,19 @@ public class Chatter extends ClientStatusAdapter {
                 if (password == null) {
                     return;
                 }
+                messageHandler.execute("/enter", channel, password);
+            } else {
+                messageHandler.execute("/enter", channel);
             }
         }
         fenetre.entrer(channel);
     }
 
     public void sortir(String channel) {
+        Channel c = channels.get(channel);
+        if (c != null) {
+            messageHandler.execute("/exit", channel);
+        }
         fenetre.sortir(channel);
     }
 }

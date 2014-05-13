@@ -89,8 +89,6 @@ public class AbstractChat extends ClientStatusAdapter
     public void response(String digit, String message) {
         if (!digit.equals("0")) {
             afficher(CURRENT, SERVER, "-- " + message);
-        } else {
-            System.out.println("-- " + message);
         }
     }
 

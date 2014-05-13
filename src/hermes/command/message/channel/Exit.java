@@ -1,6 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
+ * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package hermes.command.message.channel;
@@ -9,17 +8,17 @@ import hermes.chat.controleur.Chatter;
 import hermes.client.Client;
 import hermes.client.ClientStatus;
 import hermes.command.message.base.Message;
+import hermes.protocole.Entry;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import hermes.protocole.Entry;
 
 /**
  *
- * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
+ * @author d120041
  */
-public class UsersChannel extends Message {
+public class Exit extends Message {
 
-    public UsersChannel(Chatter chat) {
+    public Exit(Chatter chat) {
         super(chat);
     }
 
@@ -27,14 +26,14 @@ public class UsersChannel extends Message {
     public void execute() {
         if (verifierArguments(1)) {
             String channel = (String) args[0];
-            usersChannel(channel);
+            exit(channel);
         }
     }
 
-    private void usersChannel(String channel) {
+    private void exit(String channel) {
         Protocole protocole = chat.getProtocole();
         Client client = chat.getClient();
-        protocole.prepare(ProtocoleSwinen.USERSCHANNEL);
+        protocole.prepare(ProtocoleSwinen.EXIT);
         String request;
         try {
             request = protocole.make(
@@ -44,8 +43,6 @@ public class UsersChannel extends Message {
         }
         if (request != null && protocole.check(request)) {
             client.getEmetteur().envoyer(request);
-            String response = client.getEcouteur().lire();
-            chat.getEcouteur().recevoir(response);
         } else {
             client.setEtat(ClientStatus.BadMessageMaked);
         }
@@ -54,4 +51,5 @@ public class UsersChannel extends Message {
     @Override
     public void response(String response) {
     }
+
 }

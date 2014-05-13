@@ -11,7 +11,7 @@ import hermes.client.ClientStatus;
 import hermes.command.message.base.Message;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import java.util.AbstractMap;
+import hermes.protocole.Entry;
 
 /**
  *
@@ -43,11 +43,11 @@ public class CreateChannel extends Message {
         try {
             if(password == null) {
                 request = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.channel, (Object) channel));
+                    new Entry<>(ProtocoleSwinen.channel, (Object) channel));
             } else {
                 request = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.channel, (Object) channel),
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.pass, (Object) password));
+                    new Entry<>(ProtocoleSwinen.channel, (Object) channel),
+                    new Entry<>(ProtocoleSwinen.pass, (Object) password));
             }
         } catch (Exception ex) {
             return;

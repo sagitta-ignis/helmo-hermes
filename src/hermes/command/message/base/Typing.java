@@ -10,7 +10,7 @@ import hermes.client.Client;
 import hermes.client.ClientStatus;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import java.util.AbstractMap;
+import hermes.protocole.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,7 +34,7 @@ public class Typing extends Message {
             String request;
             try {
                 request = protocole.make(
-                        new AbstractMap.SimpleEntry<>(ProtocoleSwinen.digit, (Object) (b ? "1" : "0")));
+                        new Entry<>(ProtocoleSwinen.digit, (Object) (b ? "1" : "0")));
                 if (request != null && protocole.check(request)) {
                     client.getEmetteur().envoyer(request);
                 }
