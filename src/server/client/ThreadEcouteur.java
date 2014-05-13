@@ -51,6 +51,8 @@ public class ThreadEcouteur extends Thread {
             if (message == null) {
                 connectionLost();
             } else if (message.length() > 0) {
+                String prefix = clientInfo.getPrefix("> ");
+                System.out.println(prefix + message);
                 manager.traiter(message + "\r\n");
             }
 

@@ -55,6 +55,10 @@ public class Client {
     public String getUsername() {
         return username;
     }
+    
+    public String getPrefix(String prefix) {
+        return username.equals("")?prefix:"["+username+"] "+prefix;
+    }
 
     /**
      * @param username the username to set
