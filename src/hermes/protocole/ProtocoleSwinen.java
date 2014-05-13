@@ -145,7 +145,7 @@ public class ProtocoleSwinen extends AbstractProtocole {
         SCHANNELS = new MessageProtocole("schannels = \"SCHANNELS\" *(space channel) crlf", channel);
         
         INFOCHANNEL = new MessageProtocole("channels = \"INFOCHANNEL\" space channel crlf", channel);
-        SINFOCHANNEL = new MessageProtocole("channels = \"SINFOCHANNEL\" space channel space \"protege=\" digit space \"utilisateurs=\" entier crlf", channel,digit, entier);
+        SINFOCHANNEL = new MessageProtocole("channels = \"SINFOCHANNEL\" space channel space \"protege=\" digit crlf", channel,digit);
     
         USERSCHANNEL = new MessageProtocole("userschannel = \"USERSCHANNEL\" space channel crlf", channel);
         SUSERSCHANNEL = new MessageProtocole("suserschannel = \"SUSERSCHANNEL\" space channel *(space user) crlf",channel, user);
