@@ -33,18 +33,21 @@ public class ServeurControlleur {
     private Configuration config;
 
     public ServeurControlleur() {
-        channelManager = new ChannelControlleur(this);
+        output = new PrintWriter(System.out);
         users = new ListUser();
-        responseNS = new SentResponse();
-        this.output = new PrintWriter(System.out);
-
         lectureFichiers();
+        responseNS = new SentResponse();
+        
+        channelManager = new ChannelControlleur(this);
         connection();
+    }
 
-        new ThreadInput(this).start();
+    public Configuration getConfig() {
+        return config;
     }
 
     public void lancerServeur() {
+        new ThreadInput(this).start();
         while (true) {
             try {
                 Socket clientSocket = server.accept();

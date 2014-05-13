@@ -32,7 +32,8 @@ public class Quit extends CommandArgument {
     }
 
     @Override
-    public void execute() {        
+    public void execute() {       
+        client.sayGoodByeToConnectedChannels();
         sent();
         channelManager.closeClient(client.getClient().getUsername());
     }
