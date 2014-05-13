@@ -124,7 +124,9 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
     }
     
     void addConversation(Conversation c) {
-        conversations.put(c.getName(), c);
+        if(!conversations.containsKey(c.getName())) {
+            conversations.put(c.getName(), c);
+        }
     }
 
     void removeConversation(String conversation) {
@@ -203,6 +205,12 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
     public String demander(String titre, String message) {
         return JOptionPane.showInputDialog(this, message, titre, -1);
     }
+    
+    
+    int confirmer(String titre, String message, int type) {
+        return  JOptionPane.showConfirmDialog(this, message, titre, type);
+    }
+
 
     @Override
     public void setVisible(boolean bln) {
@@ -210,6 +218,11 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
         if (!bln) {
             getConversation(CURRENT).clear();
         }
+    }
+    
+    void clear() {
+        conversations.clear();
+        onglets.removeAll();
     }
 
     public JButton getEnvoyer() {
@@ -318,5 +331,6 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
     private javax.swing.JTextField message;
     private javax.swing.JTabbedPane onglets;
     // End of variables declaration//GEN-END:variables
+
 
 }

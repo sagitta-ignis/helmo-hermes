@@ -12,6 +12,7 @@ import hermes.client.channels.Channel;
 import hermes.client.channels.Channels;
 import hermes.client.utilisateurs.Utilisateur;
 import hermes.client.utilisateurs.Utilisateurs;
+import javax.swing.JOptionPane;
 import javax.swing.tree.TreeModel;
 
 /**
@@ -115,6 +116,15 @@ public class ChatIRC extends AbstractChat {
 
     public void setOverlayer(Overlayer overlayer) {
         gui.setOverlayer(overlayer);
+    }
+
+    public void clear() {
+        gui.clear();
+    }
+
+    public boolean confirmer(String titre, String message) {
+        int res = gui.confirmer(titre, message, JOptionPane.YES_NO_OPTION);
+        return res==0;
     }
 
 }

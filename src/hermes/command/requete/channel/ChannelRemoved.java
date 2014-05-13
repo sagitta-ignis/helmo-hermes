@@ -27,7 +27,7 @@ public class ChannelRemoved extends Requete {
             Protocole protocole = chat.getProtocole();
             Client client = chat.getClient();
             String text = (String) args[0];
-            protocole.prepare(ProtocoleSwinen.STYPING);
+            protocole.prepare(ProtocoleSwinen.CHANNELREMOVED);
             if (protocole.check(text)) {
                 String channel = protocole.get(ProtocoleSwinen.channel);
                 chat.getChannels().retirer(channel);

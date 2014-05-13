@@ -17,12 +17,14 @@ import javax.swing.tree.DefaultTreeModel;
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
 public class ChannelsModel extends Channels {
+    private final ServerNode server;
     private final DefaultMutableTreeNode root;
     private final DefaultTreeModel model;
 
     public ChannelsModel(Utilisateurs u) {
         super(u);
-        root = new DefaultMutableTreeNode("Server");
+        server = new ServerNode("Server");
+        root = new DefaultMutableTreeNode(server);
         model = new DefaultTreeModel(root);
     }
 
@@ -39,6 +41,7 @@ public class ChannelsModel extends Channels {
     public Channel ajouter(String channel) {
         ChannelNode c = (ChannelNode) super.ajouter(channel);
         root.add(c.getNode());
+        model.nodeStructureChanged(root);
         return c;
     }
 
@@ -46,6 +49,7 @@ public class ChannelsModel extends Channels {
     public Channel retirer(String channel) {
         ChannelNode c = (ChannelNode) super.retirer(channel);
         root.remove(c.getNode());
+        model.nodeStructureChanged(root);
         return c;
     }
     

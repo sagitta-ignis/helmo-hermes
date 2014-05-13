@@ -60,12 +60,8 @@ public class Chatter extends ClientStatusAdapter {
         fenetre.setChannels(((ChannelsModel) channels).getModel());
 
         utilisateurs.addObserver(fenetre);
-        
-        channels.addObserver(fenetre);
 
-        client.addObserver(this);
-        client.addObserver(fenetre);
-        client.addObserver(journal);
+        channels.addObserver(fenetre);
 
         ecouteur = new Ecouter(this);
     }
@@ -124,6 +120,9 @@ public class Chatter extends ClientStatusAdapter {
 
     public void open() {
         if (client.canRun()) {
+            client.addObserver(fenetre);
+            client.addObserver(journal);
+            client.addObserver(this);
             messageHandler.execute("/users");
             messageHandler.execute("/channels");
             messageHandler.execute("/whereiam");
@@ -193,11 +192,17 @@ public class Chatter extends ClientStatusAdapter {
 
     private void retour(String titre, String message) {
         if (fenetre.isVisible()) {
+            client.deleteObserver(fenetre);
+            client.deleteObserver(journal);
+            client.deleteObserver(this);
             if (titre != null && message != null) {
                 fenetre.avertir(titre, message);
             }
             fenetre.setVisible(false);
             authentifier.ouvrir();
+            fenetre.clear();
+            channels.clear();
+            utilisateurs.clear();
         }
     }
 

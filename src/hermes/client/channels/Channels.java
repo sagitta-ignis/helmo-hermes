@@ -116,5 +116,9 @@ public class Channels extends Observable implements Iterable<Channel> {
     public Iterator<Channel> iterator() {
         return channels.values().iterator();
     }
+
+    public void clear() {
+        channels.clear();
+    }
     
 }

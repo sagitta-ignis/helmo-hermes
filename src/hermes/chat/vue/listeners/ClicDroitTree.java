@@ -7,10 +7,9 @@ package hermes.chat.vue.listeners;
 
 import hermes.chat.controleur.Chatter;
 import hermes.chat.model.ChannelNode;
+import hermes.chat.model.ServerNode;
 import hermes.chat.model.UtilisateurNode;
-import hermes.chat.vue.menu.MenuChannel;
-import hermes.chat.vue.menu.MenuUtilisateur;
-import hermes.chat.vue.menu.Menus;
+import hermes.chat.vue.menu.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -38,13 +37,16 @@ public class ClicDroitTree extends MouseAdapter {
         menus = new Menus(chat);
         menus.ajouter(UtilisateurNode.class, new MenuUtilisateur(chat));
         menus.ajouter(ChannelNode.class, new MenuChannel(chat));
+        menus.ajouter(ServerNode.class, new MenuServer(chat));
     }
     private void remlpirMenu(Object lastSelectionPathComponent) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) lastSelectionPathComponent;
         Object data = node.getUserObject();
         Class type = data.getClass();
-        List<JMenuItem> items = menus.get(type).filtrerItemsPour(data);
+        Menu m = menus.get(type);
         menu.removeAll();
+        if(m == null) return;
+        List<JMenuItem> items = m.filtrerItemsPour(data);
         for (JMenuItem item : items) {
             menu.add(item);
         }

@@ -8,6 +8,7 @@ package hermes.chat.controleur;
 
 import hermes.status.ClientStatusAdapter;
 import hermes.chat.vue.Login;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -45,12 +46,13 @@ public class Authentifier extends ClientStatusAdapter implements ActionListener 
                 String password = login.getPassword();
                 int port = login.getPort();
                 if (chat.connect(ip,port)) {
+                    login.afficher("chargement en cours ...", Color.BLUE);
                     if (chat.login(username, password)) {
                         chat.open();
                         login.dispose();
                     }
                 } else {
-                    login.print("Unreachable server");
+                    login.afficher("Unreachable server");
                 }
             }
         });
@@ -58,17 +60,17 @@ public class Authentifier extends ClientStatusAdapter implements ActionListener 
 
     @Override
     public void loggedIn() {
-        login.print("chargement en cours ...");
+        
     }
 
     @Override
     public void unknownUser() {
-        login.print("Incorrect username or password");
+        login.afficher("Incorrect username or password");
     }
 
     @Override
     public void alreadyLoggedIn() {
-        login.print("User already logged in");
+        login.afficher("User already logged in");
     }
 
     @Override

@@ -14,10 +14,10 @@ import java.util.concurrent.*;
  */
 public class Utilisateurs extends Observable implements Iterable<Utilisateur> {
 
-    private final Map<String, Utilisateur> users;
+    private final Map<String, Utilisateur> utilisateurs;
 
     public Utilisateurs() {
-        users = new ConcurrentHashMap<>();
+        utilisateurs = new ConcurrentHashMap<>();
     }
 
     public boolean remplir(Collection<? extends String> utilisateurs) {
@@ -36,38 +36,38 @@ public class Utilisateurs extends Observable implements Iterable<Utilisateur> {
     }
 
     public boolean ajouter(String utilisateur) {
-        if (users.containsKey(utilisateur)) {
+        if (utilisateurs.containsKey(utilisateur)) {
             return false;
         }
-        users.put(utilisateur, instanciate(utilisateur));
+        utilisateurs.put(utilisateur, instanciate(utilisateur));
         setChanged();
         notifyObservers(new String[]{UtilisateursStatus.Join, utilisateur});
         return true;
     }
 
     public boolean retirer(String utilisateur) {
-        if (!users.containsKey(utilisateur)) {
+        if (!utilisateurs.containsKey(utilisateur)) {
             return false;
         }
-        users.remove(utilisateur);
+        utilisateurs.remove(utilisateur);
         setChanged();
         notifyObservers(new String[]{UtilisateursStatus.Leave, utilisateur});
         return true;
     }
     
     public Utilisateur get(String utilisateur) {
-        return users.get(utilisateur);
+        return utilisateurs.get(utilisateur);
     }
 
     public Utilisateur[] toArray() {
-        Utilisateur[] array = new Utilisateur[users.size()];
-        return users.values().toArray(array);
+        Utilisateur[] array = new Utilisateur[utilisateurs.size()];
+        return utilisateurs.values().toArray(array);
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        for (String user : users.keySet()) {
+        for (String user : utilisateurs.keySet()) {
             if (builder.toString().length() != 0) {
                 builder.append(", ");
             }
@@ -77,11 +77,15 @@ public class Utilisateurs extends Observable implements Iterable<Utilisateur> {
     }
 
     public boolean existe(String user) {
-        return users.containsKey(user);
+        return utilisateurs.containsKey(user);
     }
 
     @Override
     public Iterator<Utilisateur> iterator() {
-        return users.values().iterator();
+        return utilisateurs.values().iterator();
+    }
+
+    public void clear() {
+        utilisateurs.clear();
     }
 }

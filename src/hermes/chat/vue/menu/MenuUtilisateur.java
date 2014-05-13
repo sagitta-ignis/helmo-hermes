@@ -39,7 +39,7 @@ public class MenuUtilisateur extends Menu<Utilisateur>{
     }
     
     private void configurer(Utilisateur model) {
-        entrer.setName(model.getName());
+        entrer.setChannel(model.getName());
     }
     
 }

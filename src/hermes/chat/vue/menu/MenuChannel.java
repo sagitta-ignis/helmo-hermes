@@ -9,6 +9,7 @@ package hermes.chat.vue.menu;
 import hermes.chat.controleur.Chatter;
 import hermes.chat.vue.menu.listeners.Entrer;
 import hermes.chat.vue.menu.listeners.Sortir;
+import hermes.chat.vue.menu.listeners.Supprimer;
 import hermes.client.channels.Channel;
 import java.util.List;
 import javax.swing.JMenuItem;
@@ -21,17 +22,20 @@ public class MenuChannel extends Menu<Channel>{
     private final Chatter chat;
     private final Entrer entrer;
     private final Sortir sortir;
+    private final Supprimer supprimer;
 
     public MenuChannel(Chatter chat) {
         this.chat = chat;
         entrer = new Entrer(chat);
         sortir = new Sortir(chat);
+        supprimer = new Supprimer(chat);
         initItems();
     }
     
     private void initItems() {
         ajouterItem("entrer", entrer);
         ajouterItem("sortir", sortir);
+        ajouterItem("supprimer", supprimer);
     }
 
     @Override
@@ -41,7 +45,8 @@ public class MenuChannel extends Menu<Channel>{
     }
     
     private void configurer(Channel model) {
-        entrer.setName(model.getNom());
-        sortir.setName(model.getNom());
+        entrer.setChannel(model.getNom());
+        sortir.setChannel(model.getNom());
+        supprimer.setChannel(model.getNom());
     }
 }

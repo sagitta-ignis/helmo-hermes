@@ -16,20 +16,20 @@ import java.awt.event.ActionListener;
 public class Entrer implements ActionListener {
 
     private final Chatter chat;
-    private String name;
+    private String channel;
 
     public Entrer(Chatter chat) {
         this.chat = chat;
-        name = null;
+        channel = null;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setChannel(String channel) {
+        this.channel = channel;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        chat.entrer(name);
+        chat.entrer(channel);
     }
 
 }
