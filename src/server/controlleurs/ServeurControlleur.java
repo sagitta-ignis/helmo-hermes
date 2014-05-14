@@ -5,7 +5,7 @@ package server.controlleurs;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import hermes.ssl.SSL;
+import hermes.security.ssl.SSL;
 import hermes.xml.Xml;
 import hermes.xml.XmlImpl;
 import java.io.*;
