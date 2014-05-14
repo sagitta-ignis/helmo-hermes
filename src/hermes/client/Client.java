@@ -5,12 +5,11 @@ package hermes.client;
  * To change this template file, choose Tools | Templates
  * and ouvrir the template in the editor.
  */
+import hermes.chat.controleur.handler.ClientMessageHandler;
 import hermes.client.exception.NotConnectedException;
 import hermes.client.exception.UnreachableServerExeception;
-import hermes.client.exception.UnopenableExecption;
-import hermes.protocole.Protocole;
-import hermes.protocole.ProtocoleSwinen;
 import java.io.*;
+import hermes.util.Arrays;
 import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,88 +20,33 @@ import java.util.logging.Logger;
  */
 public class Client extends Observable {
 
-    public final static int Initial = 0;
-
-    public final static int Connected = 1;
-    public final static int ConnexionLost = -10;
-    public final static int ConnexionBroken = -11;
-
-    public final static int LoggedIn = 2;
-    public final static int UnknownUser = -20;
-    public final static int AlreadyLoggedIn = -21;
-    public final static int BadMessageMaked = -29;
-
-    public final static int Opened = 3;
-    public final static int BadProtocoleMaked = -30;
-    public final static int BadProtocoleReceived = -31;
-    public final static int BadProtocoleSended = -32;
-
-    public final static int MessageSended = 4;
-    public final static int MSG = 42;
-    public final static int MSGToSelf = -420;
-
-    public final static int RESPONSE = 50;
-    public final static int SALL = 51;
-    public final static int SMSG = 52;
-    public final static int JOIN = 53;
-    public final static int LEAVE = 54;
-    public final static int STYPING = 55;    
-    public final static int ServerShutDown = 56;
-    public final static int UnknownRequestReceived = -50;
-    public final static int ReceptionFailed = -51;
-
-    public final static int LoggedOut = 6;
-
-    public final static int InputStreamUnclosed = -71;
-    public final static int OutputStreamUnclosed = -72;
-
-    private int etat;
-    private final Utilisateurs users;
-    private final Protocole protocole;
+    private String etat;
     private final ClientConnectionHandler connectionHandler;
-    private final ClientMessageHandler messageHandler;
+    private final ClientMessageHandler messageHandler; 
     
     private Emetteur emetteur;
     private Ecouteur ecouteur;
 
-    public Client(Utilisateurs users) {
-        etat = Initial;
-        this.users = users;
-        protocole = new ProtocoleSwinen();
+    public Client(ClientMessageHandler cmh) {
+        etat = ClientStatus.Initial;
         connectionHandler = new ClientConnectionHandler();
-        messageHandler = new ClientMessageHandler(this);
+        messageHandler = cmh;
     }
 
-    public void setEtat(int etat) {
+    public void setEtat(String etat) {
         this.etat = etat;
         setChanged();
-        notifyObservers();
+        notifyObservers(new Object[]{etat});
     }
 
-    public void setEtat(int etat, Object... args) {
+    public void setEtat(String etat, Object... args) {
         this.etat = etat;
         setChanged();
-        notifyObservers(args);
-    }
-
-    public int getEtat() {
-        return etat;
-    }
-
-    public Utilisateurs getUsers() {
-        return users;
-    }
-
-    public Protocole getProtocole() {
-        return protocole;
+        notifyObservers(Arrays.merge(new Object[]{etat},args));
     }
 
     public ClientConnectionHandler getConnectionHandler() {
         return connectionHandler;
-    }
-
-    public ClientMessageHandler getMessageHandler() {
-        return messageHandler;
     }
     
     public Emetteur getEmetteur() {
@@ -137,21 +81,12 @@ public class Client extends Observable {
         if (password == null || password.isEmpty()) {
             password = "password";
         }
-        messageHandler.traiter("/hello "+nom+" "+password);
-        messageHandler.traiter("/users");
+        messageHandler.execute("/hello", nom, password);
         return connectionHandler.isLogged();
-    }
-
-    public void ouvrir() throws UnopenableExecption {
-        if (!connectionHandler.isConnected() || !connectionHandler.isLogged()) {
-            throw new UnopenableExecption();
-        }
-        ecouteur.start();
     }
 
     public void fermer() throws Exception {
         try {
-            messageHandler.traiter("/quit");
             connectionHandler.shutdown();
             emetteur.fermer();
             ecouteur.fermer();

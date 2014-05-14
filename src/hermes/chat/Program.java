@@ -1,17 +1,7 @@
 package hermes.chat;
 
 import hermes.chat.controleur.Authentifier;
-import hermes.client.Client;
-import hermes.client.Encodeur;
-import hermes.client.Utilisateurs;
-import hermes.client.exception.NotConnectedException;
-import hermes.client.exception.UnopenableExecption;
-import hermes.client.exception.UnreachableServerExeception;
 import hermes.chat.vue.Login;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Scanner;
-import java.util.logging.Level;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -25,16 +15,18 @@ import java.util.logging.Level;
 public class Program {
 
     public void startConsole() {
+        /*
         Scanner input = new Scanner(System.in);
         Utilisateurs u = new Utilisateurs();
-        Client c = new Client(u);
+        Channels ch = new Channels();
+        Client c = new Client(u, ch);
         try {
             c.connect("127.0.0.1", 12345);
             System.out.println("-- client a démarré");
             System.out.println("Entrer un nom : ");
             String nom = input.nextLine();
             if (c.login(nom, null)) {
-                Encodeur enc = new Encodeur(c, System.in);
+                Ecrire enc = new Ecrire(c, System.in);
                 Observer o = new Observer() {
                     @Override
                     public void update(Observable o, Object o1) {
@@ -69,6 +61,7 @@ public class Program {
         } finally {
             System.exit(0);
         }
+        */
     }
 
     public void startInterface() {
@@ -88,15 +81,16 @@ public class Program {
             java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        Runnable runnable = new Thread("JFrame") {
             @Override
             public void run() {
                 Authentifier logger = new Authentifier();
                 logger.ouvrir();
             }
-        });
+        };
+        java.awt.EventQueue.invokeLater(runnable);
     }
 
     public static void main(String[] args) {

@@ -6,15 +6,25 @@
 package hermes.chat.vue;
 
 import hermes.chat.Chat;
+import static hermes.chat.Chat.CURRENT;
 import hermes.chat.controleur.Chatter;
 import hermes.chat.controleur.Overlayer;
-import java.awt.event.ActionEvent;
+import hermes.chat.vue.listeners.ClicDroitTree;
+import hermes.chat.vue.listeners.Ecrire;
+import hermes.chat.vue.listeners.Envoyer;
+import hermes.chat.vue.listeners.Fermer;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import javax.swing.DefaultListModel;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.JButton;
+import javax.swing.JCloseableTabComponent;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.text.DefaultCaret;
+import javax.swing.JPopupMenu.Separator;
+import javax.swing.JTextField;
+import javax.swing.tree.TreeModel;
 
 /**
  *
@@ -22,41 +32,106 @@ import javax.swing.text.DefaultCaret;
  */
 public final class ChatGUI extends javax.swing.JFrame implements Chat {
 
-    private final Overlayer overlay;
+    private Overlayer overlay;
     private final Chatter chat;
+
+    private final JMenu jmOverlay = new javax.swing.JMenu();
+    private final JMenuItem jmiOverlay1 = new javax.swing.JMenuItem();
+    private final JMenuItem jmiOverlay3 = new javax.swing.JMenuItem();
+    private final JMenuItem jmiOverlay5 = new javax.swing.JMenuItem();
+    private final Separator jSeparator1 = new javax.swing.JPopupMenu.Separator();
+    private final JMenuItem jmiOverlayDesactiver = new javax.swing.JMenuItem();
+
+    private final Map<String, Conversation> conversations;
     private boolean typing;
-    
+
     /**
      * Creates new form Chat
      *
      * @param chatter
-     * @param overlayer
-     * @param users
      */
-    public ChatGUI(Chatter chatter, Overlayer overlayer, DefaultListModel users) {
+    public ChatGUI(Chatter chatter) {
         initComponents();
-        utilisateurs.setModel(users);
+
         chat = chatter;
-        overlay = overlayer;
-        setChatListener();
-        
-        // colorise les cellules de la liste
-        utilisateurs.setCellRenderer(new ListCellRendererUser());
+        conversations = new HashMap<>();
+
+        KeyAdapter ecris = new Ecrire(this, chat);
+        message.addKeyListener(ecris);
+        ActionListener envoi = new Envoyer(this, chat);
+        envoyer.addActionListener(envoi);
+        channels.setCellRenderer(new UserTreeCellRenderer());
+        channels.addMouseListener(new ClicDroitTree(chat, channels));
 
         //centre la frame
         setLocationRelativeTo(getRootPane());
-
-        //Scroll automatiquement en bas du textarea
-        DefaultCaret caret = (DefaultCaret) conversation.getCaret();
-        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
     }
 
-    public String getUtilisateur() {
-        return utilisateur.getText();
+    void setOverlayer(Overlayer o) {
+        if (overlay == null) {
+            makeOverlayMenu();
+            menu.add(jmOverlay);
+        } else {
+            removeOverlayMenuListeners(overlay);
+        }
+        if (o != null) {
+            addOverlayMenuListeners(o);
+        } else {
+            menu.remove(jmOverlay);
+        }
+        overlay = o;
     }
 
-    public void setUtilisateur(String utilisateur) {
-        this.utilisateur.setText(utilisateur);
+    private void makeOverlayMenu() {
+        jmOverlay.setText("Overlay");
+
+        jmiOverlay1.setText("Overlay 1");
+        jmOverlay.add(jmiOverlay1);
+
+        jmiOverlay3.setText("Overlay 3");
+        jmOverlay.add(jmiOverlay3);
+
+        jmiOverlay5.setText("Overlay 5");
+        jmOverlay.add(jmiOverlay5);
+        
+        jmOverlay.add(jSeparator1);
+
+        jmiOverlayDesactiver.setText("Desactiver");
+        jmiOverlayDesactiver.setAccelerator(
+                javax.swing.KeyStroke.getKeyStroke(
+                        java.awt.event.KeyEvent.VK_O,
+                        java.awt.event.InputEvent.SHIFT_MASK
+                        | java.awt.event.InputEvent.CTRL_MASK));
+        jmOverlay.add(jmiOverlayDesactiver);
+    }
+
+    private void addOverlayMenuListeners(ActionListener al) {
+        jmiOverlay1.addActionListener(al);
+        jmiOverlay3.addActionListener(al);
+        jmiOverlay5.addActionListener(al);
+        jmiOverlayDesactiver.addActionListener(al);
+    }
+    
+    private void removeOverlayMenuListeners(ActionListener al) {
+        jmiOverlay1.removeActionListener(al);
+        jmiOverlay3.removeActionListener(al);
+        jmiOverlay5.removeActionListener(al);
+        jmiOverlayDesactiver.removeActionListener(al);
+    }
+
+    void setChannels(TreeModel channels) {
+        this.channels.setModel(channels);
+    }
+    
+    void addConversation(Conversation c) {
+        if(!conversations.containsKey(c.getName())) {
+            conversations.put(c.getName(), c);
+        }
+    }
+
+    void removeConversation(String conversation) {
+        Conversation c = conversations.remove(conversation);
+        retirerOnglet(c);
     }
 
     public boolean isTyping() {
@@ -67,37 +142,58 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
         this.typing = typing;
     }
 
-    private void setChatListener() {
-        message.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent ke) {
-                if (ke.getKeyChar() == '\n') {
-                    envoyer.doClick();
-                } else {
-                    String text = message.getText();
-                    if(!isTyping() && !text.isEmpty()) {
-                        chat.setTyping(true);
-                    } else if (isTyping() && text.isEmpty()) {
-                        chat.setTyping(false);
-                    }
-                }
-            }
-        });
-        envoyer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent ae) {
-                chat.setTyping(false);
-                chat.entrer(utilisateur.getText(), message.getText());
-                message.setText("");
-            }
-        });
+    @Override
+    public void entrer(String channel) {
+        if (conversations.containsKey(channel)) {
+            Conversation c = conversations.get(channel);
+            ajouterOnglet(c);
+        }
     }
 
     @Override
-    public void afficher(String text) {
-        overlay.afficher(text);
-        conversation.append(text);
-        conversation.append("\n");
+    public void sortir(String channel) {
+        if (conversations.containsKey(channel)) {
+            Conversation c = conversations.get(channel);
+            retirerOnglet(c);
+        }
+    }
+
+    private void ajouterOnglet(Conversation c) {
+        onglets.addTab(c.getName(), c);
+        int index = onglets.indexOfTab(c.getName());
+        JCloseableTabComponent tab = new JCloseableTabComponent(onglets, c.getName());
+        tab.addActionListener(new Fermer(chat, tab));
+        onglets.setTabComponentAt(index, tab);
+        c.setShowed(true);
+    }
+
+    private void retirerOnglet(Conversation c) {
+        int index = onglets.indexOfTab(c.getName());
+        if (index != -1) {
+            onglets.removeTabAt(index);
+            c.setShowed(false);
+        }
+    }
+
+    public Conversation getConversation(String nom) {
+        if (!nom.equals(CURRENT)) {
+            return conversations.get(nom);
+        }
+        Conversation c = (Conversation) onglets.getSelectedComponent();
+        return c;
+    }
+
+    @Override
+    public void afficher(String channel, String user, String text) {
+        Conversation c;
+        c = getConversation(channel);
+        if (c != null) {
+            if (!c.isShowed()) {
+                ajouterOnglet(c);
+            }
+            c.afficher(user, text);
+            overlay.afficher(channel, user, text);
+        }
     }
 
     @Override
@@ -105,13 +201,37 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
         JOptionPane.showMessageDialog(this, message, titre,
                 JOptionPane.WARNING_MESSAGE);
     }
+    
+    @Override
+    public String demander(String titre, String message) {
+        return JOptionPane.showInputDialog(this, message, titre, -1);
+    }
+    
+    
+    int confirmer(String titre, String message, int type) {
+        return  JOptionPane.showConfirmDialog(this, message, titre, type);
+    }
+
 
     @Override
     public void setVisible(boolean bln) {
         super.setVisible(bln);
-        if(!bln) {
-            conversation.setText(null);
+        if (!bln) {
+            getConversation(CURRENT).clear();
         }
+    }
+    
+    void clear() {
+        conversations.clear();
+        onglets.removeAll();
+    }
+
+    public JButton getEnvoyer() {
+        return envoyer;
+    }
+
+    public JTextField getMessage() {
+        return message;
     }
 
     /**
@@ -127,21 +247,13 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
         dialogue = new javax.swing.JPanel();
         message = new javax.swing.JTextField();
         envoyer = new javax.swing.JButton();
-        utilisateur = new javax.swing.JTextField();
-        lbUtilisateur = new javax.swing.JLabel();
-        scrollPane = new javax.swing.JScrollPane();
-        conversation = new javax.swing.JTextArea();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        utilisateurs = new javax.swing.JList();
+        jSplitPane1 = new javax.swing.JSplitPane();
+        onglets = new javax.swing.JTabbedPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        channels = new javax.swing.JTree();
         menu = new javax.swing.JMenuBar();
         jmIRC = new javax.swing.JMenu();
         jmiQuitter = new javax.swing.JMenuItem();
-        jmOverlay = new javax.swing.JMenu();
-        jmiOverlay1 = new javax.swing.JMenuItem();
-        jmiOverlay3 = new javax.swing.JMenuItem();
-        jmiOverlay5 = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        jmiOverlayDesactiver = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("IRC Helmo");
@@ -172,35 +284,16 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
         gridBagConstraints.gridheight = 2;
         gridBagConstraints.weightx = 0.1;
         dialogue.add(envoyer, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 0.1;
-        dialogue.add(utilisateur, gridBagConstraints);
-
-        lbUtilisateur.setText("Utilisateur");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.weightx = 0.1;
-        dialogue.add(lbUtilisateur, gridBagConstraints);
 
         getContentPane().add(dialogue, java.awt.BorderLayout.PAGE_END);
 
-        conversation.setEditable(false);
-        conversation.setColumns(20);
-        conversation.setRows(5);
-        scrollPane.setViewportView(conversation);
+        jSplitPane1.setRightComponent(onglets);
 
-        getContentPane().add(scrollPane, java.awt.BorderLayout.CENTER);
+        jScrollPane2.setViewportView(channels);
 
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(100, 27));
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(100, 130));
+        jSplitPane1.setLeftComponent(jScrollPane2);
 
-        jScrollPane1.setViewportView(utilisateurs);
-
-        getContentPane().add(jScrollPane1, java.awt.BorderLayout.EAST);
+        getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
         jmIRC.setText("IRC");
 
@@ -214,43 +307,6 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
 
         menu.add(jmIRC);
 
-        jmOverlay.setText("Overlay");
-
-        jmiOverlay1.setText("Overlay 1");
-        jmiOverlay1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Overlay1(evt);
-            }
-        });
-        jmOverlay.add(jmiOverlay1);
-
-        jmiOverlay3.setText("Overlay 3");
-        jmiOverlay3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Overlay3(evt);
-            }
-        });
-        jmOverlay.add(jmiOverlay3);
-
-        jmiOverlay5.setText("Overlay 5");
-        jmiOverlay5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Overlay5(evt);
-            }
-        });
-        jmOverlay.add(jmiOverlay5);
-        jmOverlay.add(jSeparator1);
-
-        jmiOverlayDesactiver.setText("Desactiver");
-        jmiOverlayDesactiver.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                OverlayDesactiver(evt);
-            }
-        });
-        jmOverlay.add(jmiOverlayDesactiver);
-
-        menu.add(jmOverlay);
-
         setJMenuBar(menu);
 
         pack();
@@ -260,45 +316,22 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
         chat.quitter();
     }//GEN-LAST:event_fermer
 
-    private void Overlay1(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Overlay1
-        overlay.activer(1);
-    }//GEN-LAST:event_Overlay1
-
-    private void Overlay3(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Overlay3
-        overlay.activer(3);
-    }//GEN-LAST:event_Overlay3
-
-    private void Overlay5(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Overlay5
-        overlay.activer(5);
-    }//GEN-LAST:event_Overlay5
-
-    private void OverlayDesactiver(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OverlayDesactiver
-        overlay.desactiver();
-    }//GEN-LAST:event_OverlayDesactiver
-
     private void jmiQuitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiQuitterActionPerformed
         chat.quitter();
     }//GEN-LAST:event_jmiQuitterActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea conversation;
+    private javax.swing.JTree channels;
     private javax.swing.JPanel dialogue;
     private javax.swing.JButton envoyer;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JMenu jmIRC;
-    private javax.swing.JMenu jmOverlay;
-    private javax.swing.JMenuItem jmiOverlay1;
-    private javax.swing.JMenuItem jmiOverlay3;
-    private javax.swing.JMenuItem jmiOverlay5;
-    private javax.swing.JMenuItem jmiOverlayDesactiver;
     private javax.swing.JMenuItem jmiQuitter;
-    private javax.swing.JLabel lbUtilisateur;
     private javax.swing.JMenuBar menu;
     private javax.swing.JTextField message;
-    private javax.swing.JScrollPane scrollPane;
-    private javax.swing.JTextField utilisateur;
-    private javax.swing.JList utilisateurs;
+    private javax.swing.JTabbedPane onglets;
     // End of variables declaration//GEN-END:variables
+
 
 }

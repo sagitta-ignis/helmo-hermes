@@ -18,18 +18,14 @@ import java.util.logging.Logger;
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
-public class Ecouteur extends Thread {
+public class Ecouteur {
 
     Client client;
-    MessageQueueHandler messageQueue;
-    ServerRequestHandler serverRequest;
+    
     BufferedReader inFromServer;
 
     public Ecouteur(Client clt) {
         client = clt;
-        messageQueue = new MessageQueueHandler();
-        serverRequest = new ServerRequestHandler(client);
-        setName("Ecouteur");
     }
 
     public void lier(Socket socket) throws IOException {
@@ -41,70 +37,31 @@ public class Ecouteur extends Thread {
         );
     }
 
-    public MessageQueueHandler getMessageQueue() {
-        return messageQueue;
-    }
-
-    @Override
-    public void run() {
-        while (client.getConnectionHandler().canRun()) {
-            if(!recevoir()) {
-                break;
-            }
-        }
-    }
-
-    public boolean recevoir() {
-        String message = lire();
-        if (message.startsWith("[error]")) {
-            System.err.println(message);
-            return false;
-        }
-        System.out.println(message);
-        if (!veriferAttente(message)) {
-            if (!traiter(message)) {
-                client.setEtat(Client.UnknownRequestReceived, message);
-            }
-        }
-        return true;
-    }
-
     public String lire() {
         String message;
         try {
             do {
                 message = inFromServer.readLine();
             } while (message.length() < 1);
+            System.out.println(message);
         } catch (SocketException ex) {
             message = "[error] connexion perdue avec le serveur";
             // Logger.getLogger(Client.class.getName()).log(Level.SEVERE, message, ex);
-            client.setEtat(Client.ConnexionLost);
+            client.setEtat(ClientStatus.ConnexionLost);
             
         } catch (IOException ex) {
             message = "[error] reception depuis serveur a échoué";
             //Logger.getLogger(Client.class.getName()).log(Level.SEVERE, message, ex);
-            client.setEtat(Client.ReceptionFailed);
+            client.setEtat(ClientStatus.ReceptionFailed);
         } catch (NullPointerException ex) { 
             message = "[error] connexion coupée avec le serveur"; 
             //Logger.getLogger(Client.class.getName()).log(Level.SEVERE, message, ex);
-            client.setEtat(Client.ConnexionBroken);
+            client.setEtat(ClientStatus.ConnexionBroken);
         }
         return message;
     }
 
-    private boolean veriferAttente(String message) {
-        return messageQueue.traiter(message);
-    }
-
-    private boolean traiter(String message) {
-        if (message != null) {
-            return serverRequest.parser(message + "\r\n");
-        }
-        return false;
-    }
-
     public void fermer() throws IOException {
-        interrupt();
         try {
             if (inFromServer != null) {
                 inFromServer.close();

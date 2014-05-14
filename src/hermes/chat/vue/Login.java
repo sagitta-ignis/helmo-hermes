@@ -6,6 +6,7 @@
 
 package hermes.chat.vue;
 
+import java.awt.Color;
 import java.awt.event.ActionListener;
 
 /**
@@ -42,7 +43,13 @@ public class Login extends javax.swing.JFrame {
         return Integer.parseInt(port.getText());
     } 
     
-    public void print(String message) {
+    public void afficher(String message) {
+        informations.setForeground(Color.RED);
+        informations.setText(message);
+    }
+    
+    public void afficher(String message, Color foreground) {
+        informations.setForeground(foreground);
         informations.setText(message);
     }
 
