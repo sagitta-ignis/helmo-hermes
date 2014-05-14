@@ -6,7 +6,8 @@
 
 package server.configuration;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -22,13 +23,20 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ListUser {
     
     @XmlElement(name = "user", required = true)   
-    private List<User> users;
+    private Map<String,User> users;
     
-    public List<User> getUsers() {
+    public Map<String,User> getUsers() {
+        if(users == null){
+            generateMap();
+        }
         return users;
     }
  
-    public void setUsers(List<User> user) {
+    public void setUsers(Map<String,User> user) {
         this.users = user;
+    }
+    
+    private void generateMap(){
+        users = new HashMap<>();
     }
 }

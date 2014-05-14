@@ -6,6 +6,7 @@
 package server.controlleurs;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,7 @@ public class ChannelControlleur {
 
     public ChannelControlleur(ServeurControlleur server) {
         this.server = server;
-        clients = new ArrayList<>();
+        clients = new ArrayList<ClientManager>();
         channelList = new HashMap<>();
         initDefaultChannel();
     }
@@ -58,7 +59,6 @@ public class ChannelControlleur {
 
     public void nouveauClient(ClientManager client) {
         clients.add(client);
-        //channelList.get(defaultChannel).ajouterUtilisateurChannel(client);
     }
 
     public void transmettre(String message) {
@@ -102,6 +102,10 @@ public class ChannelControlleur {
         }
     }
 
+    public boolean enregistrerUtilisateur(String user, String password){
+        return server.enregitsrerUtilisateur(user,password);
+    }
+    
     public void close() {
         for (ClientManager unClient : clients) {
             unClient.close();

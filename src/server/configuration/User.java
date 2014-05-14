@@ -18,19 +18,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "user")
 public class User {
 
-    @XmlElement(name = "nickname", required = true)
-    private String nickname;
+
+    
     @XmlElement(name = "password", required = true)
     private String password;
 
-    public String getNickname(){
-        return nickname;
+    public User(){        
     }
     
-    public void setNickname(String nickname){
-        this.nickname = nickname;
+    public User(String password){
+        this.password = password;
     }
-    
+        
     public String getPassword(){
         return password;
     }

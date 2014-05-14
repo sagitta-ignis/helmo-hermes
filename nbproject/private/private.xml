@@ -2,19 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/client/ThreadSortie.java</file>
-            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/commands/channels/Discuss.java</file>
-            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/client/ThreadEcouteur.java</file>
-            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/controlleurs/ChannelControlleur.java</file>
-            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/etat/Connecte.java</file>
-            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/channels/Channel.java</file>
-            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/etat/Etat.java</file>
-            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/client/Client.java</file>
-            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/client/ClientManager.java</file>
-            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/commands/channels/Channels.java</file>
-            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/etat/EtatAbstract.java</file>
-            <file>file:/C:/Users/David/Documents/Source%20Tree/hermes-server/src/server/controlleurs/ServeurControlleur.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

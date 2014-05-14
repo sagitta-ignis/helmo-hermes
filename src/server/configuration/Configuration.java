@@ -23,11 +23,10 @@ public class Configuration {
     @XmlElement(name = "user-filename", required = true)
     private String userFileName;
     @XmlElement(name = "sendingthread-sleepseconds", required = true)
-    private int threadSleepSeconds;
+    private double threadSleepSeconds;
     
     @XmlElement(name = "defaultChannel", required = true)
     private String defaultChannel;
-    public static int threadSleepMillisec;
 
     public void setPort(int port) {
         this.port = port;
@@ -45,12 +44,11 @@ public class Configuration {
         return userFileName;
     }
 
-    public void setThreadSleepSeconds(int threadSleepSeconds) {
+    public void setThreadSleepSeconds(double threadSleepSeconds) {
         this.threadSleepSeconds = threadSleepSeconds;
-        this.threadSleepMillisec = threadSleepSeconds * 1000;
     }
 
-    public int getThreadSleepSeconds() {
+    public double getThreadSleepSeconds() {
         return threadSleepSeconds;
     }
 

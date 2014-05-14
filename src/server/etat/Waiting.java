@@ -42,7 +42,7 @@ public class Waiting extends EtatAbstract {
     @Override
     public void initialiserCommandes() {
         commandsProtocole.put(ProtocoleSwinen.HELLO, new Hello(manager, clientInfo, listeUtilisateurs, response, channelManager));
-        commandsProtocole.put(ProtocoleSwinen.REGISTER, new Register());
+        commandsProtocole.put(ProtocoleSwinen.REGISTER, new Register(channelManager,response));
     }
 
     @Override

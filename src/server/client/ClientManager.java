@@ -57,7 +57,7 @@ public class ClientManager {
         response = new SentResponse(this);
 
         ecouteur = new ThreadEcouteur(clientInfo, sck, this, channelManager);
-        sortie = new ThreadSortie(sck, clientInfo, config.getThreadSleepSeconds() * 1000);
+        sortie = new ThreadSortie(sck, clientInfo, (int)(config.getThreadSleepSeconds() * 1000));
         initCommands();
 
         ecouteur.start();

@@ -13,10 +13,12 @@ import java.io.*;
 import java.net.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBException;
 import server.response.SentResponse;
 import server.response.SentShutDown;
 import server.configuration.Configuration;
 import server.configuration.ListUser;
+import server.configuration.User;
 
 /**
  *
@@ -29,10 +31,12 @@ public class ServeurControlleur {
     private final Writer output;
     private final SentResponse responseNS;
     private final ChannelControlleur channelManager;
+    private final  Xml xml;
     private ListUser users;
     private Configuration config;
 
     public ServeurControlleur() {
+        xml = new XmlImpl();
         output = new PrintWriter(System.out);
         users = new ListUser();
         lectureFichiers();
@@ -77,6 +81,15 @@ public class ServeurControlleur {
         }
     }
 
+    public boolean enregitsrerUtilisateur(String pseudo, String password){
+        if(users.getUsers().get(pseudo)  == null){
+           users.getUsers().put(pseudo,new User(password));
+           ecrireListeUsers();
+           return true;
+        }
+        return false;        
+    }
+    
     public synchronized void fermer() {
 
         try {
@@ -115,12 +128,21 @@ public class ServeurControlleur {
         }
     }
 
-    private void lectureFichiers() {
-        Xml xml = new XmlImpl();
+    private void lectureFichiers() {        
         try {
             config = (Configuration) xml.read(new FileInputStream("./config.xml"), Configuration.class);
             users = (ListUser) xml.read(new FileInputStream(config.getUserFileName()), ListUser.class);
         } catch (Exception ex) {
+            Logger.getLogger(ServeurControlleur.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void ecrireListeUsers(){
+        try {
+            xml.write(users, ListUser.class,new File(config.getUserFileName()));
+        } catch (IOException ex) {
+            Logger.getLogger(ServeurControlleur.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JAXBException ex) {
             Logger.getLogger(ServeurControlleur.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

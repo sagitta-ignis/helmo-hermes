@@ -1,6 +1,6 @@
 <server-config> 
  <server-port>12345</server-port> 
  <user-filename>./user.xml</user-filename> 
- <sendingthread-sleepseconds>1</sendingthread-sleepseconds> 
+ <sendingthread-sleepseconds>0.5</sendingthread-sleepseconds> 
  <defaultChannel>Accueil</defaultChannel>
 </server-config>

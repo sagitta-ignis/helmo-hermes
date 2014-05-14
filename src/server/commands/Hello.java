@@ -41,12 +41,12 @@ public class Hello extends CommandArgument {
 
     private boolean verifierParametresConnection(String pseudo, String motDePasse) {
         if (pseudo != null && motDePasse != null) {
-            for (User myUser : utilisateurs.getUsers()) {
-                if (myUser.getNickname().equals(pseudo) && myUser.getPassword().equals(motDePasse)) {
-                    return true;
-                    // connectionAvecSucces(pseudo);
+            User utilisateur = utilisateurs.getUsers().get(pseudo);
+            if(utilisateur != null){
+                if(utilisateur.getPassword().equals(motDePasse)){
+                     return true;
                 }
-            }
+            }       
         }
         return false;
     }

@@ -1,10 +1,11 @@
-<list-users> 
-	 <user> 
-		 <nickname>alice</nickname> 
-		 <password>monpass</password> 
-	 </user> 
-	 <user> 
-		 <nickname>bobby</nickname> 
-		 <password>ilovecobol</password> 
-	 </user> 
-</list-users> 
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<list-users>
+    <users>
+        <entry>
+            <key>user</key>
+            <value>
+                <password>pass</password>
+            </value>
+        </entry>
+    </users>
+</list-users>
