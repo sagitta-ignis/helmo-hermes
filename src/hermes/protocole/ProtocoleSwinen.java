@@ -23,6 +23,7 @@ public class ProtocoleSwinen extends AbstractProtocole {
     public static ABNF entier;
     public static ABNF digit;
     public static ABNF channel;
+    public static ABNF hashed;
 
     
     public static MessageProtocole REGISTER;
@@ -86,8 +87,10 @@ public class ProtocoleSwinen extends AbstractProtocole {
      */
     private static void initVariables() {   
         user = ABNF.compilerEtAjouter("user = 4*8(letter|digit)");
+        hashed = ABNF.compilerEtAjouter("hashed = 128*128(letter|digit)");
         channel = ABNF.compilerEtAjouter("channel = 1*50(letter|digit)");
-        pass = ABNF.compilerEtAjouter("pass = 4*10passchar");
+        // pass = ABNF.compilerEtAjouter("pass = 4*10passchar");
+        pass = ABNF.compilerEtAjouter("pass = hashed");
         receiver = ABNF.compilerEtAjouter("receiver = user");
         sender = ABNF.compilerEtAjouter("sender = user");
         message = ABNF.compilerEtAjouter("message = 1*500character");
