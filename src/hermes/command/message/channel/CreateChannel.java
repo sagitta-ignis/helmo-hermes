@@ -9,9 +9,9 @@ import hermes.chat.controleur.Chatter;
 import hermes.client.Client;
 import hermes.client.ClientStatus;
 import hermes.command.message.base.Message;
+import hermes.protocole.Entry;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import hermes.protocole.Entry;
 
 /**
  *
@@ -30,6 +30,7 @@ public class CreateChannel extends Message {
             String password = null;
             if (args.length == 2) {
                 password = (String) args[1];
+                password = hash(password);
             }
             createChannel(channel, password);
         }

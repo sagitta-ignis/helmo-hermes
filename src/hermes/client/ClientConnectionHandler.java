@@ -6,7 +6,7 @@
 package hermes.client;
 
 import hermes.client.exception.UnreachableServerExeception;
-import hermes.ssl.SSL;
+import hermes.security.ssl.SSL;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;

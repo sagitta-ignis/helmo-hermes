@@ -32,6 +32,7 @@ public class Enter extends Message {
             String password = null;
             if (args.length == 2) {
                 password = (String) args[1];
+                password = hash(password);
             }
             enter(channel, password);
         }

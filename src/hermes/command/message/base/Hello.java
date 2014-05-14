@@ -8,9 +8,10 @@ package hermes.command.message.base;
 import hermes.chat.controleur.Chatter;
 import hermes.client.Client;
 import hermes.client.ClientStatus;
+import hermes.protocole.Entry;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import hermes.protocole.Entry;
+import hermes.security.hash.Hash;
 
 /**
  *
@@ -27,6 +28,7 @@ public class Hello extends Message {
         if (verifierArguments(2)) {
             String user = (String) args[0];
             String pass = (String) args[1];
+            pass = hash(pass);
             hello(user, pass);
         }
     }
