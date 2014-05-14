@@ -101,7 +101,7 @@ public class Login extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         logger.add(lbPassword, gridBagConstraints);
 
-        username.setText("alice");
+        username.setText("user");
         username.setPreferredSize(new java.awt.Dimension(150, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -113,7 +113,7 @@ public class Login extends javax.swing.JFrame {
         gridBagConstraints.weighty = 0.1;
         logger.add(username, gridBagConstraints);
 
-        password.setText("monpass");
+        password.setText("pass");
         password.setPreferredSize(new java.awt.Dimension(150, 22));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
