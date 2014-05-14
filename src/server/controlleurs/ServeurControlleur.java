@@ -5,20 +5,22 @@ package server.controlleurs;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import server.entry.ThreadInput;
+import hermes.ssl.SSL;
 import hermes.xml.Xml;
 import hermes.xml.XmlImpl;
-import server.client.ClientManager;
 import java.io.*;
 import java.net.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.net.ServerSocketFactory;
 import javax.xml.bind.JAXBException;
-import server.response.SentResponse;
-import server.response.SentShutDown;
+import server.client.ClientManager;
 import server.configuration.Configuration;
 import server.configuration.ListUser;
 import server.configuration.User;
+import server.entry.ThreadInput;
+import server.response.SentResponse;
+import server.response.SentShutDown;
 
 /**
  *
@@ -121,7 +123,9 @@ public class ServeurControlleur {
 
     private void connection() {
         try {
-            server = new ServerSocket(config.getPort());
+            ServerSocketFactory ssf = SSL.getServerSocketFactory();
+            int port = config.getPort();
+            server = ssf.createServerSocket(port);
         } catch (IOException ex) {
             Logger.getLogger(ServeurControlleur.class.getName()).log(Level.SEVERE, null, ex);
             afficher(responseNS.getError(104));
