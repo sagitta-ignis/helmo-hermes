@@ -8,11 +8,12 @@ package server.commands.channels;
 import hermes.protocole.ProtocoleSwinen;
 import hermes.protocole.message.MessageProtocole;
 import pattern.command.CommandArgument;
-import server.controlleurs.ChannelControlleur;
 import server.channels.Channel;
+import server.client.Client;
 import server.client.ClientManager;
-import server.response.channels.SentJoinChannel;
+import server.controlleurs.ChannelControlleur;
 import server.response.SentResponse;
+import server.response.channels.SentJoinChannel;
 
 /**
  *
@@ -24,7 +25,7 @@ public class Enter extends CommandArgument {
     private final SentResponse sentResponse;
     private final ClientManager clientManager;
     private final SentJoinChannel sentJoin;
-    
+
     public Enter(ChannelControlleur manager, ClientManager clientManager) {
         this.manager = manager;
         this.clientManager = clientManager;
@@ -55,10 +56,21 @@ public class Enter extends CommandArgument {
             return;
         }
 
-        channel.ajouterUtilisateurChannel(clientManager);
-        sentResponse.sent(0);
-        sentJoin.sent(nomChannel, motDePasse);
-        
+        String user = clientManager.getClient().getUsername();
+        boolean alreadyin = false;
+        for (ClientManager cm : channel.getclientsChannel()) {
+            Client c = cm.getClient();
+            if (c.getUsername().equals(user)) {
+                sentResponse.sent(2);
+                alreadyin = true;
+                break;
+            }
+        }
+        if (!alreadyin) {
+            channel.ajouterUtilisateurChannel(clientManager);
+            sentResponse.sent(0);
+            sentJoin.sent(nomChannel, user);
+        }
     }
 
 }

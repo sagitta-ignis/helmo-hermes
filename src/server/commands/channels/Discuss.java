@@ -12,8 +12,9 @@ import java.util.AbstractMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pattern.command.CommandArgument;
-import server.controlleurs.ChannelControlleur;
+import server.channels.Channel;
 import server.client.ClientManager;
+import server.controlleurs.ChannelControlleur;
 import server.etat.Waiting;
 import server.response.SentResponse;
 
@@ -42,7 +43,8 @@ public class Discuss extends CommandArgument {
         String nomChannel = message.get(ProtocoleSwinen.channel);
         String msg = message.get(ProtocoleSwinen.message);
         
-        if(manager.getChannel(nomChannel) == null){
+        Channel c = manager.getChannel(nomChannel);
+        if(c == null){
             response.sent(1);
             return;
         }

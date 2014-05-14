@@ -62,7 +62,7 @@ public class UsersChannel extends CommandArgument {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        clientManager.envoyer(nomChannel);
+        clientManager.envoyer(messageProtocole);
     }
 
     private List<String> creationListeUsers(Channel channel) {

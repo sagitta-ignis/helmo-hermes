@@ -18,6 +18,8 @@ import server.client.ClientManager;
  */
 public class ChannelControlleur {
 
+    //private static final String defaultChannel = "Accueil";
+    
     private final List<ClientManager> clients;
     private final Map<String, Channel> channelList;
     private final ServeurControlleur server;
@@ -26,7 +28,13 @@ public class ChannelControlleur {
         this.server = server;
         clients = new ArrayList<>();
         channelList = new HashMap<>();
-        ajouterChannel("Acceuil");
+        initDefaultChannel();
+    }
+    
+    private void initDefaultChannel() {
+        String defaultChannel = server.getConfig().getDefaultChannel();
+        ajouterChannel(defaultChannel);
+        getChannel(defaultChannel).setTemporaire(false);
     }
 
     public Channel ajouterChannel(String nom) {
@@ -50,7 +58,7 @@ public class ChannelControlleur {
 
     public void nouveauClient(ClientManager client) {
         clients.add(client);
-        channelList.get("Acceuil").ajouterUtilisateurChannel(client);
+        //channelList.get(defaultChannel).ajouterUtilisateurChannel(client);
     }
 
     public void transmettre(String message) {

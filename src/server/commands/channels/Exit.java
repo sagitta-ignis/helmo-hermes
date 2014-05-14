@@ -11,6 +11,7 @@ import pattern.command.CommandArgument;
 import server.controlleurs.ChannelControlleur;
 import server.client.ClientManager;
 import server.response.SentResponse;
+import server.response.channels.SentChannelRemoved;
 import server.response.channels.SentLeaveChannel;
 
 /**
@@ -23,13 +24,14 @@ public class Exit extends CommandArgument {
     private final ClientManager clientManager;
     private final SentResponse sentResponse;
     private final SentLeaveChannel sentLeave;
+    private final SentChannelRemoved sentRemoved;
 
     public Exit(ChannelControlleur manager, ClientManager clientManager) {
         this.manager = manager;
         this.clientManager = clientManager;
         sentResponse = new SentResponse(clientManager);
         sentLeave = new SentLeaveChannel(manager);
-
+        sentRemoved = new SentChannelRemoved(manager);
     }
 
     @Override
@@ -45,7 +47,9 @@ public class Exit extends CommandArgument {
         sentLeave.sent(nomChannel,clientManager.getClient().getUsername());
         manager.retirerUtilisateurChannel(nomChannel, clientManager);
         sentResponse.sent(0);
-        
+        if(manager.getChannel(nomChannel) == null) {
+            sentRemoved.sent(nomChannel);
+        }
     }
 
 }

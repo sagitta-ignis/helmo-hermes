@@ -9,17 +9,18 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.channels.Channel;
+import server.configuration.Configuration;
+import server.configuration.ListUser;
 import server.controlleurs.ChannelControlleur;
 import server.controlleurs.ServeurControlleur;
 import server.etat.Connecte;
 import server.etat.EtatAbstract;
 import server.etat.Waiting;
 import server.response.SentResponse;
-import server.configuration.Configuration;
-import server.configuration.ListUser;
 import server.response.channels.SentLeaveChannel;
 
 /**
@@ -47,7 +48,7 @@ public class ClientManager {
     public ClientManager(ChannelControlleur channel, Socket sck, ListUser listeUtilisateurs, Configuration config) throws IOException {
         this.listeUtilisateurs = listeUtilisateurs;
         this.config = config;
-        channels = new HashMap<>();
+        channels = new ConcurrentHashMap<>();
         clientInfo = new Client(increment++);
 
         channelManager = channel;
@@ -56,7 +57,7 @@ public class ClientManager {
         response = new SentResponse(this);
 
         ecouteur = new ThreadEcouteur(clientInfo, sck, this, channelManager);
-        sortie = new ThreadSortie(sck, config.getThreadSleepSeconds() * 1000);
+        sortie = new ThreadSortie(sck, clientInfo, config.getThreadSleepSeconds() * 1000);
         initCommands();
 
         ecouteur.start();
@@ -101,7 +102,6 @@ public class ClientManager {
         try {
             if (clientInfo.isOpened()) {
                 clientInfo.setOpened(false);
-                sayGoodByeToConnectedChannels();
                 socket.close();
                 ecouteur.close();
                 sortie.close();
@@ -112,7 +112,7 @@ public class ClientManager {
         }
     }
 
-    private void sayGoodByeToConnectedChannels() {
+    public void sayGoodByeToConnectedChannels() {
         SentLeaveChannel leaveChannel = new SentLeaveChannel(channelManager);
 
         for (String mapKey : channels.keySet()) {

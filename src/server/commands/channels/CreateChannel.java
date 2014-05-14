@@ -54,7 +54,6 @@ public class CreateChannel extends CommandArgument {
             nouveauChannel.setMotDePasse(motDePasse);
         }
         
-        nouveauChannel.ajouterUtilisateurChannel(clientManager);
         sentResponse.sent(0);
         sentChannelAdded.sent(nomChannel);
     }
