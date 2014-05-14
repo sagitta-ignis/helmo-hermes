@@ -46,8 +46,8 @@ public class Authentifier extends ClientStatusAdapter implements ActionListener 
                 String password = login.getPassword();
                 int port = login.getPort();
                 if (chat.connect(ip,port)) {
-                    login.afficher("chargement en cours ...", Color.BLUE);
                     if (chat.login(username, password)) {
+                        login.afficher("chargement en cours ...", Color.BLUE);
                         chat.open();
                         login.dispose();
                     }
