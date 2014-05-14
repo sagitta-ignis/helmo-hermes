@@ -236,7 +236,7 @@ public class ABNFSyntaxicalParser {
         } else if(!a.equals("0") && b.equals(String.valueOf(Integer.MAX_VALUE))) {
             builder.append("{").append(a).append(",}");
         } else if(a.equals("0") && b.equals(String.valueOf(Integer.MAX_VALUE))) {
-            builder.append("+");
+            builder.append("*");
         } else {
             builder.append("{").append(a).append(",").append(b).append("}");
         }
