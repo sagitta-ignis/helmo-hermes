@@ -48,12 +48,15 @@ public class DeleteChannel extends CommandArgument {
             sentResponse.sent(2);
             return;
         }
-
-        if(!channel.getAdministrateur().equals(clientManager.getClient().getUsername())){
+        if (channel.getAdministrateur() == null) {
             sentResponse.sent(4);
             return;
         }
-        
+        if (!channel.getAdministrateur().equals(clientManager.getClient().getUsername())) {
+            sentResponse.sent(4);
+            return;
+        }
+
         manager.supprimerChannel(nomChannel);
         sentResponse.sent(0);
         sentChannelRemoved.sent(nomChannel);
