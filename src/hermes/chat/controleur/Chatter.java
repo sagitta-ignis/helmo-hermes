@@ -243,7 +243,6 @@ public class Chatter extends ClientStatusAdapter {
                 messageHandler.execute("/enter", channel);
             }
         }
-        fenetre.entrer(channel);
     }
 
     public void sortir(String channel) {

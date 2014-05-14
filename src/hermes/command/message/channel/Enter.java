@@ -5,6 +5,7 @@
 package hermes.command.message.channel;
 
 import hermes.chat.controleur.Chatter;
+import hermes.chat.vue.ChatIRC;
 import hermes.client.Client;
 import hermes.client.ClientStatus;
 import hermes.command.message.base.Message;
@@ -18,14 +19,16 @@ import hermes.protocole.Entry;
  */
 public class Enter extends Message {
 
+    private String channel;
+    
     public Enter(Chatter chat) {
         super(chat);
     }
 
     @Override
     public void execute() {
-        if (verifierArguments(1,2)) {
-            String channel = (String) args[0];
+        if (verifierArguments(1, 2)) {
+            channel = (String) args[0];
             String password = null;
             if (args.length == 2) {
                 password = (String) args[1];
@@ -52,6 +55,7 @@ public class Enter extends Message {
             return;
         }
         if (request != null && protocole.check(request)) {
+            waitResponse();
             client.getEmetteur().envoyer(request);
         } else {
             client.setEtat(ClientStatus.BadMessageMaked);
@@ -60,6 +64,34 @@ public class Enter extends Message {
 
     @Override
     public void response(String response) {
+        if (response != null) {
+            Protocole protocole = chat.getProtocole();
+            Client client = chat.getClient();
+            ChatIRC fenetre = chat.getFenetre();
+            protocole.prepare(ProtocoleSwinen.RESPONSE);
+            if (protocole.check(response + "\r\n")) {
+                switch (protocole.get(ProtocoleSwinen.digit)) {
+                    case "0":
+                        fenetre.entrer(channel);
+                        break;
+                    case "1":
+                        fenetre.avertir("Entrer dans "+channel, "channel inconnu");
+                        break;
+                    case "2":
+                        fenetre.avertir("Entrer dans "+channel, "déjà entré dans ce channel");
+                        break;
+                    case "4":
+                        fenetre.avertir("Entrer dans "+channel, "mot de passe incorrect");
+                        break;
+                    case "5":
+                        fenetre.avertir("Entrer dans "+channel, "mot de passe requis");
+                        break;
+                    case "9":
+                        
+                        break;
+                }
+            } else {
+            }
+        }
     }
-
 }
