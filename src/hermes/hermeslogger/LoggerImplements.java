@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import javax.xml.bind.JAXBException;
@@ -33,7 +34,8 @@ public class LoggerImplements implements HermesLogger {
     private final String channel;
     private final Verification verification;
     private int messagesAttentes;
-
+    private Calendar currentDate;
+    
     public LoggerImplements(String channel) {
         xml = new XmlImpl();
         verification = new Verification();
@@ -86,6 +88,7 @@ public class LoggerImplements implements HermesLogger {
     }
 
     private void ecrireFichier() throws IOException, JAXBException {
+        verifierDateFichier();
         verification.verifierExistanceDossier();
 
         xml.write(listeMessages, ListMessages.class, new File(nomFichierAEcrire()));
@@ -93,12 +96,12 @@ public class LoggerImplements implements HermesLogger {
     }
 
     private String nomFichierAEcrire() {
-        Calendar date = new GregorianCalendar();
+        currentDate = new GregorianCalendar();
         StringBuilder builder = new StringBuilder();
 
-        String jour = String.valueOf(date.get(Calendar.DAY_OF_MONTH));
-        String mois = String.valueOf(date.get(Calendar.MONTH) + 1);
-        String annee = String.valueOf(date.get(Calendar.YEAR));
+        String jour = String.valueOf(currentDate.get(Calendar.DAY_OF_MONTH));
+        String mois = String.valueOf(currentDate.get(Calendar.MONTH) + 1);
+        String annee = String.valueOf(currentDate.get(Calendar.YEAR));
 
         builder.append(Configuration.DOSSIER);
         builder.append(jour).append("-");
@@ -121,6 +124,13 @@ public class LoggerImplements implements HermesLogger {
         }
 
         return true;
+    }
+    
+    private void verifierDateFichier(){
+         Calendar newDate = new GregorianCalendar();
+         if(currentDate.get(Calendar.DAY_OF_MONTH) != newDate.get(Calendar.DAY_OF_MONTH)){
+             nomFichierAEcrire();
+         }
     }
 
 }
