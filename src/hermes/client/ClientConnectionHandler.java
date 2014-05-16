@@ -7,7 +7,6 @@ package hermes.client;
 
 import hermes.client.exception.UnreachableServerExeception;
 import hermes.security.ssl.SSL;
-import hermes.ssl.SSL;
 import java.io.IOException;
 import java.net.Socket;
 import javax.net.SocketFactory;
@@ -18,7 +17,7 @@ import javax.net.ssl.SSLSocket;
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
 public class ClientConnectionHandler {
-    
+
     private Socket socket;
     private boolean connected = false;
     private boolean logged = false;
@@ -27,7 +26,7 @@ public class ClientConnectionHandler {
         try {
             SocketFactory sslsocketfactory = SSL.getSocketFactory();
             socket = sslsocketfactory.createSocket(host, port);
-            ((SSLSocket)socket).startHandshake();
+            ((SSLSocket) socket).startHandshake();
             connected = true;
         } catch (IOException ex) {
             throw new UnreachableServerExeception();
@@ -38,7 +37,7 @@ public class ClientConnectionHandler {
     public Socket getSocket() {
         return socket;
     }
-    
+
     public void shutdown() throws IOException {
         socket.shutdownInput();
         socket.shutdownOutput();
