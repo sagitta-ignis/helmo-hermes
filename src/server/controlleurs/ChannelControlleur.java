@@ -20,7 +20,6 @@ import server.client.ClientManager;
 public class ChannelControlleur {
 
     //private static final String defaultChannel = "Accueil";
-    
     private final List<ClientManager> clients;
     private final Map<String, Channel> channelList;
     private final ServeurControlleur server;
@@ -31,7 +30,7 @@ public class ChannelControlleur {
         channelList = new HashMap<>();
         initDefaultChannel();
     }
-    
+
     private void initDefaultChannel() {
         String defaultChannel = server.getConfig().getDefaultChannel();
         ajouterChannel(defaultChannel);
@@ -102,10 +101,28 @@ public class ChannelControlleur {
         }
     }
 
-    public boolean enregistrerUtilisateur(String user, String password){
-        return server.enregitsrerUtilisateur(user,password);
+    public boolean enregistrerUtilisateur(String user, String password) {
+        return server.enregitsrerUtilisateur(user, password);
     }
-    
+
+    public void loggerToutLesChannels(String auteur, String message) {
+        for (String mapKey : channelList.keySet()) {
+            channelList.get(mapKey).logger(auteur, message);
+        }
+    }
+
+    public void loggerUnSeulChannel(String nomChannel, String auteur, String message) {
+
+        Channel channel = channelList.get(nomChannel);
+
+        if (channel == null) {
+            System.err.print("[LOGGER] channel " + nomChannel + " introuvable.");
+            return;
+        }
+
+        channel.logger(auteur, message);
+    }
+
     public void close() {
         for (ClientManager unClient : clients) {
             unClient.close();

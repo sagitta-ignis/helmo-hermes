@@ -57,6 +57,7 @@ public class DeleteChannel extends CommandArgument {
             return;
         }
 
+        manager.loggerUnSeulChannel(nomChannel, clientManager.getClient().getUsername(), message.toString());
         manager.supprimerChannel(nomChannel);
         sentResponse.sent(0);
         sentChannelRemoved.sent(nomChannel);

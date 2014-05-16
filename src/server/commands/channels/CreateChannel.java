@@ -11,6 +11,8 @@ import pattern.command.CommandArgument;
 import server.controlleurs.ChannelControlleur;
 import server.channels.Channel;
 import server.client.ClientManager;
+import server.configuration.ListUser;
+import server.controlleurs.ServeurControlleur;
 import server.response.SentResponse;
 import server.response.channels.SentChannelAdded;
 
@@ -23,11 +25,13 @@ public class CreateChannel extends CommandArgument {
     private final ChannelControlleur manager;
     private final ClientManager clientManager;
     private final SentResponse sentResponse;
-    private final SentChannelAdded sentChannelAdded;    
+    private final SentChannelAdded sentChannelAdded;
+    private final ListUser listeUtilisateurs;
 
-    public CreateChannel(ChannelControlleur manager, ClientManager clientManager) {
+    public CreateChannel(ChannelControlleur manager, ClientManager clientManager, ListUser listeUtilisateurs) {
         this.manager = manager;
         this.clientManager = clientManager;
+        this.listeUtilisateurs = listeUtilisateurs;
         sentResponse = new SentResponse(clientManager);
         sentChannelAdded = new SentChannelAdded(manager);
     }
@@ -38,13 +42,18 @@ public class CreateChannel extends CommandArgument {
         String nomChannel = message.get(ProtocoleSwinen.channel);
         String motDePasse = message.get(ProtocoleSwinen.pass);
 
-        if(nomChannel == null){
+        if (nomChannel == null) {
             sentResponse.sent(9);
             return;
         }
-        
+
         if (manager.getChannel(nomChannel) != null) {
             sentResponse.sent(2);
+            return;
+        }
+
+        if (pseudoUtilisateur(nomChannel)) {
+            sentResponse.sent(4);
             return;
         }
 
@@ -53,9 +62,20 @@ public class CreateChannel extends CommandArgument {
         if (motDePasse != null) {
             nouveauChannel.setMotDePasse(motDePasse);
         }
-        
+
+        manager.loggerUnSeulChannel(nomChannel, clientManager.getClient().getUsername(), message.toString());
         sentResponse.sent(0);
         sentChannelAdded.sent(nomChannel);
+    }
+
+    private boolean pseudoUtilisateur(String nomChannel) {
+
+        for (String mapKey : listeUtilisateurs.getUsers().keySet()) {
+            if (mapKey.equals(nomChannel)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

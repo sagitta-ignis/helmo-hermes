@@ -43,7 +43,7 @@ public class SentAll {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        client.afficherToutLesChannels(message);
+        channelManager.loggerToutLesChannels(client.getClient().getUsername(),message);
         channelManager.transmettre(messageProtocole);
 
     }

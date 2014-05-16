@@ -5,6 +5,7 @@
  */
 package server.etat;
 
+import com.sun.jmx.remote.internal.ServerCommunicatorAdmin;
 import hermes.protocole.ProtocoleSwinen;
 import server.controlleurs.ChannelControlleur;
 import server.client.Client;
@@ -25,6 +26,8 @@ import server.commands.channels.UsersChannel;
 import server.commands.channels.WhereAmI;
 import server.response.SentResponse;
 import server.configuration.Configuration;
+import server.configuration.ListUser;
+import server.controlleurs.ServeurControlleur;
 
 /**
  *
@@ -37,14 +40,16 @@ public class Connecte extends EtatAbstract {
     private final SentResponse response;
     private final ClientManager manager;
     private final Configuration config;
+    private final ListUser listeUtilisateurs;
 
-    public Connecte(Client client, ChannelControlleur channelManager, SentResponse response, ClientManager manager, Configuration config) {
+    public Connecte(Client client, ChannelControlleur channelManager, SentResponse response, ClientManager manager, Configuration config,ListUser listeUtilisateurs) {
         super(response);
         this.client = client;
         this.channelManager = channelManager;
         this.response = response;
         this.manager = manager;
         this.config = config;
+        this.listeUtilisateurs = listeUtilisateurs;
     }
 
     @Override
@@ -59,7 +64,7 @@ public class Connecte extends EtatAbstract {
 
     private void initialiserCommandesChannels() {
         commandsProtocole.put(ProtocoleSwinen.CHANNELS, new Channels(channelManager, manager));
-        commandsProtocole.put(ProtocoleSwinen.CREATECHANNEL, new CreateChannel(channelManager, manager));
+        commandsProtocole.put(ProtocoleSwinen.CREATECHANNEL, new CreateChannel(channelManager, manager,listeUtilisateurs));
         commandsProtocole.put(ProtocoleSwinen.DELETECHANNEL, new DeleteChannel(channelManager, manager));
         commandsProtocole.put(ProtocoleSwinen.USERSCHANNEL, new UsersChannel(channelManager, manager));
         commandsProtocole.put(ProtocoleSwinen.DISCUSS, new Discuss(channelManager, manager));

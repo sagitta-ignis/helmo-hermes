@@ -5,6 +5,8 @@
  */
 package server.client;
 
+import hermes.hermeslogger.HermesLogger;
+import hermes.hermeslogger.LoggerImplements;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.HashMap;
@@ -12,6 +14,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.JAXBException;
 import server.channels.Channel;
 import server.configuration.Configuration;
 import server.configuration.ListUser;
@@ -42,12 +45,13 @@ public class ClientManager {
     private final ListUser listeUtilisateurs;
 
     private final SentResponse response;
-
+    private HermesLogger log;
     private Map<Integer, EtatAbstract> etat;
 
     public ClientManager(ChannelControlleur channel, Socket sck, ListUser listeUtilisateurs, Configuration config) throws IOException {
         this.listeUtilisateurs = listeUtilisateurs;
         this.config = config;
+
         channels = new ConcurrentHashMap<>();
         clientInfo = new Client(increment++);
 
@@ -57,7 +61,7 @@ public class ClientManager {
         response = new SentResponse(this);
 
         ecouteur = new ThreadEcouteur(clientInfo, sck, this, channelManager);
-        sortie = new ThreadSortie(sck, clientInfo, (int)(config.getThreadSleepSeconds() * 1000));
+        sortie = new ThreadSortie(sck, clientInfo, (int) (config.getThreadSleepSeconds() * 1000));
         initCommands();
 
         ecouteur.start();
@@ -68,7 +72,7 @@ public class ClientManager {
         etat = new HashMap<>();
 
         etat.put(0, new Waiting(this, clientInfo, listeUtilisateurs, response, channelManager));
-        etat.put(3, new Connecte(clientInfo, channelManager, response, this, config));
+        etat.put(3, new Connecte(clientInfo, channelManager, response, this, config,listeUtilisateurs));
     }
 
     public Client getClient() {
@@ -84,12 +88,6 @@ public class ClientManager {
         return channels;
     }
 
-    public void afficherToutLesChannels(String message) {
-        for (String mapKey : channels.keySet()) {
-            channels.get(mapKey).afficher(message);
-        }
-    }
-
     public void envoyer(String message) {
         sortie.ajouter(message);
     }
@@ -98,9 +96,28 @@ public class ClientManager {
         sortie.envoyer(message);
     }
 
+    public void logClient(String auteur, String message) {
+        if (log == null) {
+            log = new LoggerImplements(clientInfo.getUsername());
+        }
+
+        try {
+            log.ajouterMessage(auteur, message);
+        } catch (IOException ex) {
+            Logger.getLogger(ClientManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JAXBException ex) {
+            Logger.getLogger(ClientManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     public void close() {
         try {
             if (clientInfo.isOpened()) {
+                if (log != null) {
+                    log.close();
+                    log = null;
+                }
+
                 clientInfo.setOpened(false);
                 socket.close();
                 ecouteur.close();
@@ -109,6 +126,8 @@ public class ClientManager {
         } catch (IOException ex) {
             Logger.getLogger(ServeurControlleur.class.getName()).log(Level.SEVERE, null, ex);
             channelManager.afficher(response.getError(101));
+        } catch (JAXBException ex) {
+            Logger.getLogger(ClientManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

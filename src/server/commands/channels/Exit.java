@@ -43,11 +43,12 @@ public class Exit extends CommandArgument {
             sentResponse.sent(1);
             return;
         }
-        
-        sentLeave.sent(nomChannel,clientManager.getClient().getUsername());
+
+        manager.loggerUnSeulChannel(nomChannel, clientManager.getClient().getUsername(), message.toString());
+        sentLeave.sent(nomChannel, clientManager.getClient().getUsername());
         manager.retirerUtilisateurChannel(nomChannel, clientManager);
         sentResponse.sent(0);
-        if(manager.getChannel(nomChannel) == null) {
+        if (manager.getChannel(nomChannel) == null) {
             sentRemoved.sent(nomChannel);
         }
     }

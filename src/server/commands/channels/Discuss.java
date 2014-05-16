@@ -63,6 +63,7 @@ public class Discuss extends CommandArgument {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        manager.loggerUnSeulChannel(nomChannel,clientManager.getClient().getUsername(), message.toString());
         manager.transmettreChannel(nomChannel, messageProtocole);
     }
 

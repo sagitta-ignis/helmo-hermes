@@ -64,12 +64,11 @@ public class Channel {
         }
     }
 
-    public void afficher(String message) {
+    public void logger(String auteur,String message) {
         try {
             if (log != null) {
-                log.ajouterMessage(message);
+                log.ajouterMessage(auteur,message);
             }
-            server.afficher(message);
         } catch (IOException ex) {
             Logger.getLogger(Channel.class.getName()).log(Level.SEVERE, null, ex);
         } catch (JAXBException ex) {

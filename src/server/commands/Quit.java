@@ -50,7 +50,7 @@ public class Quit extends CommandArgument {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        client.afficherToutLesChannels(messageProtocole);       
+        channelManager.loggerToutLesChannels(client.getClient().getUsername(),messageProtocole);       
         channelManager.transmettre(messageProtocole);
     }
 

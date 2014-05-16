@@ -67,6 +67,7 @@ public class Enter extends CommandArgument {
             }
         }
         if (!alreadyin) {
+            manager.loggerUnSeulChannel(nomChannel, clientManager.getClient().getUsername(), message.toString());
             channel.ajouterUtilisateurChannel(clientManager);
             sentResponse.sent(0);
             sentJoin.sent(nomChannel, user);

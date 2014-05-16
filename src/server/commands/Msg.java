@@ -47,6 +47,7 @@ public class Msg extends CommandArgument {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        client.logClient(auteur, message);
         channeManager.afficher(message);
         client.envoyer(message);
     }
