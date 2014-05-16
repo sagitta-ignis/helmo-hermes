@@ -38,4 +38,8 @@ public interface ClientStatusHandler {
     void sMsg(String user, String message);
     
     void sDiscuss(String channel, String user, String message);
+    
+    void pseudoAlreadyUsed();
+    
+    void registerComplete();
 }

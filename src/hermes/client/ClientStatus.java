@@ -39,5 +39,7 @@ public class ClientStatus {
     public static final String Opened = "opened";
     public static final String RESPONSE = "response";
     public static final String LoggedOut = "loggedout";
+    public static final String PseudoAlreadyUsed = "pseudo already used";
+    public static final String RegisterComplete = "Register Complete";
     
 }

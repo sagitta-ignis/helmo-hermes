@@ -24,6 +24,9 @@ public class Login extends javax.swing.JFrame {
         connecter.addActionListener(al);
         connecter.setActionCommand("connecter");
         
+        enregistrer.addActionListener(al);
+        enregistrer.setActionCommand("openEnregistrer");        
+        
         this.setLocationRelativeTo(getRootPane());
     }
     
@@ -74,6 +77,7 @@ public class Login extends javax.swing.JFrame {
         port = new javax.swing.JTextField();
         lbPort = new javax.swing.JLabel();
         informations = new javax.swing.JLabel();
+        enregistrer = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("IRCHelmo - Se connecter");
@@ -111,6 +115,7 @@ public class Login extends javax.swing.JFrame {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
         logger.add(username, gridBagConstraints);
 
         password.setText("pass");
@@ -123,13 +128,16 @@ public class Login extends javax.swing.JFrame {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 0.5;
         gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
         logger.add(password, gridBagConstraints);
 
         connecter.setText("Se connecter");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
+        gridBagConstraints.insets = new java.awt.Insets(3, 0, 0, 3);
         logger.add(connecter, gridBagConstraints);
 
         lbIP.setText("IP");
@@ -158,6 +166,7 @@ public class Login extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 0.2;
         gridBagConstraints.weighty = 0.1;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
         logger.add(port, gridBagConstraints);
 
         lbPort.setText("Port");
@@ -179,6 +188,15 @@ public class Login extends javax.swing.JFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         logger.add(informations, gridBagConstraints);
 
+        enregistrer.setText("S'enregistrer");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
+        logger.add(enregistrer, gridBagConstraints);
+
         getContentPane().add(logger, java.awt.BorderLayout.CENTER);
 
         pack();
@@ -186,6 +204,7 @@ public class Login extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton connecter;
+    private javax.swing.JButton enregistrer;
     private javax.swing.JLabel informations;
     private javax.swing.JTextField ip;
     private javax.swing.JLabel lbIP;

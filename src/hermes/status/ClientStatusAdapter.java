@@ -73,6 +73,19 @@ public class ClientStatusAdapter extends StatusHandler implements ClientStatusHa
                 serverShutDown();
             }
         });
+
+        ajouterStatus(String.valueOf(ClientStatus.PseudoAlreadyUsed), new CommandArgument() {
+            @Override
+            public void execute() {
+                pseudoAlreadyUsed();
+            }
+        });
+        ajouterStatus(String.valueOf(ClientStatus.RegisterComplete), new CommandArgument() {
+            @Override
+            public void execute() {
+                registerComplete();
+            }
+        });
         ajouterStatus(String.valueOf(ClientStatus.RESPONSE), new CommandArgument() {
             @Override
             public void execute() {
@@ -135,15 +148,15 @@ public class ClientStatusAdapter extends StatusHandler implements ClientStatusHa
     public void loggedIn() {
 
     }
-    
+
     @Override
     public void loggedOut() {
 
     }
-    
+
     @Override
     public void alreadyLoggedIn() {
-        
+
     }
 
     @Override
@@ -183,6 +196,14 @@ public class ClientStatusAdapter extends StatusHandler implements ClientStatusHa
 
     @Override
     public void sDiscuss(String channel, String user, String message) {
-        
+
+    }
+
+    @Override
+    public void pseudoAlreadyUsed() {
+    }
+
+    @Override
+    public void registerComplete() {
     }
 }
