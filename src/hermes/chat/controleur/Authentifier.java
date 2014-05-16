@@ -51,14 +51,19 @@ public class Authentifier extends ClientStatusAdapter implements ActionListener 
                 String password = login.getPassword();
                 int port = login.getPort();
 
-                if (!chat.getClient().getConnectionHandler().isConnected() && chat.connect(ip, port)) {
-                    if (chat.login(username, password)) {
-                        login.afficher("chargement en cours ...", Color.BLUE);
-                        chat.open();
-                        login.dispose();
+                if (!chat.getClient().getConnectionHandler().isConnected()) {
+                    if (!chat.connect(ip, port)) {
+                        login.afficher("Unreachable server");
+                        return;
                     }
-                } else {
-                    login.afficher("Unreachable server");
+                }
+
+                if (chat.login(username, password)) {
+                    login.afficher("chargement en cours ...", Color.BLUE);
+                    chat.open();
+                    login.dispose();
+                }else{
+                    chat.getClient().getConnectionHandler().setConnected(false);
                 }
             }
         });
@@ -78,16 +83,16 @@ public class Authentifier extends ClientStatusAdapter implements ActionListener 
                 String username = enregistrer.getPseudo();
                 String password = enregistrer.getPassword();
                 String passwordVerif = enregistrer.getPasswordVerif();
-                
-                if(!password.equals(passwordVerif)){
-                  enregistrer.afficher("Les mots de passes sont différents");
-                  return;                  
+
+                if (!password.equals(passwordVerif)) {
+                    enregistrer.afficher("Les mots de passes sont différents");
+                    return;
                 }
-                
+
                 if (chat.connect(ip, port)) {
-                    
-                    chat.getMessageHandler().execute("/register", username,password);
-                    
+
+                    chat.getMessageHandler().execute("/register", username, password);
+
                 } else {
                     enregistrer.afficher("Unreachable server");
                 }
@@ -121,8 +126,6 @@ public class Authentifier extends ClientStatusAdapter implements ActionListener 
         login.afficher("Vous avez enregistré un compte");
         enregistrer.setVisible(false);
     }
-    
-    
 
     @Override
     public void actionPerformed(ActionEvent ae) {

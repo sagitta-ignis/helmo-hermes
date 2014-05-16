@@ -21,7 +21,7 @@ public class Enregistrer extends javax.swing.JFrame {
     public Enregistrer(ActionListener al) {
         initComponents();
         go.addActionListener(al);
-        go.setActionCommand("connecter");
+        go.setActionCommand("enregitrer");
         
         this.setLocationRelativeTo(getRootPane());
     }
@@ -33,7 +33,7 @@ public class Enregistrer extends javax.swing.JFrame {
      * @return 
      */
     public String getPseudo(){
-        return pseudo.toString();
+        return pseudo.getText();
     }
     public String getPassword() {
         return String.valueOf(mdp1.getPassword());

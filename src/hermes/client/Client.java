@@ -58,22 +58,24 @@ public class Client extends Observable {
     }
 
     public boolean connect(String host, int port) throws UnreachableServerExeception {
-        return connectionHandler.connect(host, port);
+        if(connectionHandler.connect(host, port)) {
+            try {
+                emetteur = new Emetteur();
+                ecouteur = new Ecouteur(this);
+                ecouteur.lier(connectionHandler.getSocket());
+                emetteur.lier(connectionHandler.getSocket());
+                return true;
+            } catch (IOException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                connectionHandler.setConnected(false);
+            }
+        }
+        return false;
     }
 
     public final boolean login(String nom, String password) throws NotConnectedException {
         if (!connectionHandler.isConnected()) {
             throw new NotConnectedException();
-        }
-        try {
-            emetteur = new Emetteur();
-            ecouteur = new Ecouteur(this);
-            ecouteur.lier(connectionHandler.getSocket());
-            emetteur.lier(connectionHandler.getSocket());
-        } catch (IOException ex) {
-            Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            connectionHandler.setConnected(false);
-            return false;
         }
         if (nom == null || nom.isEmpty()) {
             return false;

@@ -39,7 +39,7 @@ public class Login extends javax.swing.JFrame {
     }
     
     public String getPassword() {
-        return password.getText();
+        return String.valueOf(password.getPassword());
     }
     
     public int getPort() {
@@ -70,7 +70,6 @@ public class Login extends javax.swing.JFrame {
         lbUsername = new javax.swing.JLabel();
         lbPassword = new javax.swing.JLabel();
         username = new javax.swing.JTextField();
-        password = new javax.swing.JTextField();
         connecter = new javax.swing.JButton();
         lbIP = new javax.swing.JLabel();
         ip = new javax.swing.JTextField();
@@ -78,6 +77,7 @@ public class Login extends javax.swing.JFrame {
         lbPort = new javax.swing.JLabel();
         informations = new javax.swing.JLabel();
         enregistrer = new javax.swing.JButton();
+        password = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("IRCHelmo - Se connecter");
@@ -117,19 +117,6 @@ public class Login extends javax.swing.JFrame {
         gridBagConstraints.weighty = 0.1;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
         logger.add(username, gridBagConstraints);
-
-        password.setText("pass");
-        password.setPreferredSize(new java.awt.Dimension(150, 22));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 0.1;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
-        logger.add(password, gridBagConstraints);
 
         connecter.setText("Se connecter");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -197,6 +184,16 @@ public class Login extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         logger.add(enregistrer, gridBagConstraints);
 
+        password.setText("pass");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.weightx = 0.2;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        logger.add(password, gridBagConstraints);
+
         getContentPane().add(logger, java.awt.BorderLayout.CENTER);
 
         pack();
@@ -212,7 +209,7 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JLabel lbPort;
     private javax.swing.JLabel lbUsername;
     private javax.swing.JPanel logger;
-    private javax.swing.JTextField password;
+    private javax.swing.JPasswordField password;
     private javax.swing.JTextField port;
     private javax.swing.JTextField username;
     // End of variables declaration//GEN-END:variables

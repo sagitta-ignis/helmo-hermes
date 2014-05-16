@@ -27,6 +27,7 @@ public class Register extends Message {
         if (verifierArguments(2)) {
             String user = (String) args[0];
             String pass = (String) args[1];
+            pass = hash(pass);
             Register(user, pass);
         }
     }
