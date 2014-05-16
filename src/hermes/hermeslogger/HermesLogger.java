@@ -6,9 +6,10 @@
 
 package hermes.hermeslogger;
 
+import hermes.hermeslogger.models.Message;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.JAXBException;
 
 /**
@@ -17,10 +18,10 @@ import javax.xml.bind.JAXBException;
  */
 public interface HermesLogger {
     
-    void ajouterMessage(String message)  throws IOException, JAXBException;
+    void ajouterMessage(String auteur, String message)  throws IOException, JAXBException;
     
-    ArrayList<String> listeLogsSauvegarde();
-    ArrayList<String> lireLogXml(String nom) throws FileNotFoundException,Exception;
+    List<String> listeLogsSauvegarde();
+    List<Message> lireLogXml(String nom) throws FileNotFoundException,Exception;
     
     void close() throws IOException, JAXBException;
 }

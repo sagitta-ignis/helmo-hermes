@@ -7,6 +7,7 @@ package hermes.hermeslogger;
 
 import hermes.hermeslogger.models.Configuration;
 import hermes.hermeslogger.models.ListMessages;
+import hermes.hermeslogger.models.Message;
 import hermes.hermeslogger.models.ParcourirFichiers;
 import hermes.hermeslogger.models.Verification;
 import hermes.xml.Xml;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 import javax.xml.bind.JAXBException;
 
 /**
@@ -37,19 +39,17 @@ public class LoggerImplements implements HermesLogger {
         verification = new Verification();
         this.channel = channel;
         listeMessages = verification.fichierExistant(new File(nomFichierAEcrire()));
-        
+
         messagesAttentes = 0;
     }
 
     @Override
-    public void ajouterMessage(String message) throws IOException, JAXBException {
-        if(message == null || message.length() < 1){
-            System.err.println("[LOGGER] Problème message vide ou null");
-            return;
+    public void ajouterMessage(String auteur, String message) throws IOException, JAXBException {
+        if (verifierChamps(auteur, message)) {
+            listeMessages.ajouterMessage(new Message(auteur,message));
+            messagesAttentes++;
+            verificationNbMessages();
         }
-        listeMessages.ajouterMessage(message);
-        messagesAttentes++;
-        verificationNbMessages();
     }
 
     @Override
@@ -68,7 +68,7 @@ public class LoggerImplements implements HermesLogger {
     }
 
     @Override
-    public ArrayList<String> lireLogXml(String nom) throws FileNotFoundException, Exception {
+    public List<Message> lireLogXml(String nom) throws FileNotFoundException, Exception {
         ListMessages messages = null;
 
         messages = (ListMessages) xml.read(new FileInputStream(Configuration.DOSSIER + nom), ListMessages.class);
@@ -107,6 +107,20 @@ public class LoggerImplements implements HermesLogger {
         builder.append(channel).append(".xml");
 
         return builder.toString();
+    }
+
+    private boolean verifierChamps(String auteur, String message) {
+
+        if (message == null || message.length() < 1) {
+            System.err.println("[LOGGER] Problème message vide ou null");
+            return false;
+        }
+        if (auteur == null || auteur.length() < 1) {
+            System.err.println("[LOGGER] Problème auteur vide ou null");
+            return false;
+        }
+
+        return true;
     }
 
 }

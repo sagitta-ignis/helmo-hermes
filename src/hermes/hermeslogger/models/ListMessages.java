@@ -20,21 +20,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ListMessages {
 
     @XmlElement(name = "message", type = String.class)
-    private final ArrayList<String> listeMessage;
+    private final ArrayList<Message> listeMessage;
 
     public ListMessages() {
         listeMessage = new ArrayList<>();
     }
 
-    public ListMessages(ArrayList<String> listeMessage) {
+    public ListMessages(ArrayList<Message> listeMessage) {
         this.listeMessage = listeMessage;
     }
 
-    public ArrayList<String> getListe() {
+    public ArrayList<Message> getListe() {
         return listeMessage;
     }
 
-    public void ajouterMessage(String message) {
+    public void ajouterMessage(Message message) {
         listeMessage.add(message);
     }
 
