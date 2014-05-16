@@ -58,7 +58,7 @@ public class ServeurControlleur {
             try {
                 Socket clientSocket = server.accept();
                 ClientManager client = new ClientManager(channelManager, clientSocket, users, config);
-                channelManager.nouveauClient(client);
+                
             } catch (SocketException ex) {
                 break;
             } catch (IOException ex) {

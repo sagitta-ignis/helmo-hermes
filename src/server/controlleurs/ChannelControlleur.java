@@ -27,7 +27,7 @@ public class ChannelControlleur {
 
     public ChannelControlleur(ServeurControlleur server) {
         this.server = server;
-        clients = new ArrayList<ClientManager>();
+        clients = new ArrayList<>();
         channelList = new HashMap<>();
         initDefaultChannel();
     }

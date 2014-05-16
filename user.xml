@@ -2,6 +2,24 @@
 <list-users>
     <users>
         <entry>
+            <key>myuser2</key>
+            <value>
+                <password>96e593958b50294c784cb3a6795fdd32f8a9e23df0f23d63257c924b0f5bae45482ea8d7d18fb88f593b1c574c12cf4d7e0b90830d7cba528014f780fdcab803</password>
+            </value>
+        </entry>
+        <entry>
+            <key>myuser</key>
+            <value>
+                <password>96e593958b50294c784cb3a6795fdd32f8a9e23df0f23d63257c924b0f5bae45482ea8d7d18fb88f593b1c574c12cf4d7e0b90830d7cba528014f780fdcab803</password>
+            </value>
+        </entry>
+        <entry>
+            <key>zerg</key>
+            <value>
+                <password>8adc860e4577c9c12d5a5e6f0f47442d0e3a08a1e8133813679a0b2fe7c37b4a9727e74316861383c55dc78623d91765457925e83ee8d9c355aea472d0ed4dff</password>
+            </value>
+        </entry>
+        <entry>
             <key>user</key>
             <value>
                 <password>96e593958b50294c784cb3a6795fdd32f8a9e23df0f23d63257c924b0f5bae45482ea8d7d18fb88f593b1c574c12cf4d7e0b90830d7cba528014f780fdcab803</password>

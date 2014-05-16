@@ -57,6 +57,7 @@ public class Hello extends CommandArgument {
     }
 
     private void connectionAvecSucces(String pseudo) {
+        channelManager.nouveauClient(manager);
         clientInfo.setUsername(pseudo);
         SentJoin sentJoin = new SentJoin(manager, channelManager);
         sentJoin.sent();
