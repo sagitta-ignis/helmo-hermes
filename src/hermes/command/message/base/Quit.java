@@ -33,9 +33,9 @@ public class Quit extends Message {
             try {
                 request = protocole.make();
                 if (request != null && protocole.check(request)) {
+                    client.getEmetteur().envoyer(request);
                     client.getConnectionHandler().setLogged(false);
                     client.setEtat(ClientStatus.LoggedOut);
-                    client.getEmetteur().envoyer(request);
                 }
             } catch (Exception ex) {
                 Logger.getLogger(Quit.class.getName()).log(Level.SEVERE, null, ex);

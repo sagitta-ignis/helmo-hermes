@@ -28,12 +28,18 @@ public class Envoyer implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
+        if(fenetre.getMessage().getText().isEmpty()) return;
         chat.setTyping(false);
         Conversation c = fenetre.getConversation(CURRENT);
-        if(c != null) {
+        if(c != null && !c.isHistorique()) {
             chat.ecrire(c.getName(), fenetre.getMessage().getText(), c.isPublic());
         } else {
-            fenetre.avertir("Erreur", "Pas de conversation ouverte pour discuter");
+            if(c != null && c.isHistorique()) {
+                fenetre.avertir("Erreur", "Ceci est un historique, pas une conversation");
+            } else {
+                fenetre.avertir("Erreur", "Pas de conversation ouverte pour discuter");
+            }
+            
         } 
         fenetre.getMessage().setText("");
     }

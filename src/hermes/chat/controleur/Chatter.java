@@ -47,7 +47,6 @@ public class Chatter extends ClientStatusAdapter {
         authentifier = a;
         overlayer = new Overlayer(this);
         messageHandler = new ClientMessageHandler(this);
-        journal = new MessageLogger();
 
         client = new Client(messageHandler);
 
@@ -56,7 +55,10 @@ public class Chatter extends ClientStatusAdapter {
         channels = new ChannelsModel(utilisateurs);
 
         fenetre = new ChatIRC(this);
+        journal = new MessageLogger(fenetre);
+        
         fenetre.setOverlayer(overlayer);
+        fenetre.setLogger(journal);
         fenetre.setChannels(((ChannelsModel) channels).getModel());
 
         utilisateurs.addObserver(fenetre);
@@ -176,7 +178,7 @@ public class Chatter extends ClientStatusAdapter {
             client.fermer();
         } catch (Exception ex) {
             String message = "le client n'a pas pu être fermé correctement";
-            //Logger.getLogger(Chatter.class.getName()).log(Level.SEVERE, message, ex);
+            Logger.getLogger(Chatter.class.getName()).log(Level.SEVERE, message, ex);
             fenetre.avertir("Erreur", message);
         }
     }
@@ -224,11 +226,12 @@ public class Chatter extends ClientStatusAdapter {
 
     @Override
     public void loggedOut() {
-        fermer();
         retour();
+        fermer();
     }
 
     public void entrer(String channel) {
+        journal.entrer(channel);
         Channel c = channels.get(channel);
         if (c != null) {
             if (c.isProtege()) {

@@ -7,6 +7,7 @@ package hermes.chat.vue;
 
 import hermes.chat.AbstractChat;
 import hermes.chat.controleur.Chatter;
+import hermes.chat.controleur.MessageLogger;
 import hermes.chat.controleur.Overlayer;
 import hermes.client.channels.Channel;
 import hermes.client.channels.Channels;
@@ -79,7 +80,19 @@ public class ChatIRC extends AbstractChat {
     }
     
     private void ajouterConversationChannel(String channel) {
-        gui.addConversation(new Conversation(channel, true));
+        Conversation c = new Conversation(channel, true);
+        gui.addConversation(c);
+    }
+    
+    public void ouvrirHistorique(String nom, boolean isChannel) {
+        Conversation c = new Conversation(nom, isChannel);
+        c.setHistorique(true);
+        gui.addConversation(c);
+        gui.entrer(nom);
+    }
+    
+    public void fermerHistorique(String nom) {
+        gui.removeConversation(nom);
     }
 
     @Override
@@ -116,6 +129,10 @@ public class ChatIRC extends AbstractChat {
 
     public void setOverlayer(Overlayer overlayer) {
         gui.setOverlayer(overlayer);
+    }
+    
+    public void setLogger(MessageLogger logger) {
+        gui.setLogger(logger);
     }
 
     public void clear() {

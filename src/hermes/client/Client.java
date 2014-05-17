@@ -89,7 +89,6 @@ public class Client extends Observable {
 
     public void fermer() throws Exception {
         try {
-            connectionHandler.shutdown();
             emetteur.fermer();
             ecouteur.fermer();
             connectionHandler.disconnect();
