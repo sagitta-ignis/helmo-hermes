@@ -8,6 +8,7 @@ package hermes.hermeslogger.models;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -15,8 +16,8 @@ import java.util.ArrayList;
  */
 public class ParcourirFichiers {
     
-    public ArrayList<String> obtenirListeFichiers(){
-        ArrayList<String> nomFichiers = new ArrayList<>();
+    public List<String> obtenirListeFichiers(){
+        List<String> nomFichiers = new ArrayList<>();
         
         File temp = new File(Configuration.DOSSIER);
         File[] tab = temp.listFiles();

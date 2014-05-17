@@ -6,6 +6,7 @@
 package hermes.hermeslogger.models;
 
 import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -19,18 +20,40 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "Conversation")
 public class ListMessages {
 
-    @XmlElement(name = "message", type = String.class)
-    private final ArrayList<Message> listeMessage;
-
+    @XmlElement(name = "titre", type = String.class)
+    private String titre;
+    @XmlElement(name = "date", type = String.class)
+    private String date;
+    @XmlElement(name = "message", type = Message.class)
+    private final List<Message> listeMessage;
+    
     public ListMessages() {
-        listeMessage = new ArrayList<>();
+        this(new ArrayList<Message>());
     }
 
-    public ListMessages(ArrayList<Message> listeMessage) {
+    public ListMessages(List<Message> listeMessage) {
+        titre = "";
+        date = "";
         this.listeMessage = listeMessage;
     }
 
-    public ArrayList<Message> getListe() {
+    public String getTitre() {
+        return titre;
+    }
+
+    public void setTitre(String titre) {
+        this.titre = titre;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public List<Message> getListe() {
         return listeMessage;
     }
 

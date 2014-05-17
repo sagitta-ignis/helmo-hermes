@@ -16,9 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import javax.xml.bind.JAXBException;
@@ -29,18 +27,20 @@ import javax.xml.bind.JAXBException;
  */
 public class LoggerImplements implements HermesLogger {
 
+    private static final Xml xml = new XmlImpl();
+    private static final Verification verification = new Verification();
+
     private final ListMessages listeMessages;
-    private final Xml xml;
     private final String channel;
-    private final Verification verification;
     private int messagesAttentes;
-    private Calendar currentDate;
-    
+    private final Calendar currentDate;
+
     public LoggerImplements(String channel) {
-        xml = new XmlImpl();
-        verification = new Verification();
+        currentDate = new GregorianCalendar();
         this.channel = channel;
         listeMessages = verification.fichierExistant(new File(nomFichierAEcrire()));
+        listeMessages.setTitre(channel);
+        listeMessages.setDate(formaterDate());
 
         messagesAttentes = 0;
     }
@@ -48,7 +48,7 @@ public class LoggerImplements implements HermesLogger {
     @Override
     public void ajouterMessage(String auteur, String message) throws IOException, JAXBException {
         if (verifierChamps(auteur, message)) {
-            listeMessages.ajouterMessage(new Message(auteur,message));
+            listeMessages.ajouterMessage(new Message(auteur, message));
             messagesAttentes++;
             verificationNbMessages();
         }
@@ -60,7 +60,7 @@ public class LoggerImplements implements HermesLogger {
     }
 
     @Override
-    public ArrayList<String> listeLogsSauvegarde() {
+    public List<String> listeLogsSauvegarde() {
         ParcourirFichiers parcourir = new ParcourirFichiers();
 
         if (!verification.verifierExistanceDossier()) {
@@ -70,15 +70,12 @@ public class LoggerImplements implements HermesLogger {
     }
 
     @Override
-    public List<Message> lireLogXml(String nom) throws FileNotFoundException, Exception {
+    public ListMessages lireLogXml(String nom) throws FileNotFoundException, Exception {
         ListMessages messages = null;
 
         messages = (ListMessages) xml.read(new FileInputStream(Configuration.DOSSIER + nom), ListMessages.class);
 
-        if (messages != null) {
-            return messages.getListe();
-        }
-        return null;
+        return messages;
     }
 
     private void verificationNbMessages() throws IOException, JAXBException {
@@ -96,18 +93,25 @@ public class LoggerImplements implements HermesLogger {
     }
 
     private String nomFichierAEcrire() {
-        currentDate = new GregorianCalendar();
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(Configuration.DOSSIER);
+        builder.append(formaterDate()).append(" ");
+        builder.append(channel).append(".xml");
+
+        return builder.toString();
+    }
+
+    private String formaterDate() {
         StringBuilder builder = new StringBuilder();
 
         String jour = String.valueOf(currentDate.get(Calendar.DAY_OF_MONTH));
         String mois = String.valueOf(currentDate.get(Calendar.MONTH) + 1);
         String annee = String.valueOf(currentDate.get(Calendar.YEAR));
 
-        builder.append(Configuration.DOSSIER);
         builder.append(jour).append("-");
         builder.append(mois).append("-");
-        builder.append(annee).append(" ");
-        builder.append(channel).append(".xml");
+        builder.append(annee);
 
         return builder.toString();
     }
@@ -125,12 +129,12 @@ public class LoggerImplements implements HermesLogger {
 
         return true;
     }
-    
-    private void verifierDateFichier(){
-         Calendar newDate = new GregorianCalendar();
-         if(currentDate.get(Calendar.DAY_OF_MONTH) != newDate.get(Calendar.DAY_OF_MONTH)){
-             nomFichierAEcrire();
-         }
+
+    private void verifierDateFichier() {
+        Calendar newDate = new GregorianCalendar();
+        if (currentDate.get(Calendar.DAY_OF_MONTH) != newDate.get(Calendar.DAY_OF_MONTH)) {
+            nomFichierAEcrire();
+        }
     }
 
 }

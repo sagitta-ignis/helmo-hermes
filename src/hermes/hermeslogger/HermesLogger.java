@@ -6,7 +6,7 @@
 
 package hermes.hermeslogger;
 
-import hermes.hermeslogger.models.Message;
+import hermes.hermeslogger.models.ListMessages;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
@@ -21,7 +21,7 @@ public interface HermesLogger {
     void ajouterMessage(String auteur, String message)  throws IOException, JAXBException;
     
     List<String> listeLogsSauvegarde();
-    List<Message> lireLogXml(String nom) throws FileNotFoundException,Exception;
+    ListMessages lireLogXml(String nom) throws FileNotFoundException,Exception;
     
     void close() throws IOException, JAXBException;
 }
