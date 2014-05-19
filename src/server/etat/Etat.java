@@ -4,13 +4,12 @@
  * and open the template in the editor.
  */
 
-package pattern;
+package server.etat;
 
 /**
  *
- * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
+ * @author David
  */
-public interface Command {
-    void execute();
-    void execute(String args);
+public interface Etat {
+    void verifier(String message);
 }

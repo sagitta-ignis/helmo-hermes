@@ -1,0 +1,36 @@
+﻿
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch commandes
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#	renamed:    src/server/Server.java -> src/server/ServerControleur.java
+#	renamed:    src/server/com/Configuration.java -> src/server/configuration/Configuration.java
+#	renamed:    src/server/com/ListUser.java -> src/server/configuration/ListUser.java
+#	renamed:    src/server/com/User.java -> src/server/configuration/User.java
+#
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   nbproject/private/private.xml
+#	modified:   nbproject/project.properties
+#	modified:   src/server/ServerControleur.java
+#	modified:   src/server/Xml/ReadConfiguration.java
+#	modified:   src/server/Xml/ReadUsers.java
+#	modified:   src/server/com/Client.java
+#	modified:   src/server/com/ClientManager.java
+#	modified:   src/server/com/SortieClient.java
+#	modified:   src/server/com/commands/Connect.java
+#	modified:   src/server/com/commands/Kick.java
+#	modified:   src/server/com/commands/Mute.java
+#	modified:   src/server/com/commands/Quit.java
+#	modified:   src/server/com/commands/Time.java
+#	modified:   src/server/com/commands/UnMute.java
+#	modified:   src/server/com/commands/Users.java
+#	modified:   src/server/configuration/Configuration.java
+#	modified:   src/server/configuration/ListUser.java
+#	modified:   src/server/configuration/User.java
+#
+
