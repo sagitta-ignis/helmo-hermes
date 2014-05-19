@@ -8,6 +8,7 @@ package hermes.chat.model;
 
 import hermes.client.utilisateurs.Utilisateur;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 
 /**
  *
@@ -15,28 +16,23 @@ import javax.swing.tree.DefaultMutableTreeNode;
  */
 public class UtilisateurNode extends Utilisateur {
 
+    private final DefaultTreeModel model;
     private final DefaultMutableTreeNode node;
-    private final String nameOn;
     
-    public UtilisateurNode(String name) {
+    public UtilisateurNode(String name, DefaultTreeModel model) {
         super(name);
-        nameOn = String.format("<span style=\"color:blue;\">%s</span>", name);
+        this.model = model;
         node = new DefaultMutableTreeNode(this);
     }
 
     @Override
     public void setTyping(boolean typing) {
         super.setTyping(typing);
-        node.setUserObject(this);
+        // node.setUserObject(this);
+        model.nodeChanged(node);
     }
 
     public DefaultMutableTreeNode getNode() {
         return node;
     }
-
-    @Override
-    protected String toLabel() {
-        return isTyping()?nameOn:getName();
-    }
-    
 }

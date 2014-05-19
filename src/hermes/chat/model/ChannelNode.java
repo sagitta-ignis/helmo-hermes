@@ -8,6 +8,8 @@ package hermes.chat.model;
 
 import hermes.client.channels.Channel;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
 
 /**
  *
@@ -15,12 +17,14 @@ import javax.swing.tree.DefaultMutableTreeNode;
  */
 public class ChannelNode extends Channel {
 
+    private final DefaultTreeModel model;
     private final DefaultMutableTreeNode node;
     
-    public ChannelNode(String nom) {
+    public ChannelNode(String nom, DefaultTreeModel model) {
         super(nom);
+        this.model = model;
         node = new DefaultMutableTreeNode(this);
-        setUtilisateurs(new UtilisateursModel());
+        setUtilisateurs(new UtilisateursModel(model));
     }
 
     public DefaultMutableTreeNode getNode() {
@@ -31,6 +35,7 @@ public class ChannelNode extends Channel {
     public UtilisateurNode rejoindre(String utilisateur) {
         UtilisateurNode u = (UtilisateurNode) super.rejoindre(utilisateur);
         node.add(u.getNode());
+        model.nodeStructureChanged(node);
         return u;
     }
 
@@ -39,6 +44,7 @@ public class ChannelNode extends Channel {
         UtilisateurNode u = (UtilisateurNode) super.quitter(utilisateur);
         if(u != null) {
             node.remove(u.getNode());
+            model.nodeStructureChanged(node);
         }
         return u;
     }

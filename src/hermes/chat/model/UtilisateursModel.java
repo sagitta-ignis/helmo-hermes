@@ -8,16 +8,23 @@ package hermes.chat.model;
 
 import hermes.client.utilisateurs.Utilisateur;
 import hermes.client.utilisateurs.Utilisateurs;
+import javax.swing.tree.DefaultTreeModel;
 
 /**
  *
  * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
  */
 public class UtilisateursModel extends Utilisateurs {
+    
+    private final DefaultTreeModel model;
 
+    public UtilisateursModel(DefaultTreeModel model) {
+        this.model = model;
+    }
+    
     @Override
     public Utilisateur instanciate(String utilisateur) {
-        return new UtilisateurNode(utilisateur); //To change body of generated methods, choose Tools | Templates.
+        return new UtilisateurNode(utilisateur, model);
     }
     
 }

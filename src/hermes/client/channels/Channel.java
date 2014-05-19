@@ -71,6 +71,10 @@ public class Channel {
         getUtilisateurs().retirer(utilisateur);
         return u;
     }
+    
+    public Utilisateur getUtilisateur(String utilisateur) {
+        return utilisateurs.get(utilisateur);
+    }
 
     public Utilisateur[] getArrayUtilisateurs() {
         return utilisateurs.toArray();

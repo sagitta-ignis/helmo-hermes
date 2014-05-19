@@ -37,9 +37,9 @@ public class Ecrire extends KeyAdapter {
             Conversation c = fenetre.getConversation(Chat.CURRENT);
             if(c == null || c.isHistorique()) return;
             if (!fenetre.isTyping() && !text.isEmpty()) {
-                chat.setTyping(true);
+                chat.setTyping(c.getName(), true);
             } else if (fenetre.isTyping() && text.isEmpty()) {
-                chat.setTyping(false);
+                chat.setTyping(c.getName(), false);
             }
         }
     }

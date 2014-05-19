@@ -8,6 +8,9 @@ package hermes.command.requete.notification;
 import hermes.chat.controleur.Chatter;
 import hermes.client.Client;
 import hermes.client.ClientStatus;
+import hermes.client.channels.Channel;
+import hermes.client.channels.Channels;
+import hermes.client.utilisateurs.Utilisateur;
 import hermes.command.requete.base.Requete;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
@@ -25,17 +28,25 @@ public class STyping extends Requete {
     @Override
     public void execute() {
         if (verifierArguments(1)) {
-            Protocole protocole = chat.getProtocole();
-            Client client = chat.getClient();
             String text = (String) args[0];
-            protocole.prepare(ProtocoleSwinen.STYPING);
-            if (protocole.check(text)) {
-                String user = protocole.get(ProtocoleSwinen.user);
-                String digit = protocole.get(ProtocoleSwinen.digit);
-                client.setEtat(ClientStatus.STYPING, user, digit);
-            } else {
-                client.setEtat(ClientStatus.BadProtocoleReceived);
-            }
+            sTyping(text);
+        }
+    }
+
+    private void sTyping(String text) {
+        Protocole protocole = chat.getProtocole();
+        Client client = chat.getClient();
+        Channels chs = chat.getChannels();
+        protocole.prepare(ProtocoleSwinen.STYPING);
+        if (protocole.check(text)) {
+            String channel = protocole.get(ProtocoleSwinen.channel);
+            String user = protocole.get(ProtocoleSwinen.user);
+            String digit = protocole.get(ProtocoleSwinen.digit);
+            Channel ch = chs.get(channel);
+            Utilisateur u = ch.getUtilisateur(user);
+            u.setTyping(digit.equals("1"));
+        } else {
+            client.setEtat(ClientStatus.BadProtocoleReceived);
         }
     }
 }

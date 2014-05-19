@@ -324,6 +324,8 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
 
         jSplitPane1.setRightComponent(onglets);
 
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
+        channels.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
         jScrollPane2.setViewportView(channels);
 
         jSplitPane1.setLeftComponent(jScrollPane2);

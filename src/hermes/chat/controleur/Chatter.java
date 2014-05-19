@@ -163,11 +163,11 @@ public class Chatter extends ClientStatusAdapter {
         message.execute();
     }
 
-    public void setTyping(boolean b) {
+    public void setTyping(String channel, boolean b) {
         fenetre.setTyping(b);
         CommandArgument message;
         message = messageHandler.get("typing");
-        message.setArgs(b);
+        message.setArgs(channel, b);
         message.execute();
     }
 

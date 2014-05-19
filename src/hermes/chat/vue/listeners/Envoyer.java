@@ -29,9 +29,9 @@ public class Envoyer implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ae) {
         if(fenetre.getMessage().getText().isEmpty()) return;
-        chat.setTyping(false);
         Conversation c = fenetre.getConversation(CURRENT);
         if(c != null && !c.isHistorique()) {
+            chat.setTyping(c.getName(), false);
             chat.ecrire(c.getName(), fenetre.getMessage().getText(), c.isPublic());
         } else {
             if(c != null && c.isHistorique()) {

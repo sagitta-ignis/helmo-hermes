@@ -26,22 +26,29 @@ public class Typing extends Message {
 
     @Override
     public void execute() {
-        if (verifierArguments(1)) {
-            Protocole protocole = chat.getProtocole();
-            Client client = chat.getClient();
-            boolean b = (boolean) args[0];
-            protocole.prepare(ProtocoleSwinen.TYPING);
-            String request;
-            try {
-                request = protocole.make(
-                        new Entry<>(ProtocoleSwinen.digit, (Object) (b ? "1" : "0")));
-                if (request != null && protocole.check(request)) {
-                    client.getEmetteur().envoyer(request);
-                }
-            } catch (Exception ex) {
-                Logger.getLogger(Quit.class.getName()).log(Level.SEVERE, null, ex);
-                client.setEtat(ClientStatus.BadProtocoleSended);
+        if (verifierArguments(2)) {
+            String channel = (String) args[0];
+            boolean b = (boolean) args[1];
+            typing(channel,(b ? "1" : "0"));
+        }
+    }
+
+    private void typing(String channel, String digit) {
+        Protocole protocole = chat.getProtocole();
+        Client client = chat.getClient();
+        protocole.prepare(ProtocoleSwinen.TYPING);
+        String request;
+        try {
+            request = protocole.make(
+                    new Entry<>(ProtocoleSwinen.channel, (Object) channel),
+                    new Entry<>(ProtocoleSwinen.digit, (Object) digit)
+            );
+            if (request != null && protocole.check(request)) {
+                client.getEmetteur().envoyer(request);
             }
+        } catch (Exception ex) {
+            Logger.getLogger(Quit.class.getName()).log(Level.SEVERE, null, ex);
+            client.setEtat(ClientStatus.BadProtocoleSended);
         }
     }
 

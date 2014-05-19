@@ -34,7 +34,7 @@ public class ChannelsModel extends Channels {
 
     @Override
     protected Channel instanciate(String channel) {
-        return new ChannelNode(channel);
+        return new ChannelNode(channel, model);
     }
 
     @Override
