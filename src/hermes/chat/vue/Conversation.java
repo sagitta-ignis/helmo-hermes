@@ -18,11 +18,13 @@ public class Conversation extends JScrollPane {
     private final JTextArea conversation;
     private boolean publique;
     private boolean showed;
+    private boolean historique;
 
     public Conversation(String nom, boolean publique) {
         setName(nom);
         conversation = new JTextArea();
         this.publique = publique;
+        historique = false;
         showed = false;
         setViewportView(conversation);
         //Scroll automatiquement en bas du textarea
@@ -62,5 +64,13 @@ public class Conversation extends JScrollPane {
 
     public void setShowed(boolean showed) {
         this.showed = showed;
+    }
+
+    public boolean isHistorique() {
+        return historique;
+    }
+
+    public void setHistorique(boolean historique) {
+        this.historique = historique;
     }
 }

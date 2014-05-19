@@ -8,11 +8,13 @@ package hermes.chat.vue;
 import hermes.chat.Chat;
 import static hermes.chat.Chat.CURRENT;
 import hermes.chat.controleur.Chatter;
+import hermes.chat.controleur.MessageLogger;
 import hermes.chat.controleur.Overlayer;
 import hermes.chat.vue.listeners.ClicDroitTree;
 import hermes.chat.vue.listeners.Ecrire;
 import hermes.chat.vue.listeners.Envoyer;
 import hermes.chat.vue.listeners.Fermer;
+import hermes.chat.vue.listeners.FermerHistorique;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.util.HashMap;
@@ -33,6 +35,7 @@ import javax.swing.tree.TreeModel;
 public final class ChatGUI extends javax.swing.JFrame implements Chat {
 
     private Overlayer overlay;
+    private MessageLogger logger;
     private final Chatter chat;
 
     private final JMenu jmOverlay = new javax.swing.JMenu();
@@ -41,6 +44,9 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
     private final JMenuItem jmiOverlay5 = new javax.swing.JMenuItem();
     private final Separator jSeparator1 = new javax.swing.JPopupMenu.Separator();
     private final JMenuItem jmiOverlayDesactiver = new javax.swing.JMenuItem();
+
+    private final JMenu jmHistorique = new javax.swing.JMenu();
+    private final JMenuItem jmiParcourir = new javax.swing.JMenuItem();
 
     private final Map<String, Conversation> conversations;
     private boolean typing;
@@ -93,7 +99,7 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
 
         jmiOverlay5.setText("Overlay 5");
         jmOverlay.add(jmiOverlay5);
-        
+
         jmOverlay.add(jSeparator1);
 
         jmiOverlayDesactiver.setText("Desactiver");
@@ -111,7 +117,7 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
         jmiOverlay5.addActionListener(al);
         jmiOverlayDesactiver.addActionListener(al);
     }
-    
+
     private void removeOverlayMenuListeners(ActionListener al) {
         jmiOverlay1.removeActionListener(al);
         jmiOverlay3.removeActionListener(al);
@@ -119,12 +125,42 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
         jmiOverlayDesactiver.removeActionListener(al);
     }
 
+    void setLogger(MessageLogger ml) {
+        if (logger == null) {
+            makeHistoriqueMenu();
+            menu.add(jmHistorique);
+        } else {
+            removeHistoriqueMenuListeners(logger);
+        }
+        if (ml != null) {
+            addHistoriqueMenuListeners(ml);
+        } else {
+            menu.remove(jmHistorique);
+        }
+        logger = ml;
+    }
+
+    private void makeHistoriqueMenu() {
+        jmHistorique.setText("Historique");
+
+        jmiParcourir.setText("Parcourir");
+        jmHistorique.add(jmiParcourir);
+    }
+
+    private void addHistoriqueMenuListeners(ActionListener al) {
+        jmiParcourir.addActionListener(al);
+    }
+
+    private void removeHistoriqueMenuListeners(ActionListener al) {
+        jmiParcourir.removeActionListener(al);;
+    }
+
     void setChannels(TreeModel channels) {
         this.channels.setModel(channels);
     }
-    
+
     void addConversation(Conversation c) {
-        if(!conversations.containsKey(c.getName())) {
+        if (!conversations.containsKey(c.getName())) {
             conversations.put(c.getName(), c);
         }
     }
@@ -162,7 +198,8 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
         onglets.addTab(c.getName(), c);
         int index = onglets.indexOfTab(c.getName());
         JCloseableTabComponent tab = new JCloseableTabComponent(onglets, c.getName());
-        tab.addActionListener(new Fermer(chat, tab));
+        Fermer f = c.isHistorique()?new FermerHistorique(chat, tab):new Fermer(chat, tab);
+        tab.addActionListener(f);
         onglets.setTabComponentAt(index, tab);
         c.setShowed(true);
     }
@@ -201,17 +238,15 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
         JOptionPane.showMessageDialog(this, message, titre,
                 JOptionPane.WARNING_MESSAGE);
     }
-    
+
     @Override
     public String demander(String titre, String message) {
         return JOptionPane.showInputDialog(this, message, titre, -1);
     }
-    
-    
-    int confirmer(String titre, String message, int type) {
-        return  JOptionPane.showConfirmDialog(this, message, titre, type);
-    }
 
+    int confirmer(String titre, String message, int type) {
+        return JOptionPane.showConfirmDialog(this, message, titre, type);
+    }
 
     @Override
     public void setVisible(boolean bln) {
@@ -220,7 +255,7 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
             getConversation(CURRENT).clear();
         }
     }
-    
+
     void clear() {
         conversations.clear();
         onglets.removeAll();
@@ -332,6 +367,5 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
     private javax.swing.JTextField message;
     private javax.swing.JTabbedPane onglets;
     // End of variables declaration//GEN-END:variables
-
 
 }

@@ -3,30 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package hermes.chat.vue.listeners;
 
 import hermes.chat.controleur.Chatter;
+import hermes.chat.vue.ChatIRC;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JCloseableTabComponent;
 
 /**
  *
- * @author Menini Thomas (d120041) <t.menini@student.helmo.be>
+ * @author Thomas Menini
  */
-public class Fermer implements ActionListener {
+public class FermerHistorique extends Fermer {
 
-    protected final Chatter chat;
-    protected final JCloseableTabComponent parent;
-
-    public Fermer(Chatter chat, JCloseableTabComponent parent) {
-        this.chat = chat;
-        this.parent = parent;
+    public FermerHistorique(Chatter chat, JCloseableTabComponent parent) {
+        super(chat, parent);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        chat.sortir(parent.getName());
+        ChatIRC fenetre = chat.getFenetre();
+        fenetre.fermerHistorique(parent.getName());
     }
-
+    
 }

@@ -44,6 +44,7 @@ public class ClientMessageHandler {
         requetesPubliques.put("msg", new Msg(chat));
         requetesPubliques.put("discuss", new Discuss(chat));
         requetes.put("typing", new Typing(chat));
+        requetes.put("register", new Register(chat));
     }
 
     public boolean traiter(String sequence) {
