@@ -8,7 +8,7 @@ package server.commands;
 import hermes.protocole.message.MessageProtocole;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import java.util.AbstractMap;
+import hermes.protocole.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pattern.command.CommandArgument;
@@ -40,8 +40,8 @@ public class Msg extends CommandArgument {
         String message = "";
         try {
             message = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.sender, (Object) auteur),
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, (Object) text)
+                    new Entry<>(ProtocoleSwinen.sender, (Object) auteur),
+                    new Entry<>(ProtocoleSwinen.message, (Object) text)
             );
         } catch (Exception ex) {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);

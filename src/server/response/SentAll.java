@@ -7,7 +7,7 @@ package server.response;
 
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import java.util.AbstractMap;
+import hermes.protocole.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.client.ClientManager;
@@ -36,8 +36,8 @@ public class SentAll {
         String messageProtocole = "";
         try {
             messageProtocole = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.sender, (Object)auteur),
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message,(Object) message)
+                    new Entry<>(ProtocoleSwinen.sender, (Object)auteur),
+                    new Entry<>(ProtocoleSwinen.message,(Object) message)
             );
         } catch (Exception ex) {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);

@@ -7,7 +7,7 @@ package server.response;
 
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import java.util.AbstractMap;
+import hermes.protocole.Entry;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -49,8 +49,8 @@ public class SentResponse {
             String response = "";
             try {
                 response = protocole.make(
-                        new AbstractMap.SimpleEntry<>(ProtocoleSwinen.digit, (Object)errorList.get(id).getId()),
-                        new AbstractMap.SimpleEntry<>(ProtocoleSwinen.message, (Object)errorList.get(id).getMessage())
+                        new Entry<>(ProtocoleSwinen.digit, (Object)errorList.get(id).getId()),
+                        new Entry<>(ProtocoleSwinen.message, (Object)errorList.get(id).getMessage())
                 );
             } catch (Exception ex) {
                 Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);

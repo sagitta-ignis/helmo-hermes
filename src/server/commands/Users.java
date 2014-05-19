@@ -7,7 +7,7 @@ package server.commands;
 
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import java.util.AbstractMap;
+import hermes.protocole.Entry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -41,7 +41,7 @@ public class Users extends CommandArgument {
        
         try {
             messageProtocole = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user, (Object)utilisateurs)
+                    new Entry<>(ProtocoleSwinen.user, (Object)utilisateurs)
             );
         } catch (Exception ex) {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);

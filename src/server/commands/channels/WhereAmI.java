@@ -7,7 +7,7 @@ package server.commands.channels;
 
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import java.util.AbstractMap;
+import hermes.protocole.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pattern.command.CommandArgument;
@@ -38,7 +38,7 @@ public class WhereAmI extends CommandArgument {
 
         try {
             messageProtocole = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.channel, (Object) defaultChannel)
+                    new Entry<>(ProtocoleSwinen.channel, (Object) defaultChannel)
             );
         } catch (Exception ex) {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);

@@ -7,7 +7,7 @@ package server.commands;
 
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import java.util.AbstractMap;
+import hermes.protocole.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pattern.command.CommandArgument;
@@ -44,7 +44,7 @@ public class Quit extends CommandArgument {
         String messageProtocole = "";
         try {
             messageProtocole = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user,(Object) client.getClient().getUsername())
+                    new Entry<>(ProtocoleSwinen.user,(Object) client.getClient().getUsername())
             );
         } catch (Exception ex) {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);

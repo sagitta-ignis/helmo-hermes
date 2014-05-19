@@ -7,7 +7,7 @@ package server.response.channels;
 
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import java.util.AbstractMap;
+import hermes.protocole.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.controlleurs.ChannelControlleur;
@@ -33,8 +33,8 @@ public class SentLeaveChannel {
         String messageProtocole = "";
         try {
             messageProtocole = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.channel, (Object)nomChannel),
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user,(Object) user)
+                    new Entry<>(ProtocoleSwinen.channel, (Object)nomChannel),
+                    new Entry<>(ProtocoleSwinen.user,(Object) user)
             );
         } catch (Exception ex) {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);

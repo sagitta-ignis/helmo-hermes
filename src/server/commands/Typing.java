@@ -8,12 +8,12 @@ package server.commands;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
 import hermes.protocole.message.MessageProtocole;
-import java.util.AbstractMap;
+import hermes.protocole.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import pattern.command.CommandArgument;
-import server.controlleurs.ChannelControlleur;
 import server.client.Client;
+import server.controlleurs.ChannelControlleur;
 import server.etat.Waiting;
 
 /**
@@ -35,6 +35,7 @@ public class Typing extends CommandArgument {
     @Override
     public void execute() {
         MessageProtocole message = (MessageProtocole) args[0];
+        String channel = message.get(ProtocoleSwinen.channel);
         String activite = message.get(ProtocoleSwinen.digit);
 
         protocole.prepare(ProtocoleSwinen.STYPING);
@@ -42,8 +43,9 @@ public class Typing extends CommandArgument {
 
         try {
             messageProtocole = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user, (Object) clientInfo.getUsername()),
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.digit, (Object) activite)
+                    new Entry<>(ProtocoleSwinen.channel, (Object) channel),
+                    new Entry<>(ProtocoleSwinen.user, (Object) clientInfo.getUsername()),
+                    new Entry<>(ProtocoleSwinen.digit, (Object) activite)
             );
         } catch (Exception ex) {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);

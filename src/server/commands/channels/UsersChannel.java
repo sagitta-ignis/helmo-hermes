@@ -8,7 +8,7 @@ package server.commands.channels;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
 import hermes.protocole.message.MessageProtocole;
-import java.util.AbstractMap;
+import hermes.protocole.Entry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -55,8 +55,8 @@ public class UsersChannel extends CommandArgument {
 
         try {
             messageProtocole = protocole.make(
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.channel, (Object) nomChannel),
-                    new AbstractMap.SimpleEntry<>(ProtocoleSwinen.user, (Object) creationListeUsers(channel))
+                    new Entry<>(ProtocoleSwinen.channel, (Object) nomChannel),
+                    new Entry<>(ProtocoleSwinen.user, (Object) creationListeUsers(channel))
             );
         } catch (Exception ex) {
             Logger.getLogger(Waiting.class.getName()).log(Level.SEVERE, null, ex);
