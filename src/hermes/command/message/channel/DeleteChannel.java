@@ -43,9 +43,8 @@ public class DeleteChannel extends Message {
             return;
         }
         if (request != null && protocole.check(request)) {
+            waitResponse();
             client.getEmetteur().envoyer(request);
-            String response = client.getEcouteur().lire();
-            chat.getEcouteur().recevoir(response);
         } else {
             client.setEtat(ClientStatus.BadMessageMaked);
         }
@@ -53,6 +52,22 @@ public class DeleteChannel extends Message {
 
     @Override
     public void response(String response) {
-
+        if (response != null) {
+            Protocole protocole = chat.getProtocole();
+            Client client = chat.getClient();
+            protocole.prepare(ProtocoleSwinen.RESPONSE);
+            if (protocole.check(response + "\r\n")) {
+                switch (protocole.get(ProtocoleSwinen.digit)) {
+                    case "0":
+                        
+                        break;
+                    case "9":
+                        client.setEtat(ClientStatus.BadProtocoleSended);
+                        break;
+                }
+            } else {
+                client.setEtat(ClientStatus.BadProtocoleReceived);
+            }
+        }
     }
 }
