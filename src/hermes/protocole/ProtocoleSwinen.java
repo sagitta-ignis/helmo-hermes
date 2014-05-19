@@ -181,8 +181,8 @@ public class ProtocoleSwinen extends AbstractProtocole {
      * styping = "STYPING" space user space digit crlf
      */
     private static void initNotifications() {     
-        TYPING = new MessageProtocole("typing = \"TYPING\" space digit crlf", digit);
-        STYPING = new MessageProtocole("styping = \"STYPING\" space user space digit crlf", user, digit);
+        TYPING = new MessageProtocole("typing = \"TYPING\" space channel space digit crlf", channel, digit);
+        STYPING = new MessageProtocole("styping = \"STYPING\" space channel space user space digit crlf", channel, user, digit);
         SERVERSHUTDOWN = new MessageProtocole("servershutdown = \"SERVERSHUTDOWN\" crlf");
         WHEREAMI = new MessageProtocole("whereami = \"WHEREAMI\" crlf");
         HERE = new MessageProtocole("here = \"HERE\" space channel crlf",channel);
