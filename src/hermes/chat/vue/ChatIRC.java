@@ -103,7 +103,7 @@ public class ChatIRC extends AbstractChat {
 
     @Override
     public void leave(String user) {
-        super.join(user);
+        super.leave(user);
         gui.removeConversation(user);
     }
 
