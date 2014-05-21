@@ -19,6 +19,8 @@ import hermes.protocole.Entry;
  */
 public class DeleteChannel extends Message {
 
+    private String channel;
+    
     public DeleteChannel(Chatter chat) {
         super(chat);
     }
@@ -26,7 +28,7 @@ public class DeleteChannel extends Message {
     @Override
     public void execute() {
         if (verifierArguments(1)) {
-            String channel = (String) args[0];
+            channel = (String) args[0];
             deleteChannel(channel);
         }
     }
@@ -60,6 +62,9 @@ public class DeleteChannel extends Message {
                 switch (protocole.get(ProtocoleSwinen.digit)) {
                     case "0":
                         
+                        break;
+                    case "1":
+                        chat.getFenetre().avertir("Channel inconnu", "suppresion impossible pour "+channel);
                         break;
                     case "9":
                         client.setEtat(ClientStatus.BadProtocoleSended);

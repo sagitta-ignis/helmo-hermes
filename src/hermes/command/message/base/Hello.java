@@ -11,7 +11,6 @@ import hermes.client.ClientStatus;
 import hermes.protocole.Entry;
 import hermes.protocole.Protocole;
 import hermes.protocole.ProtocoleSwinen;
-import hermes.security.hash.Hash;
 
 /**
  *

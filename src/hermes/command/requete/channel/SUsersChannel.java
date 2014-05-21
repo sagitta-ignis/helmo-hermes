@@ -32,10 +32,7 @@ public class SUsersChannel extends Requete {
             if (protocole.check(text)) {
                 String channel = protocole.get(ProtocoleSwinen.channel);
                 List<String> users = protocole.getAll(ProtocoleSwinen.user);
-                users.remove("SUSERSCH");
-                users.remove("ANNEL");
-                users.remove(channel);
-                chat.getChannels().remplir(channel, users);
+                if(users != null) chat.getChannels().remplir(channel, users);
             } else {
                 client.setEtat(ClientStatus.BadProtocoleReceived);
             }

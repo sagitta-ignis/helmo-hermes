@@ -43,8 +43,10 @@ public class STyping extends Requete {
             String user = protocole.get(ProtocoleSwinen.user);
             String digit = protocole.get(ProtocoleSwinen.digit);
             Channel ch = chs.get(channel);
-            Utilisateur u = ch.getUtilisateur(user);
-            u.setTyping(digit.equals("1"));
+            if(ch != null) {
+                Utilisateur u = ch.getUtilisateur(user);
+                if(u!=null) u.setTyping(digit.equals("1"));
+            }
         } else {
             client.setEtat(ClientStatus.BadProtocoleReceived);
         }

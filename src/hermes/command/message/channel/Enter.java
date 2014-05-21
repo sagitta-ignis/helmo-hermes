@@ -74,6 +74,7 @@ public class Enter extends Message {
                 switch (protocole.get(ProtocoleSwinen.digit)) {
                     case "0":
                         fenetre.entrer(channel);
+                        chat.getMessageHandler().execute("/userschannel", channel);
                         break;
                     case "1":
                         fenetre.avertir("Entrer dans "+channel, "channel inconnu");

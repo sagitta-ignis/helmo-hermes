@@ -113,6 +113,7 @@ public class Chatter extends ClientStatusAdapter {
     public boolean login(String username, String password) {
         try {
             utilisateur = utilisateurs.instanciate(username);
+            fenetre.setTitre("IRC Helmo : "+username);
             return client.login(username, password);
         } catch (NotConnectedException ex) {
             Logger.getLogger(Chatter.class.getName()).log(Level.SEVERE, null, ex);
@@ -137,10 +138,11 @@ public class Chatter extends ClientStatusAdapter {
     }
 
     public void ecrire(String channel, String text, boolean publique) {
-        if (text == null || channel == null) {
+        if (text == null) {
             return;
         }
         if (!messageHandler.traiter(text)) {
+            if(channel == null) return;
             if (publique) {
                 publique(channel, text);
             } else {
@@ -245,6 +247,10 @@ public class Chatter extends ClientStatusAdapter {
             } else {
                 messageHandler.execute("/enter", channel);
             }
+        }
+        Utilisateur u = utilisateurs.get(channel);
+        if(u != null) {
+            fenetre.entrer(channel);
         }
     }
 

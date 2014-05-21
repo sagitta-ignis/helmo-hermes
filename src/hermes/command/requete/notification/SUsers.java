@@ -32,8 +32,7 @@ public class SUsers extends Requete {
             protocole.prepare(ProtocoleSwinen.SUSERS);
             if (protocole.check(text)) {
                 List<String> users = protocole.getAll(ProtocoleSwinen.user);
-                users.remove("SUSERS");
-                chat.getUtilisateurs().remplir(users);
+                if(users != null) chat.getUtilisateurs().remplir(users);
             } else {
                 client.setEtat(ClientStatus.BadProtocoleReceived);
             }

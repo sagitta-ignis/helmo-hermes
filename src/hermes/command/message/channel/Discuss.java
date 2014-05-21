@@ -18,8 +18,11 @@ import hermes.protocole.Entry;
  */
 public class Discuss extends Message {
 
+    private String channel;
+    
     public Discuss(Chatter chat) {
         super(chat);
+        setExpected(ProtocoleSwinen.RESPONSE);
     }
 
     @Override
@@ -27,7 +30,7 @@ public class Discuss extends Message {
         if(verifierArguments(2)) {
             Protocole protocole = chat.getProtocole();
             Client client = chat.getClient();
-            String channel = (String) args[0];
+            channel = (String) args[0];
             String message = (String) args[1];
             protocole.prepare(ProtocoleSwinen.DISCUSS);
             String request;
@@ -40,6 +43,7 @@ public class Discuss extends Message {
                 return;
             }
             if (request != null && protocole.check(request)) {
+                waitResponse();
                 client.getEmetteur().envoyer(request);
             } else {
                 client.setEtat(ClientStatus.BadMessageMaked);
@@ -48,5 +52,27 @@ public class Discuss extends Message {
     }
     
     @Override
-    public void response(String response) {}
+    public void response(String response) {
+        if (response != null) {
+            Protocole protocole = chat.getProtocole();
+            Client client = chat.getClient();
+            protocole.prepare(ProtocoleSwinen.RESPONSE);
+            if (protocole.check(response + "\r\n")) {
+                switch (protocole.get(ProtocoleSwinen.digit)) {
+                    case "0":
+                        
+                        break;
+                    case "1":
+                        chat.getFenetre().avertir("Channel inconnu", "discution impossible vers "+channel);
+                        break;
+                    case "9":
+                        client.setEtat(ClientStatus.BadProtocoleSended);
+                        break;
+                }
+            } else {
+                chat.getEcouteur().recevoir(response);
+                client.setEtat(ClientStatus.BadProtocoleReceived);
+            }
+        }
+    }
 }

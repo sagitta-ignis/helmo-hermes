@@ -31,7 +31,7 @@ public class Envoyer implements ActionListener {
         if(fenetre.getMessage().getText().isEmpty()) return;
         Conversation c = fenetre.getConversation(CURRENT);
         if(c != null && !c.isHistorique()) {
-            chat.setTyping(c.getName(), false);
+            if (c.isPublic()) chat.setTyping(c.getName(), false);
             chat.ecrire(c.getName(), fenetre.getMessage().getText(), c.isPublic());
         } else {
             if(c != null && c.isHistorique()) {
@@ -39,7 +39,6 @@ public class Envoyer implements ActionListener {
             } else {
                 fenetre.avertir("Erreur", "Pas de conversation ouverte pour discuter");
             }
-            
         } 
         fenetre.getMessage().setText("");
     }

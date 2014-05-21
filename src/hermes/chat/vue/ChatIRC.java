@@ -97,11 +97,13 @@ public class ChatIRC extends AbstractChat {
 
     @Override
     public void join(String user) {
+        super.join(user);
         ajouterConversationUtilisateur(user);
     }
 
     @Override
     public void leave(String user) {
+        super.join(user);
         gui.removeConversation(user);
     }
 
@@ -142,6 +144,10 @@ public class ChatIRC extends AbstractChat {
     public boolean confirmer(String titre, String message) {
         int res = gui.confirmer(titre, message, JOptionPane.YES_NO_OPTION);
         return res==0;
+    }
+
+    public void setTitre(String titre) {
+        gui.setTitre(titre);
     }
 
 }

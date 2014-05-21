@@ -35,7 +35,7 @@ public class Ecrire extends KeyAdapter {
             JTextField message = (JTextField) ke.getSource();
             String text = message.getText();
             Conversation c = fenetre.getConversation(Chat.CURRENT);
-            if(c == null || c.isHistorique()) return;
+            if(c == null || c.isHistorique() || c.isPrivate()) return;
             if (!fenetre.isTyping() && !text.isEmpty()) {
                 chat.setTyping(c.getName(), true);
             } else if (fenetre.isTyping() && text.isEmpty()) {

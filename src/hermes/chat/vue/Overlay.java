@@ -16,6 +16,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -62,7 +63,7 @@ public class Overlay extends AbstractChat {
 
         frame.setUndecorated(true);
         frame.setOpacity((float) 0.8);
-        frame.setSize(350, 30 * (dimension + 1));
+        frame.setSize(350, 30 * (dimension));
         frame.setLayout(experimentLayout);
 
         fieldEnvoyer = new JTextField();
@@ -72,7 +73,7 @@ public class Overlay extends AbstractChat {
             frame.add(label);
         }
         Collections.reverse(labels);
-        frame.add(fieldEnvoyer);
+        // frame.add(fieldEnvoyer);
         frame.setAlwaysOnTop(true);
 
         int x = (int) dim.getWidth() / 2 - 150;
@@ -118,13 +119,14 @@ public class Overlay extends AbstractChat {
     }
 
     private void envoyer() {
-        //chat.entrer(null,fieldEnvoyer.getText());
+        chat.ecrire(SERVER, fieldEnvoyer.getText(), true);
         fieldEnvoyer.setText("");
     }
 
     @Override
     public void afficher(String channel, String user, String text) {
-        ArrayList<String> myLittlePoney = decomposer(text);
+        String mesage = String.format("[%s][%s] %s", channel, user, text);
+        List<String> myLittlePoney = decomposer(mesage);
         String oldLady[] = new String[labels.size()];
         int compter = 0;
         int furiousCompter = 0;
@@ -148,8 +150,8 @@ public class Overlay extends AbstractChat {
     public void avertir(String titre, String message) {
     }
 
-    private ArrayList<String> decomposer(String text) {
-        ArrayList<String> tempo = new ArrayList<>();
+    private List<String> decomposer(String text) {
+        List<String> tempo = new ArrayList<>();
 
         int div = (int) Math.ceil(text.length() / CHARPARLIGNE) + 1;
                

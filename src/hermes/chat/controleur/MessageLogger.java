@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.xml.bind.JAXBException;
@@ -47,7 +45,9 @@ public class MessageLogger extends AbstractChat implements ActionListener {
     public void afficher(String channel, String user, String texte) {
         try {
             HermesLogger logger = get(channel);
-            logger.ajouterMessage(user, texte);
+            if(logger != null) {
+                logger.ajouterMessage(user, texte);
+            }
         } catch (IOException | JAXBException ex) {
             java.util.logging.Logger.getLogger(MessageLogger.class.getName()).log(Level.SEVERE, null, ex);
         }

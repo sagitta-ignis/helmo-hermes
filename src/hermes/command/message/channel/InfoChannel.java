@@ -20,6 +20,7 @@ public class InfoChannel extends Message {
     
     public InfoChannel(Chatter chat) {
         super(chat);
+        // setExpected(ProtocoleSwinen.SINFOCHANNEL);
     }
 
     @Override
@@ -42,7 +43,6 @@ public class InfoChannel extends Message {
             return;
         }
         if (request != null && protocole.check(request)) {
-            waitResponse();
             client.getEmetteur().envoyer(request);
         } else {
             client.setEtat(ClientStatus.BadMessageMaked);

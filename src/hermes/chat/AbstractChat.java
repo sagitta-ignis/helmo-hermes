@@ -67,28 +67,28 @@ public class AbstractChat extends ClientStatusAdapter
 
     @Override
     public void unknownRequest() {
-        afficher(CURRENT, SERVER, "-- unknown request received");
+        afficher(CURRENT, SERVER, "unknown request received");
     }
 
     @Override
     public void unknownUser() {
-        afficher(CURRENT, SERVER, "-- utilisateur inconnu");
+        avertir("Utilisateur inconnu", "cet utilisateur n'est pas connecté ou n'existe pas");
     }
 
     @Override
     public void msgToSelf() {
-        afficher(CURRENT, SERVER, "-- impossible d'envoyer un message à soi-même (avez-vous besoin d'un psychologue ?)");
+        afficher(CURRENT, SERVER, "impossible d'envoyer un message à soi-même (avez-vous besoin d'un psychologue ?)");
     }
 
     @Override
     public void loggedIn() {
-        afficher(CURRENT, SERVER, "-- user logged in");
+        afficher(SERVER, SERVER, "user logged in");
     }
 
     @Override
     public void response(String digit, String message) {
         if (!digit.equals("0")) {
-            afficher(CURRENT, SERVER, "-- " + message);
+            afficher(SERVER, SERVER, message);
         }
     }
 
@@ -114,17 +114,17 @@ public class AbstractChat extends ClientStatusAdapter
 
     @Override
     public void sUsers(Utilisateurs users) {
-        afficher(SERVER, SERVER,"-- connectés : "+users.toString());
+        afficher(SERVER, SERVER, "connectés : "+users.toString());
     }
 
     @Override
     public void join(String user) {
-        afficher(SERVER, SERVER, "-- " + user + " a rejoint le serveur");
+        afficher(SERVER, SERVER, user + " a rejoint le serveur");
     }
 
     @Override
     public void leave(String user) {
-        afficher(SERVER, SERVER, "-- " + user + " a quitté le serveur");
+        afficher(SERVER, SERVER, user + " a quitté le serveur");
     }
 
     @Override

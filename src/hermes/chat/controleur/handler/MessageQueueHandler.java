@@ -31,8 +31,9 @@ public class MessageQueueHandler {
     }
 
     public boolean traiter(String message) {
-        Message m = file.poll();
-        if(m != null) {
+        Message m = file.peek();
+        if(m != null && m.accept(message)) {
+            file.poll();
             m.response(message);
             return true;
         }

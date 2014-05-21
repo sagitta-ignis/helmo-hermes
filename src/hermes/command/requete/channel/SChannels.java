@@ -33,8 +33,7 @@ public class SChannels extends Requete {
             protocole.prepare(ProtocoleSwinen.SCHANNELS);
             if (protocole.check(text)) {
                 List<String> channels = protocole.getAll(ProtocoleSwinen.channel);
-                channels.remove("SCHANNEL");
-                remplir(channels);
+                if(channels != null) remplir(channels);
             } else {
                 client.setEtat(ClientStatus.BadProtocoleReceived);
             }

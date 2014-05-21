@@ -15,6 +15,7 @@ import hermes.chat.vue.listeners.Ecrire;
 import hermes.chat.vue.listeners.Envoyer;
 import hermes.chat.vue.listeners.Fermer;
 import hermes.chat.vue.listeners.FermerHistorique;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu.Separator;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 import javax.swing.tree.TreeModel;
 
 /**
@@ -158,6 +160,10 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
     void setChannels(TreeModel channels) {
         this.channels.setModel(channels);
     }
+    
+    void setTitre(String titre) {
+        setTitle(titre);
+    }
 
     void addConversation(Conversation c) {
         if (!conversations.containsKey(c.getName())) {
@@ -222,6 +228,17 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
 
     @Override
     public void afficher(String channel, String user, String text) {
+        if (channel.equals(SERVER)) {
+            informations.setText(user + " : " + text);
+            Timer t = new Timer(3000, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    informations.setText(null);
+                }
+            });
+            t.start();
+            return;
+        }
         Conversation c;
         c = getConversation(channel);
         if (c != null) {
@@ -286,6 +303,7 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
         onglets = new javax.swing.JTabbedPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         channels = new javax.swing.JTree();
+        informations = new javax.swing.JLabel();
         menu = new javax.swing.JMenuBar();
         jmIRC = new javax.swing.JMenu();
         jmiQuitter = new javax.swing.JMenuItem();
@@ -332,6 +350,11 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
 
         getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
+        informations.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        informations.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        informations.setPreferredSize(new java.awt.Dimension(0, 20));
+        getContentPane().add(informations, java.awt.BorderLayout.PAGE_START);
+
         jmIRC.setText("IRC");
 
         jmiQuitter.setText("Quitter");
@@ -361,6 +384,7 @@ public final class ChatGUI extends javax.swing.JFrame implements Chat {
     private javax.swing.JTree channels;
     private javax.swing.JPanel dialogue;
     private javax.swing.JButton envoyer;
+    private javax.swing.JLabel informations;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JMenu jmIRC;
