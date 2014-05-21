@@ -56,7 +56,7 @@ public class Chatter extends ClientStatusAdapter {
 
         fenetre = new ChatIRC(this);
         journal = new MessageLogger(fenetre);
-        
+
         fenetre.setOverlayer(overlayer);
         fenetre.setLogger(journal);
         fenetre.setChannels(((ChannelsModel) channels).getModel());
@@ -113,7 +113,7 @@ public class Chatter extends ClientStatusAdapter {
     public boolean login(String username, String password) {
         try {
             utilisateur = utilisateurs.instanciate(username);
-            fenetre.setTitre("IRC Helmo : "+username);
+            fenetre.setTitre("IRC Helmo : " + username);
             return client.login(username, password);
         } catch (NotConnectedException ex) {
             Logger.getLogger(Chatter.class.getName()).log(Level.SEVERE, null, ex);
@@ -137,18 +137,22 @@ public class Chatter extends ClientStatusAdapter {
         }
     }
 
-    public void ecrire(String channel, String text, boolean publique) {
+    public boolean ecrire(String channel, String text, boolean publique) {
         if (text == null) {
-            return;
+            return false;
         }
-        if (!messageHandler.traiter(text)) {
-            if(channel == null) return;
-            if (publique) {
-                publique(channel, text);
-            } else {
-                prive(channel, text);
-            }
+        if (messageHandler.traiter(text)) {
+            return true;
         }
+        if (channel == null) {
+            return false;
+        }
+        if (publique) {
+            publique(channel, text);
+        } else {
+            prive(channel, text);
+        }
+        return true;
     }
 
     private void publique(String channel, String text) {
@@ -249,7 +253,7 @@ public class Chatter extends ClientStatusAdapter {
             }
         }
         Utilisateur u = utilisateurs.get(channel);
-        if(u != null) {
+        if (u != null) {
             fenetre.entrer(channel);
         }
     }
