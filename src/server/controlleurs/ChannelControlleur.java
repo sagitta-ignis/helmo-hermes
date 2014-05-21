@@ -97,6 +97,7 @@ public class ChannelControlleur {
         Channel channel = channelList.get(nom);
         channel.retirerUtilisateurChannel(client);
         if (channel.getClientSize() == 0 && channel.isTemporaire()) {
+            client.retirerChannel(nom);
             supprimerChannel(nom);
         }
     }

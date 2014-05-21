@@ -95,6 +95,11 @@ public class ClientManager {
     public void envoitImmediat(String message) {
         sortie.envoyer(message);
     }
+    
+    
+    public void retirerChannel(String nom) {
+        channels.remove(nom);
+    }
 
     public void logClient(String auteur, String message) {
         if (log == null) {
