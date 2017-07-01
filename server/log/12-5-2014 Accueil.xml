@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Conversation>
+    <message>JOIN alice
+</message>
+    <message>SUSERS alice
+</message>
+    <message>LEAVE alice
+</message>
+    <message>JOIN alice
+</message>
+    <message>SUSERS alice
+</message>
+    <message>LEAVE alice
+</message>
+    <message>JOIN alice
+</message>
+    <message>SUSERS alice
+</message>
+    <message>LEAVE alice
+</message>
+    <message>JOIN alice
+</message>
+    <message>SUSERS alice
+</message>
+    <message>LEAVE alice
+</message>
+    <message>JOIN alice
+</message>
+    <message>SUSERS alice
+</message>
+    <message>LEAVE alice
+</message>
+    <message>JOIN alice
+</message>
+    <message>LEAVE alice
+</message>
+    <message>JOIN alice
+</message>
+    <message>LEAVE alice
+</message>
+    <message>JOIN alice
+</message>
+    <message>JOIN alice
+</message>
+    <message>SUSERS alice
+</message>
+    <message>LEAVE alice
+</message>
+    <message>JOIN alice
+</message>
+    <message>SUSERS alice
+</message>
+    <message>JOIN alice
+</message>
+    <message>SUSERS alice
+</message>
+    <message>LEAVE alice
+</message>
+</Conversation>
